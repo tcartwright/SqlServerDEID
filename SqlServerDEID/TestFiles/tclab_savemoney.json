@@ -1,0 +1,274 @@
+﻿{
+  "ServerName": "172.16.20.179",
+  "DatabaseName": "SaveMoney",
+  "CredentialsName": "TCLAB",
+  "Locale": "en",
+  "ScriptingImports": [ { "NameSpace": "Bogus.Extensions.UnitedStates" } ],
+  "SqlScripts": [
+    {
+      "FileName": "",
+      "ScriptType": "pre",
+      "Timeout": 30
+    },
+    {
+      "FileName": "",
+      "ScriptType": "post",
+      "Timeout": 30
+    }
+  ],
+  "Tables": [
+    {
+      "Name": "[dbo].[Driver]",
+      "DisableTriggers": true,
+      "DisableConstraints": false,
+      "ScriptTimeout": 600,
+      "Columns": [
+        {
+          "Name": "[gender]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Random.ListItem(new[] { \"M\", \"F\" })",
+              "TransformType": "expression",
+              "WhereClause": ""
+            }
+          ]
+        },
+        {
+          "Name": "[fname]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Name.FirstName(Bogus.DataSets.Name.Gender.Male).ToUpper()",
+              "TransformType": "expression",
+              "WhereClause": "[Gender] = 'M'"
+            },
+            {
+              "Transform": "Faker.Name.FirstName(Bogus.DataSets.Name.Gender.Female).ToUpper()",
+              "TransformType": "expression",
+              "WhereClause": "[Gender] = 'F'"
+            },
+            {
+              "Transform": "Faker.Name.FirstName().ToUpper()",
+              "TransformType": "expression",
+              "WhereClause": "[Gender] IS NULL OR [Gender] NOT IN ('F', 'M')"
+            }
+          ]
+        },
+        {
+          "Name": "[middle]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Name.LastName().Substring(0, 1)",
+              "TransformType": "expression",
+              "WhereClause": "[Middle] IS NOT NULL AND LEN([Middle]) = 1"
+            },
+            {
+              "Transform": "Faker.Name.LastName()",
+              "TransformType": "expression",
+              "WhereClause": "[Middle] IS NOT NULL AND LEN([Middle]) > 1"
+            }
+          ]
+        },
+        {
+          "Name": "[lname]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Name.LastName().ToUpper()",
+              "TransformType": "expression",
+              "WhereClause": ""
+            }
+          ]
+        },
+        {
+          "Name": "[dob]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Date.Between(DateTime.Now.AddYears(-70), DateTime.Now.AddYears(-18)).Date",
+              "TransformType": "expression",
+              "WhereClause": ""
+            }
+          ]
+        },
+        {
+          "Name": "[occupation]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Name.JobTitle()",
+              "TransformType": "expression",
+              "WhereClause": "[occupation] IS NOT NULL"
+            }
+          ]
+        },
+        {
+          "Name": "[licNum]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Random.ReplaceNumbers(\"########\")",
+              "TransformType": "expression",
+              "WhereClause": "[licNum] IS NOT NULL"
+            }
+          ]
+        },
+        {
+          "Name": "[licState]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Address.StateAbbr()",
+              "TransformType": "expression",
+              "WhereClause": ""
+            }
+          ]
+        },
+        {
+          "Name": "[ssNum]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Person.Ssn().Replace(\"-\", \"\")",
+              "TransformType": "expression",
+              "WhereClause": "LEN([ssNum]) > 0"
+            }
+          ]
+        }
+      ],
+      "SqlScripts": []
+    },
+    {
+      "Name": "[dbo].[Insured]",
+      "DisableTriggers": true,
+      "DisableConstraints": false,
+      "ScriptTimeout": 600,
+      "Columns": [
+        {
+          "Name": "[fname1]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Name.FirstName().ToUpper()",
+              "TransformType": "expression",
+              "WhereClause": ""
+            }
+          ]
+        },
+        {
+          "Name": "[middle1]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Name.LastName().Substring(0, 1).ToUpper()",
+              "TransformType": "expression",
+              "WhereClause": "[Middle1] IS NOT NULL AND LEN([Middle1]) = 1"
+            },
+            {
+              "Transform": "Faker.Name.LastName().ToUpper()",
+              "TransformType": "expression",
+              "WhereClause": "[Middle1] IS NOT NULL AND LEN([Middle1]) > 1"
+            }
+          ]
+        },
+        {
+          "Name": "[lname1]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Name.LastName().ToUpper()",
+              "TransformType": "expression",
+              "WhereClause": ""
+            }
+          ]
+        },
+        {
+          "Name": "[insuredName]",
+          "Transforms": [
+            {
+              "Transform": "String.Concat(RowValues.fname1, \" \", RowValues.middle1, \" \", RowValues.lname1)",
+              "TransformType": "expression",
+              "WhereClause": "[middle1] IS NOT NULL"
+            },
+            {
+              "Transform": "String.Concat(RowValues.fname1, \" \", RowValues.lname1)",
+              "TransformType": "expression",
+              "WhereClause": "[middle1] IS NULL"
+            }
+          ]
+        },
+        {
+          "Name": "[address1]",
+          "Transforms": [
+            {
+              "Transform": "String.Concat(Faker.Address.BuildingNumber(), \" \", Faker.Address.StreetName())",
+              "TransformType": "expression",
+              "WhereClause": ""
+            }
+          ]
+        },
+        {
+          "Name": "[city]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Address.City()",
+              "TransformType": "expression",
+              "WhereClause": ""
+            }
+          ]
+        },
+        {
+          "Name": "[state]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Address.State()",
+              "TransformType": "expression",
+              "WhereClause": ""
+            }
+          ]
+        },
+        {
+          "Name": "[zip]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Address.ZipCode()",
+              "TransformType": "expression",
+              "WhereClause": ""
+            }
+          ]
+        },
+        {
+          "Name": "[county]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Address.County()",
+              "TransformType": "expression",
+              "WhereClause": ""
+            }
+          ]
+        },
+        {
+          "Name": "[phone]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Phone.PhoneNumber(\"(###) ###-####\")",
+              "TransformType": "expression",
+              "WhereClause": "LEN([phone]) > 0"
+            }
+          ]
+        },
+        {
+          "Name": "[phone2]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Phone.PhoneNumber(\"(###) ###-####\")",
+              "TransformType": "expression",
+              "WhereClause": "LEN([phone2]) > 0"
+            }
+          ]
+        },
+        {
+          "Name": "[email]",
+          "Transforms": [
+            {
+              "Transform": "Faker.Internet.Email()",
+              "TransformType": "expression",
+              "WhereClause": "LEN([phone2]) > 0"
+            }
+          ]
+        }
+      ],
+      "SqlScripts": []
+    }
+  ]
+}

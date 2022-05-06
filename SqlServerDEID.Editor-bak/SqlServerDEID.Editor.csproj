@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<StartupObject>SqlServerDEID.Editor.Program</StartupObject>
+		<UseWindowsForms>true</UseWindowsForms>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Bogus" Version="34.0.2" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.1.0" />
+		<PackageReference Include="RoslynPad.Editor.Avalonia" Version="1.2.0" />
+		<PackageReference Include="RoslynPad.Roslyn.Avalonia" Version="3.6.0" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\SqlServerDEID.Common\SqlServerDEID.Common.csproj" />
+	</ItemGroup>
+</Project>

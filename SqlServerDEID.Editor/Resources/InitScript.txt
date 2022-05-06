@@ -1,0 +1,52 @@
+﻿
+/* 
+Notes: 
+	- There must be at least one Console.WriteLine(...)
+	- The contents of the very last Console.WriteLine(...) will be used as the contents of the expression when editing is completed
+		- All other content will be discarded.
+		- Do not use the parameters overload of the last Console.WriteLine
+	- Keep expressions simple, and short as possible. More complex scripting can be done as powershell
+
+Available Objects:
+	- RowValues: This is an object representing the data within the table row. Each column will appear as a property. EX: RowValues.FirstName
+	- Faker: Faker object that can be used to generate all sorts of localized random data. See: https://github.com/bchavez/Bogus#bogus-api-support
+	- Male: A person generated with a male gender with contextually relevant fields specific to the locale.
+	- Female: A person generated with a female gender with contextually relevant fields specific to the locale.
+	- Locale: the current locale being used to generate fake data
+	- Misc info: 
+		- DatabaseName: The name of the current database 
+		- TableName: The name of the current database table
+		- ColumnInfo: This object details information about the column being transformed
+		
+*/
+
+
+// EXAMPLE: dump out all of the misc info
+Console.WriteLine("Misc Info:");
+Console.WriteLine("{0, 15}: {1}", "Locale", Locale);
+Console.WriteLine("{0, 15}: {1}", "DatabaseName", DatabaseName);
+Console.WriteLine("{0, 15}: {1}", "TableName", TableName);
+Console.WriteLine("{0, 15}: {1}", "Column", Column.ToString());
+Console.WriteLine();
+
+// EXAMPLE: dump out the contents of the rowvalues
+Console.WriteLine("RowValues:");
+Console.WriteLine(RowValues.ToString());
+Console.WriteLine();
+
+// EXAMPLE: dump out the people
+Console.WriteLine("People:");
+Console.WriteLine(Male.ToString());
+Console.WriteLine(Female.ToString());
+Console.WriteLine();
+
+// EXAMPLE: dump out some fake data using faker
+Console.WriteLine("Faker:");
+Console.WriteLine("  FullName = {0}", Faker.Name.FullName());
+Console.WriteLine("  Address = {0}", String.Concat(Faker.Address.BuildingNumber(), Faker.Address.StreetAddress(), " ", Faker.Address.City(), " ", Faker.Address.State(), ", ", Faker.Address.ZipCode()));
+//generate a birthdate between 18 and 70 years old
+Console.WriteLine("  Age = {0}", Faker.Date.Past(70, DateTime.Now.AddYears(-18)));
+Console.WriteLine();
+
+// This last console.writeline will become the guts of the expression in the transform file
+Console.WriteLine(String.Concat(Male.FullName, " <", Male.Email, ">"));

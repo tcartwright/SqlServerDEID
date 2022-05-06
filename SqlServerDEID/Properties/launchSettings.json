@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SqlServerDEID": {
+      "commandName": "Project",
+      "commandLineArgs": "-f \"testfiles\\tclab_savemoney.json\" -t 1"
+    }
+  }
+}
