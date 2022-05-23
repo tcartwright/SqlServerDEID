@@ -3,7 +3,9 @@ using SqlServerDEID.Common.Globals.Models;
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Security;
+using System.Text.RegularExpressions;
 
 namespace SqlServerDEID.Common.Globals.Extensions
 {
@@ -54,15 +56,23 @@ namespace SqlServerDEID.Common.Globals.Extensions
             return new SqlConnection(connectionString, credentials);
         }
 
-        public static void RunScript(this SqlConnection connection, SqlScript sqlScript)
+        public static void RunScriptFile(this SqlConnection connection, string baseTransformPath, string fileName, int timeout = 30)
         {
             if (connection is null) { throw new System.ArgumentNullException(nameof(connection)); }
 
-            if (sqlScript != null)
+            if (!string.IsNullOrWhiteSpace(fileName))
             {
-                connection.RunScript(sqlScript.GetScript(), sqlScript.Timeout);
+                fileName = fileName.GetPath(true, baseTransformPath);
+                var contents = File.ReadAllText(fileName);
+                var scripts = Regex.Split(contents, @"^GO\s*$", RegexOptions.IgnoreCase);
+
+                foreach (var script in scripts)
+                {
+                    connection.RunScript(script, timeout);
+                }
             }
         }
+
         public static void RunScript(this SqlConnection connection, string commandText, int timeout = 30)
         {
             if (connection is null) { throw new System.ArgumentNullException(nameof(connection)); }

@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 
 namespace SqlServerDEID.Common.Globals.Models
 {
-    public partial class DatabaseTable 
+    public partial class DatabaseTable
     {
         private const string tab = " ";
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -36,30 +36,44 @@ namespace SqlServerDEID.Common.Globals.Models
             }
         }
 
-        internal void GetMetaData(SqlConnection connection)
+        public void Reset()
+        {
+            var reset = new DatabaseTable();
+            this.Columns.Clear();
+            this.DisableTriggers = reset.DisableTriggers;
+            this.DisableConstraints = reset.DisableConstraints;
+            this.ScriptTimeout = reset.ScriptTimeout;
+        }
+
+        public void GetMetaData(SqlConnection connection, bool addAllColumns = false)
         {
             var table = connection.ExecuteDataTable(
                 Resources.GetTableMetaData,
-                new[] { 
-                    new SqlParameter("@table_name", SqlDbType.NVarChar, 256) { Value = this.Name } 
+                new[] {
+                    new SqlParameter("@table_name", SqlDbType.NVarChar, 256) { Value = this.Name }
                 },
                 CommandType.Text);
 
             foreach (DataRow row in table.Rows)
             {
                 var column = this.Columns.FirstOrDefault(c => _stringComparer.Equals(c.CleanName, row["column_name"]));
+
                 if (column != null)
                 {
-                    column.SetMetaData(row);
+                    column.IsSelected = true;
                 }
-                else if (Convert.ToBoolean(row["is_pk"]))
+                else if (Convert.ToBoolean(row["is_pk"]) || addAllColumns)
                 {
-                    var newCol = new DatabaseTableColumn
+                    column = new DatabaseTableColumn
                     {
                         Name = Convert.ToString(row["column_name"])
                     };
-                    newCol.SetMetaData(row);
-                    this.Columns.Add(newCol);
+                    this.Columns.Add(column);
+                }
+
+                if (column != null)
+                {
+                    column.SetMetaData(row);
                 }
             }
         }

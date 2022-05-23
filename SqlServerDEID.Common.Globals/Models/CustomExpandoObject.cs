@@ -9,6 +9,19 @@ namespace SqlServerDEID.Common.Globals.Models
 {
     public class CustomExpandoObject : DynamicObject
     {
+        public CustomExpandoObject()
+        {
+
+        }
+
+        public CustomExpandoObject(IDictionary<string, object> values)
+        {
+            foreach (var item in values)
+            {
+                this.Members.Add(item.Key, item.Value);
+            }
+        }
+
         public IDictionary<string, object> Members { get; private set; } = new Dictionary<string, object>();
 
         public override bool TryDeleteMember(DeleteMemberBinder binder)
@@ -31,7 +44,7 @@ namespace SqlServerDEID.Common.Globals.Models
         {
             if (this.Members.Any())
             {
-                return String.Join("\r\n", this.Members.Select((k, v) => $"{k.Key, 15}: {GetValue(k.Value)}"));
+                return String.Join("\r\n", this.Members.Select((k, v) => $"{k.Key,15}: {GetValue(k.Value)}"));
             }
             else
             {

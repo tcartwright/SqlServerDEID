@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 
 namespace SqlServerDEID.Common.Globals.Models
@@ -19,6 +20,12 @@ namespace SqlServerDEID.Common.Globals.Models
         [XmlAttribute]
         public bool DisableConstraints { get; set; }
 
+        [XmlAttribute]
+        public string PreScript { get; set; }
+
+        [XmlAttribute]
+        public string PostScript { get; set; }
+
         /// <summary>
         /// Gets or sets the script timeout in seconds for enabling or disabling constraints and triggers. Defaults to 180 seconds or three minutes.
         /// </summary>
@@ -30,11 +37,6 @@ namespace SqlServerDEID.Common.Globals.Models
 
         /// <remarks/>
         [XmlArrayItem("Column", IsNullable = false)]
-        public List<DatabaseTableColumn> Columns { get; set; } = new List<DatabaseTableColumn>();
-
-        /// <remarks/>
-        [XmlArrayItem("Script", IsNullable = true)]
-        public List<SqlScript> SqlScripts { get; set; } = new List<SqlScript>();
-
+        public ObservableCollection<DatabaseTableColumn> Columns { get; set; } = new ObservableCollection<DatabaseTableColumn>();
     }
 }

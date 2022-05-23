@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 
 namespace SqlServerDEID.Common.Globals.Models
@@ -30,17 +31,23 @@ namespace SqlServerDEID.Common.Globals.Models
         [XmlAttribute]
         public string Locale { get; set; }
 
-        /// <remarks/>
-        [XmlArrayItem("Table", IsNullable = false)]
-        public List<DatabaseTable> Tables { get; set; } = new List<DatabaseTable>(); 
+        [XmlAttribute]
+        public string PreScript { get; set; }
+
+        [XmlAttribute]
+        public string PostScript { get; set; }
+
+        [XmlAttribute]
+        public int ScriptTimeout { get; set; } = 180;
+
 
         /// <remarks/>
-        [XmlArrayItem("Script", IsNullable = true)]
-        public List<SqlScript> SqlScripts { get; set; } = new List<SqlScript>();
+        [XmlArrayItem("Table", IsNullable = false)]
+        public ObservableCollection<DatabaseTable> Tables { get; set; } = new ObservableCollection<DatabaseTable>(); 
 
         /// <remarks/>
         [XmlArrayItem("ScriptingImport", IsNullable = true)]
-        public List<ScriptingImport> ScriptingImports { get; set; } = new List<ScriptingImport>();
+        public ObservableCollection<ScriptingImport> ScriptingImports { get; set; } = new ObservableCollection<ScriptingImport>();
 
     }
 }

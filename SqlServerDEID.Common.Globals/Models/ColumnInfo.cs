@@ -4,6 +4,7 @@
     public class ColumnInfo
     {
         public string Name { get; internal set; }
+        public string SqlType { get; internal set; }
         public string DataType { get; internal set; }
         public int MaxLength { get; internal set; }
         public int Precision { get; internal set; }
@@ -11,7 +12,7 @@
 
         public override string ToString()
         {
-            return $"{Name,50} {DataType}";
+            return $"{Name} {DataType}";
         }
     }
 }

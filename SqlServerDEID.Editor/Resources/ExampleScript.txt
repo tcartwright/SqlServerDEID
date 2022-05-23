@@ -1,13 +1,16 @@
 ﻿
 /* 
+This https://github.com/bchavez/Bogus is the faker library provided. Please refer to its documentation for more information about how to use the various faker methods or properties.
+
 Notes: 
 	- There must be at least one Console.WriteLine(...)
 	- The contents of the very last Console.WriteLine(...) will be used as the contents of the expression when editing is completed
 		- All other content will be discarded.
 		- Do not use the parameters overload of the last Console.WriteLine
 	- Keep expressions simple, and short as possible. More complex scripting can be done as powershell
+	- Do not use variables in the Console.WriteLine that were created outside of it
 
-Available Objects:
+Available Global Objects:
 	- RowValues: This is an object representing the data within the table row. Each column will appear as a property. EX: RowValues.FirstName
 	- Faker: Faker object that can be used to generate all sorts of localized random data. See: https://github.com/bchavez/Bogus#bogus-api-support
 	- Male: A person generated with a male gender with contextually relevant fields specific to the locale.

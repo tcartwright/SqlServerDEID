@@ -7,6 +7,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace SqlServerDEID.Common.Globals.Models
 {
@@ -14,13 +16,13 @@ namespace SqlServerDEID.Common.Globals.Models
     {
         private static StringComparer _stringComparer = StringComparer.OrdinalIgnoreCase;
         private bool _isMetaDataRetrieved = false;
-        public void GetMetaData(SqlConnection connection)
+        public void GetMetaData(SqlConnection connection, bool addAllColumns = false)
         {
             if (_isMetaDataRetrieved) { return; }
 
             foreach (var table in this.Tables)
             {
-                table.GetMetaData(connection);
+                table.GetMetaData(connection, addAllColumns);
             }
 
             if (this.Tables.Any(t => !t.Columns.Any(c => c.IsPk)))
@@ -30,6 +32,7 @@ namespace SqlServerDEID.Common.Globals.Models
             _isMetaDataRetrieved = true;
         }
 
+
         public static Database LoadFile(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath)) { throw new ArgumentException($"'{nameof(filePath)}' cannot be null or whitespace.", nameof(filePath)); }
@@ -37,19 +40,22 @@ namespace SqlServerDEID.Common.Globals.Models
             var path = filePath.GetPath(true);
             var fileText = File.ReadAllText(path);
             var extension = Path.GetExtension(path);
+            Database database = null;
 
             if (_stringComparer.Equals(extension, ".xml"))
             {
-                return LoadData(fileText, FileType.xml);
+                database = LoadData(fileText, FileType.xml);
             }
             else if (_stringComparer.Equals(extension, ".json"))
             {
-                return LoadData(fileText, FileType.json);
+                database= LoadData(fileText, FileType.json);
             }
             else
             {
                 throw new FileFormatException("The file supplied must either be of JSON or XML format");
             }
+            database.TransformFilePath = path;
+            return database;
         }
 
         public static Database LoadData(string fileData, FileType fileType)
@@ -91,65 +97,14 @@ namespace SqlServerDEID.Common.Globals.Models
             }
         }
 
-        public DataSet ToDataSet()
+        [XmlIgnore]
+        [JsonIgnore]
+        public string TransformFilePath { get; set; }
+
+
+        public override string ToString()
         {
-            var dataset = new DataSet();
-
-            var tablesTable = new DataTable("Tables");
-            tablesTable.Columns.Add("TableName", typeof(string));
-            tablesTable.Columns.Add("DisableTriggers", typeof(bool));
-            tablesTable.Columns.Add("DisableConstraints", typeof(bool));
-            tablesTable.Columns.Add("ScriptTimeout", typeof(int));
-            tablesTable.Columns.Add("ColumnsCount", typeof(int));
-
-            var columnsTable = new DataTable("Columns");
-            columnsTable.Columns.Add("TableName", typeof(string));
-            columnsTable.Columns.Add("ColumnName", typeof(string));
-            columnsTable.Columns.Add("Datatype", typeof(string));
-            columnsTable.Columns.Add("IsPK", typeof(bool));
-            columnsTable.Columns.Add("IsIdentity", typeof(bool));
-            columnsTable.Columns.Add("IsComputed", typeof(bool));
-            columnsTable.Columns.Add("TransformsCount", typeof(int));
-
-            var transformsTable = new DataTable("Transforms");
-            transformsTable.Columns.Add("TableName", typeof(string));
-            transformsTable.Columns.Add("ColumnName", typeof(string));
-            transformsTable.Columns.Add("Transform", typeof(string));
-            transformsTable.Columns.Add("Type", typeof(int));
-            transformsTable.Columns.Add("WhereClause", typeof(string));
-
-            dataset.Tables.Add(tablesTable);
-            dataset.Tables.Add(columnsTable);
-            dataset.Tables.Add(transformsTable);
-
-            dataset.Relations.Add(new DataRelation("Columns", tablesTable.Columns["TableName"], columnsTable.Columns["TableName"], true));
-            dataset.Relations.Add(new DataRelation("Transforms", 
-                new [] { 
-                    columnsTable.Columns["TableName"], 
-                    columnsTable.Columns["ColumnName"] 
-                }, new [] { 
-                    transformsTable.Columns["TableName"], 
-                    transformsTable.Columns["ColumnName"] 
-                }, true));
-
-            foreach (var table in this.Tables)
-            {
-                var tableName = table.Name.CleanName();
-                tablesTable.Rows.Add(tableName, table.DisableTriggers, table.DisableConstraints, table.ScriptTimeout, table.Columns.Count);
-
-                foreach (var column in table.Columns)
-                {
-                    var columnName = column.Name.CleanName();
-                    columnsTable.Rows.Add(tableName, columnName, column.SqlDbType.ToString(), column.IsPk, column.IsIdentity, column.IsComputed, column.Transforms.Count);
-
-                    foreach (var transform in column.Transforms)
-                    {
-                        transformsTable.Rows.Add(tableName, columnName, transform.Transform, (int)transform.TransformType, transform.WhereClause);
-                    }
-                }
-            }
-
-            return dataset;
+            return $"{this.ServerName} - {this.DatabaseName}";
         }
     }
 

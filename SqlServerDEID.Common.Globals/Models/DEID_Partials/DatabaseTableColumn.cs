@@ -29,7 +29,7 @@ namespace SqlServerDEID.Common.Globals.Models
         {
             SqlDbType = (SqlDbType)Enum.Parse(typeof(SqlDbType), Convert.ToString(row["type_name"]), true);
             if (!row.IsNull("max_length")) { MaxLength = Convert.ToInt32(row["max_length"]); }
-            if (!row.IsNull("precision")) { Scale = Convert.ToByte(row["precision"]); }
+            if (!row.IsNull("precision")) { Precision = Convert.ToByte(row["precision"]); }
             if (!row.IsNull("scale")) { Scale = Convert.ToByte(row["scale"]); }
             IsIdentity = Convert.ToBoolean(row["is_identity"]);
             IsComputed = Convert.ToBoolean(row["is_computed"]);
@@ -42,7 +42,8 @@ namespace SqlServerDEID.Common.Globals.Models
             return new ColumnInfo()
             {
                 Name = this.CleanName,
-                DataType = this.SqlDbType.ToString().ToLower(),
+                SqlType = this.SqlDbType.ToString().ToUpper(),
+                DataType = this.DataType,
                 MaxLength = this.MaxLength,
                 Scale = this.Scale,
                 Precision = this.Precision
@@ -92,6 +93,37 @@ namespace SqlServerDEID.Common.Globals.Models
         {
             return $"{this.Name} {this.SqlDbType}";
         }
-    }
 
+        [XmlIgnore]
+        [JsonIgnore]
+        public bool IsSelected { get; set; }
+
+        [XmlIgnore]
+        [JsonIgnore]
+        public string DataType
+        {
+            get
+            {
+                switch (this.SqlDbType)
+                {
+                    case SqlDbType.Char:
+                    case SqlDbType.Binary:
+                    case SqlDbType.NChar:
+                    case SqlDbType.NVarChar:
+                    case SqlDbType.VarBinary:
+                    case SqlDbType.VarChar:
+                        return $"{this.SqlDbType} ({this.MaxLength})";
+                    case SqlDbType.Decimal:
+                        return $"{this.SqlDbType} ({this.Precision}, {this.Scale})";
+                    case SqlDbType.Time:
+                    case SqlDbType.DateTime2:
+                    case SqlDbType.DateTimeOffset:
+                        return $"{this.SqlDbType} ({this.Scale})";
+                    default:
+                        return $"{this.SqlDbType}";
+                }
+                return "";
+            }
+        }
+    }
 }

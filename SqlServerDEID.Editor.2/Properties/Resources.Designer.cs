@@ -59,47 +59,5 @@ namespace SqlServerDEID.Editor.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 
-        ////* 
-        ///This https://github.com/bchavez/Bogus is the faker library provided. Please refer to its documentation for more information about how to use the various faker methods or properties.
-        ///
-        ///Notes: 
-        ///	- There must be at least one Console.WriteLine(...)
-        ///	- The contents of the very last Console.WriteLine(...) will be used as the contents of the expression when editing is completed
-        ///		- All other content will be discarded.
-        ///		- Do not use the parameters overload of the last Console.WriteLine
-        ///	- Keep express [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string ExampleScript {
-            get {
-                return ResourceManager.GetString("ExampleScript", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to SELECT CONCAT(QUOTENAME(OBJECT_SCHEMA_NAME(t.[object_id])), &apos;.&apos;, QUOTENAME(t.[name])) AS [TableName]
-        ///FROM [{{DB_NAME}}].[sys].[tables] AS [t]
-        ///WHERE [t].[is_ms_shipped] = 0
-        ///ORDER BY [TableName]
-        ///.
-        /// </summary>
-        internal static string GetTableNames {
-            get {
-                return ResourceManager.GetString("GetTableNames", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 
-        ///
-        ///Console.WriteLine(&lt;&lt;TRANSFORM&gt;&gt;);.
-        /// </summary>
-        internal static string ScriptTemplate {
-            get {
-                return ResourceManager.GetString("ScriptTemplate", resourceCulture);
-            }
-        }
     }
 }

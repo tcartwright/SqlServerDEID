@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Text.Json.Serialization;
@@ -59,7 +60,7 @@ namespace SqlServerDEID.Common.Globals.Models
 
         /// <remarks/>
         [XmlArrayItem("Transform", IsNullable = true)]
-        public List<DatabaseTableColumnTransform> Transforms { get; set; } = new List<DatabaseTableColumnTransform>();
+        public ObservableCollection<DatabaseTableColumnTransform> Transforms { get; set; } = new ObservableCollection<DatabaseTableColumnTransform>();
 
     }
 }

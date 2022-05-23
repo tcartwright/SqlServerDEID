@@ -8,13 +8,13 @@ namespace SqlServerDEID.Editor.Controls
     public class DataGridComboBoxColumn : DataGridTextBoxColumn
     {
         private DataGridComboBox _comboBox;
-        private CurrencyManager _sorce;
+        private CurrencyManager _source;
         private int _rowNumber;
         private bool _editing;
 
         public DataGridComboBoxColumn(IEnumerable dataSource, string valueMember, string displayMember, ComboBoxStyle comboBoxStyle = ComboBoxStyle.DropDownList)
         {
-            _sorce = null;
+            _source = null;
             _editing = false;
 
             _comboBox = new DataGridComboBox
@@ -30,8 +30,6 @@ namespace SqlServerDEID.Editor.Controls
             _comboBox.SelectionChangeCommitted += new EventHandler(_comboBox_SelectionChangeCommitted);
         }
 
-        
-
         public DataGridComboBox ComboBox
         {
             get
@@ -45,7 +43,7 @@ namespace SqlServerDEID.Editor.Controls
             if (_editing)
             {
                 _editing = false;
-                SetColumnValueAtRow(_sorce, _rowNumber, _comboBox.Text);
+                SetColumnValueAtRow(_source, _rowNumber, _comboBox.Text);
                 Invalidate();
             }
             _comboBox.Visible = false;
@@ -87,7 +85,7 @@ namespace SqlServerDEID.Editor.Controls
             this.TextBox.Visible = false;
 
             _rowNumber = rowNum;
-            _sorce = source;
+            _source = source;
 
             _comboBox.Bounds = bounds;
             _comboBox.RightToLeft = this.DataGridTableStyle.DataGrid.RightToLeft;

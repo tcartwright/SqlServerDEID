@@ -15,10 +15,16 @@ namespace SqlServerDEID.Common.Globals.Models
         [JsonIgnore]
         public object Script { get; set; }
 
+        [XmlIgnore]
+        [JsonIgnore]
+        public int TransformTypeInt
+        {
+            get { return (int)this.TransformType; }
+            set { this.TransformType = (TransformType)value; }
+        }
         public override string ToString()
         {
             return this.Transform;
         }
     }
-
 }

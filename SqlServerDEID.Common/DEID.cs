@@ -19,6 +19,7 @@ namespace SqlServerDEID.Common
     {
         private StringComparer _stringComparer = StringComparer.OrdinalIgnoreCase;
         private InitialSessionState _initialSessionState = null;
+        private Database _database;
         private CancellationTokenSource _cancellationTokenSource = null;
         private static Action<string, MessageImportance> _stdout = null;
         private static Action<string> _stderror = null;
@@ -121,6 +122,7 @@ namespace SqlServerDEID.Common
         /// <exception cref="System.ArgumentException">'{nameof(transformXml)}' cannot be null or whitespace. - transformXml</exception>
         public void RunTransform(Database database)
         {
+            _database = database;
             _cancellationTokenSource = new CancellationTokenSource();
 
             var results = new List<ValidationResult>();
@@ -188,9 +190,9 @@ namespace SqlServerDEID.Common
                                 connection.RunScript($"ALTER TABLE {databaseTable.Name} DISABLE TRIGGER ALL", (Exception ex) => WriteError($"EXCEPTION DISABLING TRIGGERS: {ex.Message}"));
                             }
 
-                            connection.RunScript(database.SqlScripts.FirstOrDefault(s => s.ScriptType == ScriptType.pre));
+                            connection.RunScriptFile(database.TransformFilePath, database.PreScript, database.ScriptTimeout);
                             UpdateTable(connection, databaseTable, imports, cancellationToken, database.Locale);
-                            connection.RunScript(database.SqlScripts.FirstOrDefault(s => s.ScriptType == ScriptType.post));
+                            connection.RunScriptFile(database.TransformFilePath, database.PostScript, database.ScriptTimeout);
 
                             sw.Stop();
                             WriteLine("[{0}]Finished [{1}].{2} in {3}", Thread.CurrentThread.ManagedThreadId, database.ServerName.CleanName().ToUpper(), databaseTable.Name.ToUpper(), sw.Elapsed.ToStringFormat());
@@ -270,7 +272,7 @@ namespace SqlServerDEID.Common
 
                 try
                 {
-                    connection.RunScript(databaseTable.SqlScripts.FirstOrDefault(s => s.ScriptType == ScriptType.pre));
+                    connection.RunScriptFile(_database.TransformFilePath, databaseTable.PreScript, databaseTable.ScriptTimeout);
                     do
                     {
                         if (cancellationToken.IsCancellationRequested) { return; }
@@ -366,7 +368,7 @@ namespace SqlServerDEID.Common
                             if (tableRowCount < ProcessRowCount) { break; }
                         }
                     } while (tableRowCount > 0);
-                    connection.RunScript(databaseTable.SqlScripts.FirstOrDefault(s => s.ScriptType == ScriptType.post));
+                    connection.RunScriptFile(_database.TransformFilePath, databaseTable.PostScript, databaseTable.ScriptTimeout);
                 }
                 catch (Exception ex)
                 {
@@ -385,7 +387,7 @@ namespace SqlServerDEID.Common
 
         private object RunPowerShell(RunspacePool runspacePool, DatabaseTableColumnTransform columnTransform, ScriptGlobals scriptGlobals, string[] imports)
         {
-            var path = columnTransform.Transform.GetPath();
+            var path = columnTransform.Transform.GetPath(true, _database.TransformFilePath);
 
             using (PowerShell ps = PowerShell.Create())
             {
