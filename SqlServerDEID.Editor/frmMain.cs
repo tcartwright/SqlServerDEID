@@ -42,9 +42,10 @@ namespace SqlServerDEID.Editor
                 .ToList();
             ddlCredentials.DisplayMember = "Item1";
             ddlCredentials.ValueMember = "Item2";
-            credentials.Insert(0, new Tuple<string, string>("Trusted Connection", null));
+            credentials.Insert(0, new Tuple<string, string>("Trusted Connection", ""));
 
             ddlCredentials.DataSource = credentials;
+            ddlCredentials.SelectedText = "";
             SetupGrid();
             SetNewDatabase();
         }
@@ -68,7 +69,7 @@ namespace SqlServerDEID.Editor
             tablesGrid.CurrentCellBeginEdit += TablesGrid_CurrentCellBeginEdit;
             tablesGrid.CellComboBoxSelectionChanged += TablesGrid_CellComboBoxSelectionChanged;
 
-            _tablesColumn = new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName" };
+            _tablesColumn = new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300 };
             tablesGrid.Columns.Add(_tablesColumn); // new GridTextColumn() { MappingName = "Name", HeaderText = "Table Name", AllowEditing = false });
             tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableTriggers", HeaderText = "Disable Triggers" });
             tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableConstraints", HeaderText = "Disable Constraints" });
@@ -95,7 +96,6 @@ namespace SqlServerDEID.Editor
             columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsIdentity", HeaderText = "Is Identity", AllowEditing = false });
             columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsComputed", HeaderText = "Is Computed", AllowEditing = false });
 
-
             tablesGrid.DetailsViewDefinitions.Add(new GridViewDefinition
             {
                 RelationalColumn = "Columns",
@@ -106,6 +106,7 @@ namespace SqlServerDEID.Editor
             var transformsGrid = new SfDataGrid
             {
                 AutoGenerateColumns = false,
+                AutoSizeColumnsMode = AutoSizeColumnsMode.Fill,
                 AllowResizingColumns = true,
                 EditMode = EditMode.SingleClick,
                 AddNewRowPosition = RowPosition.Bottom,
@@ -114,10 +115,10 @@ namespace SqlServerDEID.Editor
             transformsGrid.CellButtonClick += TransformsChildGrid_CellButtonClick;
             transformsGrid.CellComboBoxSelectionChanged += TransformsGrid_CellComboBoxSelectionChanged;
 
-            transformsGrid.Columns.Add(new GridTextColumn() { MappingName = "Transform", HeaderText = "Transform", Width = 400 });
+            transformsGrid.Columns.Add(new GridTextColumn() { MappingName = "Transform", HeaderText = "Transform", Width = 300 });
             transformsGrid.Columns.Add(new GridTextColumn() { MappingName = "WhereClause", HeaderText = "Where Clause", Width = 300 });
             transformsGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "TransformType", HeaderText = "TransformType", ValueMember = "Item1", DisplayMember = "Item2", DataSource = transformTypeValues });
-            transformsGrid.Columns.Add(new GridButtonColumn() { MappingName = "Transform", DefaultButtonText = "Edit", HeaderText = "Edit", AllowDefaultButtonText = true, Width = 100 });
+            transformsGrid.Columns.Add(new GridButtonColumn() { MappingName = "Transform", DefaultButtonText = "Edit", HeaderText = "Edit", AllowDefaultButtonText = true });
             columnsGrid.DetailsViewDefinitions.Add(new GridViewDefinition
             {
                 RelationalColumn = "Transforms",
@@ -275,7 +276,16 @@ namespace SqlServerDEID.Editor
         private void DisableEnableControls(bool enabled = false)
         {
             txtServerName.Enabled =
+                txtDatabaseName.Enabled =
                 btnConnect.Enabled = enabled;
+        }
+
+        private void ResetData()
+        {
+            _tablesColumn.DataSource = null;
+            tablesGrid.DataSource = null;
+            bindingSource1.DataSource = typeof(Database);
+            ddlCredentials.SelectedText = "";
         }
 
         private void LoadData()
@@ -283,6 +293,7 @@ namespace SqlServerDEID.Editor
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
+                ResetData();
                 using (var connection = _database.GetConnection())
                 {
                     connection.Open();
@@ -292,6 +303,7 @@ namespace SqlServerDEID.Editor
 
                 tablesGrid.DataSource = _database.Tables;
                 bindingSource1.DataSource = _database;
+                ValidateForm();
             }
             catch (Exception ex)
             {
@@ -313,7 +325,7 @@ namespace SqlServerDEID.Editor
         {
             using (var dialog = new OpenFileDialog())
             {
-                dialog.Filter = "xml files (*.xml)|*.xml|json files (*.json)|*.json|All files (*.*)|*.*";
+                dialog.Filter = "Transform Files (*.xml, *.json)|*.xml; *.json|All files (*.*)|*.*";
                 dialog.RestoreDirectory = true;
 
                 if (dialog.ShowDialog() == DialogResult.OK)
@@ -337,9 +349,9 @@ namespace SqlServerDEID.Editor
         private void SetNewDatabase()
         {
             _database = new Database();
+            ResetData();
             tablesGrid.DataSource = _database.Tables;
             bindingSource1.DataSource = _database;
-            _tablesColumn.DataSource = null;
             DisableEnableControls(true);
             txtServerName.Focus();
         }
@@ -369,7 +381,7 @@ namespace SqlServerDEID.Editor
 
                 using (var dialog = new SaveFileDialog())
                 {
-                    dialog.Filter = "xml files (*.xml)|*.xml|json files (*.json)|*.json";
+                    dialog.Filter = "Transform Files (*.xml, *.json)|*.xml; *.json|All files (*.*)|*.*";
                     dialog.RestoreDirectory = true;
                     dialog.FileName = _database.TransformFilePath;
 
@@ -384,15 +396,25 @@ namespace SqlServerDEID.Editor
 
         private void SaveFile()
         {
-            var ext = Path.GetExtension(_database.TransformFilePath).ToLower();
+            var db = _database.CloneObject<Database>();
+            db.RemoveNullTransforms();
 
-            if (_stringComparer.Equals(ext, ".xml"))
+            try
             {
-                File.WriteAllText(_database.TransformFilePath, _database.ToXml());
+                var ext = Path.GetExtension(db.TransformFilePath).ToLower();
+
+                if (_stringComparer.Equals(ext, ".xml"))
+                {
+                    File.WriteAllText(db.TransformFilePath, db.ToXml());
+                }
+                else if (_stringComparer.Equals(ext, ".json"))
+                {
+                    File.WriteAllText(db.TransformFilePath, db.ToJson());
+                }
             }
-            else if (_stringComparer.Equals(ext, ".json"))
+            catch (Exception ex)
             {
-                File.WriteAllText(_database.TransformFilePath, _database.ToJson());
+                MessageException(ex, "Exception saving file");
             }
         }
 
@@ -402,6 +424,56 @@ namespace SqlServerDEID.Editor
             {
                 MessageBox.Show(this, "The current database does not have any transforms and cannot be saved.", "No Transforms", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btnConnect_Click(object sender, EventArgs e)
+        {
+            if (ValidateForm())
+            {
+                LoadData();
+            }
+        }
+
+        private void txtServerName_Validating(object sender, CancelEventArgs e)
+        {
+            ValidateServerName();
+        }
+
+        private void txtDatabaseName_Validating(object sender, CancelEventArgs e)
+        {
+            ValidateDatabaseName();
+        }
+
+        private bool ValidateServerName()
+        {
+            if (string.IsNullOrWhiteSpace(txtServerName.Text))
+            {
+                errorProvider1.SetError(txtServerName, "ServerName is required");
+                return false;
+            }
+            else
+            {
+                errorProvider1.SetError(txtServerName, "");
+                return true;
+            }
+        }
+        private bool ValidateDatabaseName()
+        {
+            if (string.IsNullOrWhiteSpace(txtDatabaseName.Text))
+            {
+                errorProvider1.SetError(txtDatabaseName, "Database name is required");
+                return false;
+            }
+            else
+            {
+                errorProvider1.SetError(txtDatabaseName, "");
+                return true;
+            }
+        }
+
+        private bool ValidateForm()
+        {
+            return ValidateServerName() && ValidateDatabaseName();
         }
     }
 }

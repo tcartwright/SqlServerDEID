@@ -48,7 +48,7 @@ namespace SqlServerDEID.Common.Globals.Models
             }
             else if (_stringComparer.Equals(extension, ".json"))
             {
-                database= LoadData(fileText, FileType.json);
+                database = LoadData(fileText, FileType.json);
             }
             else
             {
@@ -106,6 +106,27 @@ namespace SqlServerDEID.Common.Globals.Models
         {
             return $"{this.ServerName} - {this.DatabaseName}";
         }
-    }
 
+        /// <summary>
+        /// Remove any columns that dont have transforms or are not selected, also remove any tables that dont have columns
+        /// </summary>
+        public void RemoveNullTransforms()
+        {
+            for (int t = this.Tables.Count - 1; t >= 0; t--)
+            {
+                for (int c = this.Tables[t].Columns.Count - 1; c >= 0; c--)
+                {
+                    var column = this.Tables[t].Columns[c];
+                    if (!(column.IsSelected || column.Transforms.Any()))
+                    {
+                        this.Tables[t].Columns.RemoveAt(c);
+                    }
+                }
+                if (!this.Tables[t].Columns.Any())
+                {
+                    this.Tables.RemoveAt(t);
+                }
+            }
+        }
+    }
 }

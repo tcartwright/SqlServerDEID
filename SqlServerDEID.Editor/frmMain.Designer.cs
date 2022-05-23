@@ -34,6 +34,7 @@
             this.newToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,7 +59,9 @@
             this.btnConnect = new System.Windows.Forms.Button();
             this.txtServerName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.txtDatabaseName = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tablesGrid)).BeginInit();
             this.panel1.SuspendLayout();
@@ -66,6 +69,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.portNumber)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -93,28 +97,35 @@
             // newToolStripMenuItem1
             // 
             this.newToolStripMenuItem1.Name = "newToolStripMenuItem1";
-            this.newToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
             this.newToolStripMenuItem1.Text = "New";
             this.newToolStripMenuItem1.Click += new System.EventHandler(this.newToolStripMenuItem1_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.saveAsToolStripMenuItem.Text = "Save As...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem1
             // 
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
             this.exitToolStripMenuItem1.Text = "Exit";
             // 
             // fileToolStripMenuItem
@@ -158,7 +169,7 @@
             this.tablesGrid.Location = new System.Drawing.Point(12, 156);
             this.tablesGrid.Name = "tablesGrid";
             this.tablesGrid.Size = new System.Drawing.Size(1027, 509);
-            this.tablesGrid.TabIndex = 7;
+            this.tablesGrid.TabIndex = 0;
             // 
             // panel1
             // 
@@ -194,7 +205,7 @@
             this.txtPostScript.Location = new System.Drawing.Point(425, 51);
             this.txtPostScript.Name = "txtPostScript";
             this.txtPostScript.Size = new System.Drawing.Size(242, 20);
-            this.txtPostScript.TabIndex = 6;
+            this.txtPostScript.TabIndex = 4;
             // 
             // bindingSource1
             // 
@@ -203,7 +214,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(361, 55);
+            this.label6.Location = new System.Drawing.Point(364, 55);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(58, 13);
             this.label6.TabIndex = 18;
@@ -215,12 +226,12 @@
             this.txtPreScript.Location = new System.Drawing.Point(425, 26);
             this.txtPreScript.Name = "txtPreScript";
             this.txtPreScript.Size = new System.Drawing.Size(242, 20);
-            this.txtPreScript.TabIndex = 5;
+            this.txtPreScript.TabIndex = 3;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(361, 30);
+            this.label2.Location = new System.Drawing.Point(369, 30);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 13);
             this.label2.TabIndex = 16;
@@ -229,7 +240,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(28, 30);
+            this.label5.Location = new System.Drawing.Point(33, 30);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(59, 13);
             this.label5.TabIndex = 15;
@@ -238,7 +249,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(61, 55);
+            this.label4.Location = new System.Drawing.Point(66, 55);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(26, 13);
             this.label4.TabIndex = 14;
@@ -248,10 +259,10 @@
             // 
             this.ddlCredentials.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.bindingSource1, "CredentialsName", true));
             this.ddlCredentials.FormattingEnabled = true;
-            this.ddlCredentials.Location = new System.Drawing.Point(93, 26);
+            this.ddlCredentials.Location = new System.Drawing.Point(92, 26);
             this.ddlCredentials.Name = "ddlCredentials";
             this.ddlCredentials.Size = new System.Drawing.Size(242, 21);
-            this.ddlCredentials.TabIndex = 2;
+            this.ddlCredentials.TabIndex = 0;
             // 
             // portNumber
             // 
@@ -264,7 +275,7 @@
             0});
             this.portNumber.Name = "portNumber";
             this.portNumber.Size = new System.Drawing.Size(242, 20);
-            this.portNumber.TabIndex = 3;
+            this.portNumber.TabIndex = 1;
             // 
             // txtLocale
             // 
@@ -272,12 +283,12 @@
             this.txtLocale.Location = new System.Drawing.Point(93, 77);
             this.txtLocale.Name = "txtLocale";
             this.txtLocale.Size = new System.Drawing.Size(242, 20);
-            this.txtLocale.TabIndex = 4;
+            this.txtLocale.TabIndex = 2;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(48, 81);
+            this.label3.Location = new System.Drawing.Point(53, 81);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(39, 13);
             this.label3.TabIndex = 10;
@@ -285,6 +296,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.txtDatabaseName);
+            this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.btnConnect);
             this.groupBox2.Controls.Add(this.txtServerName);
             this.groupBox2.Controls.Add(this.label1);
@@ -297,36 +310,55 @@
             // 
             // btnConnect
             // 
-            this.btnConnect.Location = new System.Drawing.Point(95, 67);
+            this.btnConnect.Location = new System.Drawing.Point(95, 81);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(115, 23);
-            this.btnConnect.TabIndex = 1;
+            this.btnConnect.TabIndex = 2;
             this.btnConnect.Text = "Connect";
             this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
             // 
             // txtServerName
             // 
             this.txtServerName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "ServerName", true));
+            this.errorProvider1.SetError(this.txtServerName, "ServerName is required");
             this.txtServerName.Location = new System.Drawing.Point(95, 27);
             this.txtServerName.Name = "txtServerName";
             this.txtServerName.Size = new System.Drawing.Size(200, 20);
             this.txtServerName.TabIndex = 0;
+            this.txtServerName.Validating += new System.ComponentModel.CancelEventHandler(this.txtServerName_Validating);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 31);
+            this.label1.Location = new System.Drawing.Point(23, 31);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(69, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "Server Name";
             // 
-            // saveAsToolStripMenuItem
+            // errorProvider1
             // 
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saveAsToolStripMenuItem.Text = "Save As...";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            this.errorProvider1.ContainerControl = this;
+            // 
+            // txtDatabaseName
+            // 
+            this.txtDatabaseName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "DatabaseName", true));
+            this.errorProvider1.SetError(this.txtDatabaseName, "Database name is required");
+            this.txtDatabaseName.Location = new System.Drawing.Point(95, 51);
+            this.txtDatabaseName.Name = "txtDatabaseName";
+            this.txtDatabaseName.Size = new System.Drawing.Size(200, 20);
+            this.txtDatabaseName.TabIndex = 1;
+            this.txtDatabaseName.Validating += new System.ComponentModel.CancelEventHandler(this.txtDatabaseName_Validating);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(8, 55);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(84, 13);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "Database Name";
             // 
             // frmMain
             // 
@@ -350,6 +382,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.portNumber)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -386,5 +419,8 @@
         private System.Windows.Forms.TextBox txtPreScript;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.TextBox txtDatabaseName;
+        private System.Windows.Forms.Label label7;
     }
 }

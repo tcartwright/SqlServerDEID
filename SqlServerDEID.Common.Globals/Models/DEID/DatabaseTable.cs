@@ -15,7 +15,7 @@ namespace SqlServerDEID.Common.Globals.Models
         public string Name { get; set; }
 
         [XmlAttribute]
-        public bool DisableTriggers { get; set; }
+        public bool DisableTriggers { get; set; } = true;
 
         [XmlAttribute]
         public bool DisableConstraints { get; set; }
@@ -27,7 +27,7 @@ namespace SqlServerDEID.Common.Globals.Models
         public string PostScript { get; set; }
 
         /// <summary>
-        /// Gets or sets the script timeout in seconds for enabling or disabling constraints and triggers. Defaults to 180 seconds or three minutes.
+        /// Gets or sets the script timeout in seconds for enabling or disabling constraints and triggers and the pre and post scripts. Defaults to 180 seconds or three minutes.
         /// </summary>
         /// <value>
         /// The script timeout.
