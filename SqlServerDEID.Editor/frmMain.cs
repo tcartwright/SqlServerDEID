@@ -12,7 +12,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Design;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -69,7 +71,7 @@ namespace SqlServerDEID.Editor
             tablesGrid.CurrentCellBeginEdit += TablesGrid_CurrentCellBeginEdit;
             tablesGrid.CellComboBoxSelectionChanged += TablesGrid_CellComboBoxSelectionChanged;
 
-            _tablesColumn = new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300 };
+            _tablesColumn = new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300, ShowToolTip = true };
             tablesGrid.Columns.Add(_tablesColumn); // new GridTextColumn() { MappingName = "Name", HeaderText = "Table Name", AllowEditing = false });
             tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableTriggers", HeaderText = "Disable Triggers" });
             tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableConstraints", HeaderText = "Disable Constraints" });
@@ -144,9 +146,6 @@ namespace SqlServerDEID.Editor
                             table.Reset();
                             table.GetMetaData(connection, true);
                         }
-                        // cant seem to get the +/- to show up when the row is added
-                        //tablesGrid.Invalidate(true);
-                        //tablesGrid.Refresh();
                     }
                     catch (Exception ex)
                     {
@@ -183,7 +182,12 @@ namespace SqlServerDEID.Editor
         private void TablesGrid_CellButtonClick(object sender, Syncfusion.WinForms.DataGrid.Events.CellButtonClickEventArgs e)
         {
             var table = ((DataRowBase)e.Record).RowData as DatabaseTable;
-            var tranformsTestForm = new frmTransformTest();
+            var database = _database.CloneObject<Database>();
+            database.Tables.Clear();
+            database.Tables.Add(table);
+            database.RemoveNullTransforms();
+
+            var tranformsTestForm = new frmTransformTest(database);
             if (tranformsTestForm.ShowDialog(this) == DialogResult.OK)
             {
                 //TODO: ???
@@ -323,15 +327,28 @@ namespace SqlServerDEID.Editor
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var dialog = new OpenFileDialog())
+            try
             {
-                dialog.Filter = "Transform Files (*.xml, *.json)|*.xml; *.json|All files (*.*)|*.*";
-                dialog.RestoreDirectory = true;
-
-                if (dialog.ShowDialog() == DialogResult.OK)
+                Cursor.Current = Cursors.WaitCursor;
+                using (var dialog = new OpenFileDialog())
                 {
-                    LoadFile(dialog.FileName);
+                    dialog.Filter = "Transform Files (*.xml, *.json)|*.xml; *.json|All files (*.*)|*.*";
+                    dialog.RestoreDirectory = true;
+
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        LoadFile(dialog.FileName);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Cursor.Current = Cursors.Default;
+                MessageException(ex, "Exception loading file.");
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
             }
         }
 
@@ -414,7 +431,7 @@ namespace SqlServerDEID.Editor
             }
             catch (Exception ex)
             {
-                MessageException(ex, "Exception saving file");
+                MessageException(ex, "Exception saving file.");
             }
         }
 
@@ -473,7 +490,27 @@ namespace SqlServerDEID.Editor
 
         private bool ValidateForm()
         {
-            return ValidateServerName() && ValidateDatabaseName();
+            return ValidateServerName() 
+                && ValidateDatabaseName();
+        }
+
+        private void btnEditScriptImports_Click(object sender, EventArgs e)
+        {
+            // https://localcoder.org/is-there-any-way-to-use-a-collectioneditor-outside-of-the-property-grid
+            PropertyDescriptor pd = TypeDescriptor.GetProperties(_database)["ScriptingImports"];
+            UITypeEditor editor = (UITypeEditor)pd.GetEditor(typeof(UITypeEditor));
+            RuntimeServiceProvider serviceProvider = new RuntimeServiceProvider();
+            editor.EditValue(serviceProvider, serviceProvider, _database.ScriptingImports);
+        }
+
+        private void txtLocale_DoubleClick(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/bchavez/Bogus#locales");
+        }
+
+        private void txtScriptImports_DoubleClick(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/bchavez/Bogus#api-extension-methods");
         }
     }
 }

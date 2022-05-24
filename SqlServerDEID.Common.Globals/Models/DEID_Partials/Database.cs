@@ -117,7 +117,7 @@ namespace SqlServerDEID.Common.Globals.Models
                 for (int c = this.Tables[t].Columns.Count - 1; c >= 0; c--)
                 {
                     var column = this.Tables[t].Columns[c];
-                    if (!(column.IsSelected || column.Transforms.Any()))
+                    if (!(column.IsSelected || column.IsPk || column.Transforms.Any()))
                     {
                         this.Tables[t].Columns.RemoveAt(c);
                     }

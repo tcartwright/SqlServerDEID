@@ -7,13 +7,6 @@ namespace SqlServerDEID.Common.Globals.Extensions
 {
     public static partial class Extensions
     {
-        public static string CleanName(this string name)
-        {
-            if (string.IsNullOrWhiteSpace(name)) { throw new System.ArgumentException($"'{nameof(name)}' cannot be null or whitespace.", nameof(name)); }
-
-            name = name.Replace("[", "").Replace("]", "");
-            return name;
-        }
 
         /// <summary>
         /// https://csharp-extension.com/en/method/1002764/datarow-toexpandoobject

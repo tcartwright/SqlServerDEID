@@ -124,6 +124,9 @@
   <data name="GetTableNames" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GetTableNames.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="GetTransformData" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GetTransformData.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="ScriptTemplate" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ScriptTemplate.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

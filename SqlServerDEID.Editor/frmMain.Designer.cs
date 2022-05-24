@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,8 +45,11 @@
             this.tablesGrid = new Syncfusion.WinForms.DataGrid.SfDataGrid();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.txtPostScript = new System.Windows.Forms.TextBox();
+            this.btnEditScriptImports = new System.Windows.Forms.Button();
+            this.txtScriptImports = new System.Windows.Forms.TextBox();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.label8 = new System.Windows.Forms.Label();
+            this.txtPostScript = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.txtPreScript = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -56,12 +60,13 @@
             this.txtLocale = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.txtDatabaseName = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.btnConnect = new System.Windows.Forms.Button();
             this.txtServerName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.txtDatabaseName = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tablesGrid)).BeginInit();
             this.panel1.SuspendLayout();
@@ -182,6 +187,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnEditScriptImports);
+            this.groupBox1.Controls.Add(this.txtScriptImports);
+            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.txtPostScript);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.txtPreScript);
@@ -199,6 +207,39 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Optional";
             // 
+            // btnEditScriptImports
+            // 
+            this.btnEditScriptImports.Location = new System.Drawing.Point(614, 77);
+            this.btnEditScriptImports.Name = "btnEditScriptImports";
+            this.btnEditScriptImports.Size = new System.Drawing.Size(52, 20);
+            this.btnEditScriptImports.TabIndex = 22;
+            this.btnEditScriptImports.Text = "Edit";
+            this.btnEditScriptImports.UseVisualStyleBackColor = true;
+            this.btnEditScriptImports.Click += new System.EventHandler(this.btnEditScriptImports_Click);
+            // 
+            // txtScriptImports
+            // 
+            this.txtScriptImports.Location = new System.Drawing.Point(425, 77);
+            this.txtScriptImports.Name = "txtScriptImports";
+            this.txtScriptImports.ReadOnly = true;
+            this.txtScriptImports.Size = new System.Drawing.Size(183, 20);
+            this.txtScriptImports.TabIndex = 21;
+            this.toolTip1.SetToolTip(this.txtScriptImports, resources.GetString("txtScriptImports.ToolTip"));
+            this.txtScriptImports.DoubleClick += new System.EventHandler(this.txtScriptImports_DoubleClick);
+            // 
+            // bindingSource1
+            // 
+            this.bindingSource1.DataSource = typeof(SqlServerDEID.Common.Globals.Models.Database);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(351, 81);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(71, 13);
+            this.label8.TabIndex = 20;
+            this.label8.Text = "Script Imports";
+            // 
             // txtPostScript
             // 
             this.txtPostScript.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "PostScript", true));
@@ -206,10 +247,9 @@
             this.txtPostScript.Name = "txtPostScript";
             this.txtPostScript.Size = new System.Drawing.Size(242, 20);
             this.txtPostScript.TabIndex = 4;
-            // 
-            // bindingSource1
-            // 
-            this.bindingSource1.DataSource = typeof(SqlServerDEID.Common.Globals.Models.Database);
+            this.toolTip1.SetToolTip(this.txtPostScript, "This sql script will be run after any table transforms are run. \r\nA fully qualifi" +
+        "ed or relative path can be used. \r\n\r\nAll relative paths will be relative to the " +
+        "transform configuration file.");
             // 
             // label6
             // 
@@ -227,6 +267,9 @@
             this.txtPreScript.Name = "txtPreScript";
             this.txtPreScript.Size = new System.Drawing.Size(242, 20);
             this.txtPreScript.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.txtPreScript, "This sql script will be run before any table transforms are run. \r\nA fully qualif" +
+        "ied or relative path can be used. \r\n\r\nAll relative paths will be relative to the" +
+        " transform configuration file. ");
             // 
             // label2
             // 
@@ -263,6 +306,9 @@
             this.ddlCredentials.Name = "ddlCredentials";
             this.ddlCredentials.Size = new System.Drawing.Size(242, 21);
             this.ddlCredentials.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.ddlCredentials, "A generic credential must be created in the Credential Manager to be available in" +
+        " this dropdown.\r\n Use \"Trusted Connection\" to connect as the currently logged on" +
+        " user.");
             // 
             // portNumber
             // 
@@ -276,6 +322,7 @@
             this.portNumber.Name = "portNumber";
             this.portNumber.Size = new System.Drawing.Size(242, 20);
             this.portNumber.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.portNumber, "The port to connect to SQL Server on. 0 and 1433 are synonymous.");
             // 
             // txtLocale
             // 
@@ -284,6 +331,9 @@
             this.txtLocale.Name = "txtLocale";
             this.txtLocale.Size = new System.Drawing.Size(242, 20);
             this.txtLocale.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.txtLocale, "More information about locales and available locales can be found here: https://g" +
+        "ithub.com/bchavez/Bogus#locales. \r\n\r\nDouble click to open the url.");
+            this.txtLocale.DoubleClick += new System.EventHandler(this.txtLocale_DoubleClick);
             // 
             // label3
             // 
@@ -307,6 +357,25 @@
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Required";
+            // 
+            // txtDatabaseName
+            // 
+            this.txtDatabaseName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "DatabaseName", true));
+            this.errorProvider1.SetError(this.txtDatabaseName, "Database name is required");
+            this.txtDatabaseName.Location = new System.Drawing.Point(95, 51);
+            this.txtDatabaseName.Name = "txtDatabaseName";
+            this.txtDatabaseName.Size = new System.Drawing.Size(200, 20);
+            this.txtDatabaseName.TabIndex = 1;
+            this.txtDatabaseName.Validating += new System.ComponentModel.CancelEventHandler(this.txtDatabaseName_Validating);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(8, 55);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(84, 13);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "Database Name";
             // 
             // btnConnect
             // 
@@ -341,24 +410,11 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
-            // txtDatabaseName
+            // toolTip1
             // 
-            this.txtDatabaseName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "DatabaseName", true));
-            this.errorProvider1.SetError(this.txtDatabaseName, "Database name is required");
-            this.txtDatabaseName.Location = new System.Drawing.Point(95, 51);
-            this.txtDatabaseName.Name = "txtDatabaseName";
-            this.txtDatabaseName.Size = new System.Drawing.Size(200, 20);
-            this.txtDatabaseName.TabIndex = 1;
-            this.txtDatabaseName.Validating += new System.ComponentModel.CancelEventHandler(this.txtDatabaseName_Validating);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(8, 55);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(84, 13);
-            this.label7.TabIndex = 4;
-            this.label7.Text = "Database Name";
+            this.toolTip1.AutoPopDelay = 30000;
+            this.toolTip1.InitialDelay = 500;
+            this.toolTip1.ReshowDelay = 100;
             // 
             // frmMain
             // 
@@ -422,5 +478,9 @@
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.TextBox txtDatabaseName;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button btnEditScriptImports;
+        private System.Windows.Forms.TextBox txtScriptImports;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

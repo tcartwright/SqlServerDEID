@@ -104,13 +104,21 @@ namespace SqlServerDEID.Common.Globals.Models
 
         }
 
-        public string GetSelectStatement()
+        public string GetSelectStatement(string whereClause = null, string padding = null, string columnsSeperator = "\r\n")
         {
+            if (string.IsNullOrWhiteSpace(padding))
+            {
+                padding = tab;
+            }
             GetColumnNames();
             var sb = new StringBuilder();
-            sb.AppendLine($"SELECT {string.Join($",\r\n{tab}", _columnNames.Select(c => $"[{c}]"))}");
+            sb.AppendLine($"SELECT {string.Join($",{columnsSeperator}{padding}", _columnNames.Select(c => $"[{c}]"))}");
             sb.AppendLine($"FROM {this.Name}");
-            sb.AppendLine($"ORDER BY {string.Join($",\r\n{tab}", _primaryKeyColumnNames.Select(c => $"[{c}]"))}");
+            if (!string.IsNullOrWhiteSpace(whereClause))
+            {
+                sb.AppendLine(whereClause);
+            }
+            sb.AppendLine($"ORDER BY {string.Join($",{columnsSeperator}{padding}", _primaryKeyColumnNames.Select(c => $"[{c}]"))}");
             sb.AppendLine($"OFFSET @offset ROWS");
             sb.AppendLine($"FETCH NEXT @rows ROWS ONLY");
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SqlServerDEID.Common.Globals.Extensions;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 
@@ -10,9 +11,11 @@ namespace SqlServerDEID.Common.Globals.Models
     [XmlType(AnonymousType = true)]
     public partial class DatabaseTable
     {
+        private string _name;
+
         /// <remarks/>
         [XmlAttribute]
-        public string Name { get; set; }
+        public string Name { get => _name; set => _name = value.FormatName(); }
 
         [XmlAttribute]
         public bool DisableTriggers { get; set; } = true;

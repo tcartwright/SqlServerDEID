@@ -79,7 +79,7 @@ namespace SqlServerDEID.Editor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SELECT CONCAT(QUOTENAME(OBJECT_SCHEMA_NAME(t.[object_id])), &apos;.&apos;, QUOTENAME(t.[name])) AS [TableName]
+        ///   Looks up a localized string similar to SELECT UPPER(CONCAT(QUOTENAME(OBJECT_SCHEMA_NAME(t.[object_id])), &apos;.&apos;, QUOTENAME(t.[name]))) AS [TableName]
         ///FROM [{{DB_NAME}}].[sys].[tables] AS [t]
         ///WHERE [t].[is_ms_shipped] = 0
         ///ORDER BY [TableName]
@@ -88,6 +88,24 @@ namespace SqlServerDEID.Editor.Properties {
         internal static string GetTableNames {
             get {
                 return ResourceManager.GetString("GetTableNames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IF OBJECT_ID(&apos;tempdb..#TransformTest&apos;) IS NOT NULL 
+        ///	DROP TABLE #TransformTest; 
+        ///	
+        ///SELECT TOP (1000) * 
+        ///INTO #TransformTest 
+        ///FROM (
+        ///{{QUERY}}
+        ///) t; 
+        ///
+        ///SELECT * FROM [#TransformTest] AS [tt].
+        /// </summary>
+        internal static string GetTransformData {
+            get {
+                return ResourceManager.GetString("GetTransformData", resourceCulture);
             }
         }
         
