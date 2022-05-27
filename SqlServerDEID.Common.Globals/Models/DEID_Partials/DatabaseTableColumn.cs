@@ -2,6 +2,7 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
@@ -24,6 +25,10 @@ namespace SqlServerDEID.Common.Globals.Models
                 return _cleanName;
             }
         }
+
+        [XmlIgnore]
+        [JsonIgnore]
+        public bool IsSelected { get; set; }
 
         internal void SetMetaData(DataRow row)
         {
@@ -89,14 +94,6 @@ namespace SqlServerDEID.Common.Globals.Models
             return parameter;
         }
 
-        public override string ToString()
-        {
-            return $"{this.Name} {this.SqlDbType}";
-        }
-
-        [XmlIgnore]
-        [JsonIgnore]
-        public bool IsSelected { get; set; }
 
         [XmlIgnore]
         [JsonIgnore]
@@ -124,6 +121,10 @@ namespace SqlServerDEID.Common.Globals.Models
                 }
                 return "";
             }
+        }
+        public override string ToString()
+        {
+            return $"{this.Name} {this.SqlDbType}";
         }
     }
 }

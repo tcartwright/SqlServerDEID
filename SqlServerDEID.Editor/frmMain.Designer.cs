@@ -171,11 +171,9 @@
             // tablesGrid
             // 
             this.tablesGrid.AccessibleName = "Table";
-            this.tablesGrid.AllowResizingColumns = true;
             this.tablesGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tablesGrid.AutoGenerateColumns = false;
             this.tablesGrid.Location = new System.Drawing.Point(12, 173);
             this.tablesGrid.Name = "tablesGrid";
             this.tablesGrid.Size = new System.Drawing.Size(1027, 500);

@@ -44,8 +44,8 @@ namespace SqlServerDEID.Editor
         {
             var credentials = CredentialManager.EnumerateCredentials()
                 .OrderBy(cr => cr.ApplicationName)
-                .Where(cr => cr.CredentialType == CredentialType.Generic && !Regex.IsMatch(cr.ApplicationName, "git.*|microsoft.*|onedrive.*", RegexOptions.IgnoreCase))
-                .Select(cr => new KeyValuePair<string, string>(cr.ApplicationName.ToLower(), cr.ApplicationName.ToLower()))
+                .Where(cr => cr.CredentialType == CredentialType.Generic && !Regex.IsMatch(cr.ApplicationName, "git.*|microsoft.*|onedrive.*|xbox.*", RegexOptions.IgnoreCase))
+                .Select(cr => new KeyValuePair<string, string>(cr.ApplicationName, cr.ApplicationName.ToLower()))
                 .ToList();
             ddlCredentials.DisplayMember = "Key";
             ddlCredentials.ValueMember = "Value";
@@ -77,12 +77,12 @@ namespace SqlServerDEID.Editor
             tablesGrid.ToolTipOpening += Grid_ToolTipOpening;
 
             tablesGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300, ShowToolTip = true }); // new GridTextColumn() { MappingName = "Name", HeaderText = "Table Name", AllowEditing = false });
+            tablesGrid.Columns.Add(new GridNumericColumn() { MappingName = "Columns.Count", HeaderText = "Columns Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
             tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableTriggers", HeaderText = "Disable Triggers" });
             tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableConstraints", HeaderText = "Disable Constraints" });
             tablesGrid.Columns.Add(new GridTextColumn() { MappingName = "PreScript", HeaderText = "Pre Script", ShowHeaderToolTip = true });
             tablesGrid.Columns.Add(new GridTextColumn() { MappingName = "PostScript", HeaderText = "Post Script", ShowHeaderToolTip = true });
             tablesGrid.Columns.Add(new GridNumericColumn() { MappingName = "ScriptTimeout", HeaderText = "Script Timeout", NumberFormatInfo = integerFormatInfo, ShowHeaderToolTip = true });
-            tablesGrid.Columns.Add(new GridNumericColumn() { MappingName = "Columns.Count", HeaderText = "Columns Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
             tablesGrid.Columns.Add(new GridButtonColumn() { HeaderText = "Test Transform", DefaultButtonText = "Test Transform", AllowDefaultButtonText = true, MappingName = "Name" });
 
             //columns
@@ -98,13 +98,13 @@ namespace SqlServerDEID.Editor
             columnsGrid.DetailsViewExpanding += ColumnsGrid_DetailsViewExpanding;
 
             columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "Name", HeaderText = "Column Name", AllowEditing = false, Width = 150 });
+            columnsGrid.Columns.Add(new GridNumericColumn() { MappingName = "Transforms.Count", HeaderText = "Transforms Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
             columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "DataType", HeaderText = "Data Type", AllowEditing = false });
             columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsSelected", HeaderText = "Is Selected", ShowHeaderToolTip = true });
             columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsPk", HeaderText = "Is Pk", AllowEditing = false });
             columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsIdentity", HeaderText = "Is Identity", AllowEditing = false });
             columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsComputed", HeaderText = "Is Computed", AllowEditing = false });
             // this column will not update. for w/e reason
-            columnsGrid.Columns.Add(new GridNumericColumn() { MappingName = "Transforms.Count", HeaderText = "Transforms Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
 
             tablesGrid.DetailsViewDefinitions.Add(new GridViewDefinition
             {
@@ -169,7 +169,7 @@ namespace SqlServerDEID.Editor
             if (_stringComparer.Equals(e.DataColumn.GridColumn.MappingName, "Name"))
             {
                 var table = e.DataRow.RowData as DatabaseTable;
-                if (table.Columns.Any(c => c.Transforms.Any()))
+                if (table.HasTransforms())
                 {
                     e.Cancel = true;
                     MessageBox.Show(this, "The table cannot be changed once it has column transforms assigned.", "Edit Table", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -181,7 +181,7 @@ namespace SqlServerDEID.Editor
         {
             var table = tablesGrid.CurrentItem as DatabaseTable;
             if (table != null
-                && table.Columns.Any(c => c.Transforms.Any())
+                && table.HasTransforms()
                 && MessageBox.Show(this, "This table has transforms, do you still with to delete it?", "Delete Table", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
             {
                 e.Cancel = true;
@@ -192,7 +192,7 @@ namespace SqlServerDEID.Editor
         {
             var table = ((DataRowBase)e.Record).RowData as DatabaseTable;
 
-            if (!table.Columns.Any(c => c.Transforms.Any()))
+            if (!table.HasTransforms())
             {
                 MessageBox.Show(this, "This table does not have any transforms. You cannot test it.", "Test Transforms", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -214,6 +214,7 @@ namespace SqlServerDEID.Editor
         {
             //var grid = e.OriginalSender as SfDataGrid;
             var column = e.Record as DatabaseTableColumn;
+            
             if (column.IsPk || column.IsComputed || column.IsIdentity)
             {
                 MessageBox.Show(this, "Transforms cannot be added to a Primary Key, Identity, or Computed column.", "Transforms", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -497,7 +498,7 @@ namespace SqlServerDEID.Editor
 
         private void ValidateForSave()
         {
-            if (!_database.Tables.Any(t => t.Columns.Any(c => c.Transforms.Any())))
+            if (!_database.Tables.Any(t => t.HasTransforms()))
             {
                 MessageBox.Show(this, "The current database does not have any transforms and cannot be saved.", "No Transforms", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

@@ -131,7 +131,7 @@ namespace SqlServerDEID.Common.Globals.Models
             {
                 if (!whereClause.Trim().ToLower().StartsWith("where"))
                 {
-                    whereClause = "WHERE " + whereClause.Trim();   
+                    whereClause = "WHERE " + whereClause.Trim();
                 }
                 sb.AppendLine(whereClause);
             }
@@ -173,6 +173,11 @@ namespace SqlServerDEID.Common.Globals.Models
         public override string ToString()
         {
             return this.Name;
+        }
+
+        public bool HasTransforms()
+        {
+            return this.Columns.Any(c => c.Transforms.Any(t => !string.IsNullOrWhiteSpace(t.Transform)));
         }
     }
 
