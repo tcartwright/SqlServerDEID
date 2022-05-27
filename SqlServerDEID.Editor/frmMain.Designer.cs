@@ -45,9 +45,10 @@
             this.tablesGrid = new Syncfusion.WinForms.DataGrid.SfDataGrid();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.scriptTimeout = new System.Windows.Forms.NumericUpDown();
+            this.bindingSourceFormMain = new System.Windows.Forms.BindingSource(this.components);
             this.btnEditScriptImports = new System.Windows.Forms.Button();
-            this.txtScriptImports = new System.Windows.Forms.TextBox();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.label8 = new System.Windows.Forms.Label();
             this.txtPostScript = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -67,11 +68,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.refreshCredentialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tablesGrid)).BeginInit();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.scriptTimeout)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFormMain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.portNumber)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
@@ -94,6 +97,7 @@
             this.openToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
+            this.refreshCredentialsToolStripMenuItem,
             this.exitToolStripMenuItem1});
             this.fileToolStripMenuItem1.Name = "fileToolStripMenuItem1";
             this.fileToolStripMenuItem1.Size = new System.Drawing.Size(37, 20);
@@ -102,36 +106,37 @@
             // newToolStripMenuItem1
             // 
             this.newToolStripMenuItem1.Name = "newToolStripMenuItem1";
-            this.newToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
+            this.newToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem1.Text = "New";
             this.newToolStripMenuItem1.Click += new System.EventHandler(this.newToolStripMenuItem1_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem1
             // 
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(123, 22);
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem1.Text = "Exit";
+            this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem1_Click);
             // 
             // fileToolStripMenuItem
             // 
@@ -171,9 +176,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tablesGrid.AutoGenerateColumns = false;
-            this.tablesGrid.Location = new System.Drawing.Point(12, 156);
+            this.tablesGrid.Location = new System.Drawing.Point(12, 173);
             this.tablesGrid.Name = "tablesGrid";
-            this.tablesGrid.Size = new System.Drawing.Size(1027, 509);
+            this.tablesGrid.Size = new System.Drawing.Size(1027, 500);
             this.tablesGrid.TabIndex = 0;
             // 
             // panel1
@@ -182,13 +187,14 @@
             this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Location = new System.Drawing.Point(12, 27);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1027, 123);
+            this.panel1.Size = new System.Drawing.Size(1027, 140);
             this.panel1.TabIndex = 5;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Controls.Add(this.scriptTimeout);
             this.groupBox1.Controls.Add(this.btnEditScriptImports);
-            this.groupBox1.Controls.Add(this.txtScriptImports);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.txtPostScript);
             this.groupBox1.Controls.Add(this.label6);
@@ -202,52 +208,69 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Location = new System.Drawing.Point(330, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(694, 115);
+            this.groupBox1.Size = new System.Drawing.Size(694, 131);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Optional";
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(347, 80);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(75, 13);
+            this.label9.TabIndex = 24;
+            this.label9.Text = "Script Timeout";
+            // 
+            // scriptTimeout
+            // 
+            this.scriptTimeout.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.bindingSourceFormMain, "ScriptTimeout", true));
+            this.scriptTimeout.Location = new System.Drawing.Point(425, 76);
+            this.scriptTimeout.Maximum = new decimal(new int[] {
+            32767,
+            0,
+            0,
+            0});
+            this.scriptTimeout.Name = "scriptTimeout";
+            this.scriptTimeout.Size = new System.Drawing.Size(242, 20);
+            this.scriptTimeout.TabIndex = 23;
+            this.toolTip1.SetToolTip(this.scriptTimeout, "Gets the wait time (in seconds) before terminating the attempt to execute the Pre" +
+        "Script or PostScript and generating an error.");
+            // 
+            // bindingSourceFormMain
+            // 
+            this.bindingSourceFormMain.DataSource = typeof(SqlServerDEID.Common.Globals.Models.Database);
+            // 
             // btnEditScriptImports
             // 
-            this.btnEditScriptImports.Location = new System.Drawing.Point(614, 77);
+            this.btnEditScriptImports.Enabled = false;
+            this.btnEditScriptImports.Location = new System.Drawing.Point(425, 101);
             this.btnEditScriptImports.Name = "btnEditScriptImports";
-            this.btnEditScriptImports.Size = new System.Drawing.Size(52, 20);
+            this.btnEditScriptImports.Size = new System.Drawing.Size(115, 20);
             this.btnEditScriptImports.TabIndex = 22;
             this.btnEditScriptImports.Text = "Edit";
             this.btnEditScriptImports.UseVisualStyleBackColor = true;
             this.btnEditScriptImports.Click += new System.EventHandler(this.btnEditScriptImports_Click);
             // 
-            // txtScriptImports
-            // 
-            this.txtScriptImports.Location = new System.Drawing.Point(425, 77);
-            this.txtScriptImports.Name = "txtScriptImports";
-            this.txtScriptImports.ReadOnly = true;
-            this.txtScriptImports.Size = new System.Drawing.Size(183, 20);
-            this.txtScriptImports.TabIndex = 21;
-            this.toolTip1.SetToolTip(this.txtScriptImports, resources.GetString("txtScriptImports.ToolTip"));
-            this.txtScriptImports.DoubleClick += new System.EventHandler(this.txtScriptImports_DoubleClick);
-            // 
-            // bindingSource1
-            // 
-            this.bindingSource1.DataSource = typeof(SqlServerDEID.Common.Globals.Models.Database);
-            // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(351, 81);
+            this.label8.Location = new System.Drawing.Point(351, 105);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(71, 13);
             this.label8.TabIndex = 20;
             this.label8.Text = "Script Imports";
+            this.toolTip1.SetToolTip(this.label8, resources.GetString("label8.ToolTip"));
+            this.label8.DoubleClick += new System.EventHandler(this.label8_DoubleClick);
             // 
             // txtPostScript
             // 
-            this.txtPostScript.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "PostScript", true));
+            this.txtPostScript.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceFormMain, "PostScript", true));
             this.txtPostScript.Location = new System.Drawing.Point(425, 51);
             this.txtPostScript.Name = "txtPostScript";
             this.txtPostScript.Size = new System.Drawing.Size(242, 20);
             this.txtPostScript.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.txtPostScript, "This sql script will be run after any table transforms are run. \r\nA fully qualifi" +
+            this.toolTip1.SetToolTip(this.txtPostScript, "This sql script will be run after all table transforms are run. \r\nA fully qualifi" +
         "ed or relative path can be used. \r\n\r\nAll relative paths will be relative to the " +
         "transform configuration file.");
             // 
@@ -262,12 +285,12 @@
             // 
             // txtPreScript
             // 
-            this.txtPreScript.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "PreScript", true));
+            this.txtPreScript.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceFormMain, "PreScript", true));
             this.txtPreScript.Location = new System.Drawing.Point(425, 26);
             this.txtPreScript.Name = "txtPreScript";
             this.txtPreScript.Size = new System.Drawing.Size(242, 20);
             this.txtPreScript.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.txtPreScript, "This sql script will be run before any table transforms are run. \r\nA fully qualif" +
+            this.toolTip1.SetToolTip(this.txtPreScript, "This sql script will be run before all table transforms are run. \r\nA fully qualif" +
         "ied or relative path can be used. \r\n\r\nAll relative paths will be relative to the" +
         " transform configuration file. ");
             // 
@@ -300,7 +323,7 @@
             // 
             // ddlCredentials
             // 
-            this.ddlCredentials.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.bindingSource1, "CredentialsName", true));
+            this.ddlCredentials.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.bindingSourceFormMain, "CredentialsName", true));
             this.ddlCredentials.FormattingEnabled = true;
             this.ddlCredentials.Location = new System.Drawing.Point(92, 26);
             this.ddlCredentials.Name = "ddlCredentials";
@@ -312,7 +335,7 @@
             // 
             // portNumber
             // 
-            this.portNumber.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.bindingSource1, "Port", true));
+            this.portNumber.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.bindingSourceFormMain, "Port", true));
             this.portNumber.Location = new System.Drawing.Point(93, 51);
             this.portNumber.Maximum = new decimal(new int[] {
             65535,
@@ -326,8 +349,8 @@
             // 
             // txtLocale
             // 
-            this.txtLocale.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "Locale", true));
-            this.txtLocale.Location = new System.Drawing.Point(93, 77);
+            this.txtLocale.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceFormMain, "Locale", true));
+            this.txtLocale.Location = new System.Drawing.Point(93, 76);
             this.txtLocale.Name = "txtLocale";
             this.txtLocale.Size = new System.Drawing.Size(242, 20);
             this.txtLocale.TabIndex = 2;
@@ -338,7 +361,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(53, 81);
+            this.label3.Location = new System.Drawing.Point(53, 80);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(39, 13);
             this.label3.TabIndex = 10;
@@ -353,14 +376,14 @@
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(321, 115);
+            this.groupBox2.Size = new System.Drawing.Size(321, 131);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Required";
             // 
             // txtDatabaseName
             // 
-            this.txtDatabaseName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "DatabaseName", true));
+            this.txtDatabaseName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceFormMain, "DatabaseName", true));
             this.errorProvider1.SetError(this.txtDatabaseName, "Database name is required");
             this.txtDatabaseName.Location = new System.Drawing.Point(95, 51);
             this.txtDatabaseName.Name = "txtDatabaseName";
@@ -379,9 +402,9 @@
             // 
             // btnConnect
             // 
-            this.btnConnect.Location = new System.Drawing.Point(95, 81);
+            this.btnConnect.Location = new System.Drawing.Point(95, 75);
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(115, 23);
+            this.btnConnect.Size = new System.Drawing.Size(115, 20);
             this.btnConnect.TabIndex = 2;
             this.btnConnect.Text = "Connect";
             this.btnConnect.UseVisualStyleBackColor = true;
@@ -389,9 +412,9 @@
             // 
             // txtServerName
             // 
-            this.txtServerName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSource1, "ServerName", true));
+            this.txtServerName.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.bindingSourceFormMain, "ServerName", true));
             this.errorProvider1.SetError(this.txtServerName, "ServerName is required");
-            this.txtServerName.Location = new System.Drawing.Point(95, 27);
+            this.txtServerName.Location = new System.Drawing.Point(95, 26);
             this.txtServerName.Name = "txtServerName";
             this.txtServerName.Size = new System.Drawing.Size(200, 20);
             this.txtServerName.TabIndex = 0;
@@ -400,7 +423,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(23, 31);
+            this.label1.Location = new System.Drawing.Point(23, 30);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(69, 13);
             this.label1.TabIndex = 2;
@@ -416,11 +439,18 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
+            // refreshCredentialsToolStripMenuItem
+            // 
+            this.refreshCredentialsToolStripMenuItem.Name = "refreshCredentialsToolStripMenuItem";
+            this.refreshCredentialsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.refreshCredentialsToolStripMenuItem.Text = "Refresh Credentials";
+            this.refreshCredentialsToolStripMenuItem.Click += new System.EventHandler(this.refreshCredentialsToolStripMenuItem_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1051, 677);
+            this.ClientSize = new System.Drawing.Size(1051, 685);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.tablesGrid);
             this.Controls.Add(this.menuStrip1);
@@ -434,7 +464,8 @@
             this.panel1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.scriptTimeout)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSourceFormMain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.portNumber)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -458,7 +489,7 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.BindingSource bindingSourceFormMain;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.TextBox txtServerName;
@@ -480,7 +511,9 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btnEditScriptImports;
-        private System.Windows.Forms.TextBox txtScriptImports;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.NumericUpDown scriptTimeout;
+        private System.Windows.Forms.ToolStripMenuItem refreshCredentialsToolStripMenuItem;
     }
 }

@@ -27,6 +27,7 @@ namespace SqlServerDEID.Editor
             txtQuery.Text = _database.Tables.First().GetSelectStatement(padding: "", columnsSeperator: "");
             // we have to use a global table here, as we are spanning connections :|
             _tableName = $"##TransformTest_{Guid.NewGuid():N}";
+            this.Text = $"Transform Test ({database.Tables.First().Name} - {_tableName})";
             _connection = database.GetConnection();
             _connection.Open();
         }
@@ -42,12 +43,15 @@ namespace SqlServerDEID.Editor
             {
                 Cursor.Current = Cursors.WaitCursor;
                 txtQuery.Text = _database.Tables.First().GetSelectStatement(txtWhereClause.Text, "", "");
+                var topRows = 100;
 
-                var query = Resources.GetTransformData.Replace("{{QUERY}}", txtQuery.Text).Replace("{{TEMP_TABLE}}", _tableName);
+                var query = Resources.GetTransformData
+                    .Replace("{{QUERY}}", txtQuery.Text)
+                    .Replace("{{TEMP_TABLE}}", _tableName);
                 var tbl = _connection.ExecuteDataTable(query, new[]
                     {
                     new SqlParameter("@offset", SqlDbType.Int) { Value = 0 },
-                    new SqlParameter("@rows", SqlDbType.Int) { Value = 500 }
+                    new SqlParameter("@rows", SqlDbType.Int) { Value = topRows }
                 });
                 gridRawData.DataSource = tbl;
 
@@ -56,8 +60,7 @@ namespace SqlServerDEID.Editor
             catch (Exception ex)
             {
                 Cursor.Current = Cursors.Default;
-
-                throw;
+                MessageException(ex, $"Exception running query to generate temp table: {_tableName} from {_database.Tables.First().Name}.");
             }
             finally
             {
@@ -83,8 +86,7 @@ namespace SqlServerDEID.Editor
             catch (Exception ex)
             {
                 Cursor.Current = Cursors.Default;
-
-                throw;
+                MessageException(ex, $"Exception running transform.");
             }
             finally
             {
@@ -94,11 +96,27 @@ namespace SqlServerDEID.Editor
 
         private void frmTransformTest_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_connection != null)
+            try
             {
-                _connection.ExecuteNonQuery($"IF OBJECT_ID('tempdb..{_tableName}') IS NOT NULL DROP TABLE {_tableName}; ");
-                _connection.Dispose();
+                if (_connection != null)
+                {
+                    _connection.ExecuteNonQuery($"IF OBJECT_ID('tempdb..{_tableName}') IS NOT NULL DROP TABLE {_tableName}; ");
+                }
             }
+            catch (Exception ex)
+            {
+                MessageException(ex, $"Unable to drop the temp table: {_tableName}. Please drop it manually.");
+            }
+            finally
+            {
+                if (_connection != null) { _connection.Dispose(); }
+            }
+        }
+
+        private void MessageException(Exception ex, string message, string title = "Exception")
+        {
+            var msg = $"{message} Exception:\r\n\r\n{ex.Message}";
+            MessageBox.Show(this, msg, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

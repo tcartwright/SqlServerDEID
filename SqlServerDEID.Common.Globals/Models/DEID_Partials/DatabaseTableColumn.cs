@@ -112,7 +112,7 @@ namespace SqlServerDEID.Common.Globals.Models
                     case SqlDbType.NVarChar:
                     case SqlDbType.VarBinary:
                     case SqlDbType.VarChar:
-                        return $"{this.SqlDbType} ({this.MaxLength})";
+                        return $"{this.SqlDbType} ({(this.MaxLength == -1 ? "MAX" : $"{this.MaxLength}")})";
                     case SqlDbType.Decimal:
                         return $"{this.SqlDbType} ({this.Precision}, {this.Scale})";
                     case SqlDbType.Time:

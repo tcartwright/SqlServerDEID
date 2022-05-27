@@ -12,6 +12,8 @@ namespace SqlServerDEID.Common.Globals.Models
     [XmlRoot(Namespace = "", IsNullable = false)]
     public partial class Database
     {
+        private string _credentialsName = "";
+
         /// <remarks/>
         [XmlAttribute]
         public string ServerName { get; set; }
@@ -26,10 +28,10 @@ namespace SqlServerDEID.Common.Globals.Models
 
         /// <remarks/>
         [XmlAttribute]
-        public string CredentialsName { get; set; }
-
+        public string CredentialsName { get => _credentialsName?.ToLower(); set => _credentialsName = value; }
+        
         [XmlAttribute]
-        public string Locale { get; set; }
+        public string Locale { get; set; } = "en";
 
         [XmlAttribute]
         public string PreScript { get; set; }
@@ -43,7 +45,7 @@ namespace SqlServerDEID.Common.Globals.Models
 
         /// <remarks/>
         [XmlArrayItem("Table", IsNullable = false)]
-        public ObservableCollection<DatabaseTable> Tables { get; set; } = new ObservableCollection<DatabaseTable>(); 
+        public ObservableCollection<DatabaseTable> Tables { get; set; } = new ObservableCollection<DatabaseTable>();
 
         /// <remarks/>
         [XmlArrayItem("ScriptingImport", IsNullable = true)]

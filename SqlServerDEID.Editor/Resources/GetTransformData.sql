@@ -1,6 +1,6 @@
 ﻿IF OBJECT_ID('tempdb..{{TEMP_TABLE}}') IS NOT NULL DROP TABLE {{TEMP_TABLE}}; 
 	
-SELECT TOP (500) * 
+SELECT TOP (@rows) * 
 INTO {{TEMP_TABLE}} 
 FROM (
 {{QUERY}}

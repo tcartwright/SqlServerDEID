@@ -3,24 +3,21 @@ using SqlServerDEID.Common.Globals.Extensions;
 using SqlServerDEID.Common.Globals.Models;
 using SqlServerDEID.Editor.Controls;
 using SqlServerDEID.Editor.Properties;
+using Syncfusion.Windows.Forms;
 using Syncfusion.WinForms.Core.Utils;
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 using Syncfusion.WinForms.DataGrid.Events;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.Drawing.Design;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SqlServerDEID.Editor
@@ -28,8 +25,9 @@ namespace SqlServerDEID.Editor
     public partial class frmMain : Form
     {
         private Database _database;
-        private GridComboBoxColumn _tablesColumn;
         private readonly StringComparer _stringComparer = StringComparer.OrdinalIgnoreCase;
+        private readonly SfToolTip _tooltip = new SfToolTip() { AutoPopDelay = 5000 };
+
         public frmMain()
         {
             InitializeComponent();
@@ -37,30 +35,36 @@ namespace SqlServerDEID.Editor
 
         private void frmMain_Load(object sender, EventArgs e)
         {
+            BindCredentials();
+            SetupGrid();
+            BindNewDatabase();
+        }
+
+        private void BindCredentials()
+        {
             var credentials = CredentialManager.EnumerateCredentials()
                 .OrderBy(cr => cr.ApplicationName)
                 .Where(cr => cr.CredentialType == CredentialType.Generic && !Regex.IsMatch(cr.ApplicationName, "git.*|microsoft.*|onedrive.*", RegexOptions.IgnoreCase))
-                .Select(cr => Tuple.Create(cr.ApplicationName, cr.ApplicationName))
+                .Select(cr => new KeyValuePair<string, string>(cr.ApplicationName.ToLower(), cr.ApplicationName.ToLower()))
                 .ToList();
-            ddlCredentials.DisplayMember = "Item1";
-            ddlCredentials.ValueMember = "Item2";
-            credentials.Insert(0, new Tuple<string, string>("Trusted Connection", ""));
+            ddlCredentials.DisplayMember = "Key";
+            ddlCredentials.ValueMember = "Value";
+            credentials.Insert(0, new KeyValuePair<string, string>("Trusted Connection", ""));
 
             ddlCredentials.DataSource = credentials;
-            ddlCredentials.SelectedText = "";
-            SetupGrid();
-            SetNewDatabase();
+            ddlCredentials.SelectedIndex = 0;
         }
 
         private void SetupGrid()
         {
             var transformTypeValues = Enum.GetValues(typeof(TransformType))
                 .Cast<TransformType>()
-                .Select(tt => Tuple.Create(tt, ProperCase(Enum.GetName(typeof(TransformType), tt))))
+                .Select(tt => new KeyValuePair<string, TransformType>(ProperCase(Enum.GetName(typeof(TransformType), tt)), tt))
                 .ToList();
 
             var integerFormatInfo = new NumberFormatInfo() { NumberDecimalDigits = 0, NumberGroupSizes = new int[] { } };
 
+            //tablesGrid.ResetTableControl();
             tablesGrid.EditMode = EditMode.SingleClick;
             tablesGrid.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
             tablesGrid.AutoGenerateColumns = false;
@@ -70,14 +74,15 @@ namespace SqlServerDEID.Editor
             tablesGrid.RecordDeleting += TablesGrid_RecordDeleting;
             tablesGrid.CurrentCellBeginEdit += TablesGrid_CurrentCellBeginEdit;
             tablesGrid.CellComboBoxSelectionChanged += TablesGrid_CellComboBoxSelectionChanged;
+            tablesGrid.ToolTipOpening += Grid_ToolTipOpening;
 
-            _tablesColumn = new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300, ShowToolTip = true };
-            tablesGrid.Columns.Add(_tablesColumn); // new GridTextColumn() { MappingName = "Name", HeaderText = "Table Name", AllowEditing = false });
+            tablesGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300, ShowToolTip = true }); // new GridTextColumn() { MappingName = "Name", HeaderText = "Table Name", AllowEditing = false });
             tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableTriggers", HeaderText = "Disable Triggers" });
             tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableConstraints", HeaderText = "Disable Constraints" });
-            tablesGrid.Columns.Add(new GridTextColumn() { MappingName = "PreScript", HeaderText = "Pre Script" });
-            tablesGrid.Columns.Add(new GridTextColumn() { MappingName = "PostScript", HeaderText = "Post Script" });
-            tablesGrid.Columns.Add(new GridNumericColumn() { MappingName = "ScriptTimeout", HeaderText = "Script Timeout", NumberFormatInfo = integerFormatInfo });
+            tablesGrid.Columns.Add(new GridTextColumn() { MappingName = "PreScript", HeaderText = "Pre Script", ShowHeaderToolTip = true });
+            tablesGrid.Columns.Add(new GridTextColumn() { MappingName = "PostScript", HeaderText = "Post Script", ShowHeaderToolTip = true });
+            tablesGrid.Columns.Add(new GridNumericColumn() { MappingName = "ScriptTimeout", HeaderText = "Script Timeout", NumberFormatInfo = integerFormatInfo, ShowHeaderToolTip = true });
+            tablesGrid.Columns.Add(new GridNumericColumn() { MappingName = "Columns.Count", HeaderText = "Columns Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
             tablesGrid.Columns.Add(new GridButtonColumn() { HeaderText = "Test Transform", DefaultButtonText = "Test Transform", AllowDefaultButtonText = true, MappingName = "Name" });
 
             //columns
@@ -86,9 +91,10 @@ namespace SqlServerDEID.Editor
                 AutoGenerateColumns = false,
                 AutoSizeColumnsMode = AutoSizeColumnsMode.Fill,
                 EditMode = EditMode.SingleClick,
-                AllowDeleting = false
+                AllowDeleting = false,
+                AllowSorting = false
             };
-            columnsGrid.ToolTipOpening += ColumnsGrid_ToolTipOpening;
+            columnsGrid.ToolTipOpening += Grid_ToolTipOpening;
             columnsGrid.DetailsViewExpanding += ColumnsGrid_DetailsViewExpanding;
 
             columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "Name", HeaderText = "Column Name", AllowEditing = false, Width = 150 });
@@ -97,6 +103,8 @@ namespace SqlServerDEID.Editor
             columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsPk", HeaderText = "Is Pk", AllowEditing = false });
             columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsIdentity", HeaderText = "Is Identity", AllowEditing = false });
             columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsComputed", HeaderText = "Is Computed", AllowEditing = false });
+            // this column will not update. for w/e reason
+            columnsGrid.Columns.Add(new GridNumericColumn() { MappingName = "Transforms.Count", HeaderText = "Transforms Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
 
             tablesGrid.DetailsViewDefinitions.Add(new GridViewDefinition
             {
@@ -116,11 +124,12 @@ namespace SqlServerDEID.Editor
             };
             transformsGrid.CellButtonClick += TransformsChildGrid_CellButtonClick;
             transformsGrid.CellComboBoxSelectionChanged += TransformsGrid_CellComboBoxSelectionChanged;
+            transformsGrid.ToolTipOpening += Grid_ToolTipOpening;
 
-            transformsGrid.Columns.Add(new GridTextColumn() { MappingName = "Transform", HeaderText = "Transform", Width = 300 });
-            transformsGrid.Columns.Add(new GridTextColumn() { MappingName = "WhereClause", HeaderText = "Where Clause", Width = 300 });
-            transformsGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "TransformType", HeaderText = "TransformType", ValueMember = "Item1", DisplayMember = "Item2", DataSource = transformTypeValues });
-            transformsGrid.Columns.Add(new GridButtonColumn() { MappingName = "Transform", DefaultButtonText = "Edit", HeaderText = "Edit", AllowDefaultButtonText = true });
+            transformsGrid.Columns.Add(new GridTextColumn() { MappingName = "Transform", HeaderText = "Transform", Width = 300, ShowHeaderToolTip = true });
+            transformsGrid.Columns.Add(new GridTextColumn() { MappingName = "WhereClause", HeaderText = "Where Clause", Width = 300, ShowHeaderToolTip = true });
+            transformsGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "TransformType", HeaderText = "TransformType", DisplayMember = "Key", ValueMember = "Value", DataSource = transformTypeValues, ShowHeaderToolTip = true });
+            transformsGrid.Columns.Add(new GridButtonColumn() { MappingName = "Transform", DefaultButtonText = "Edit Transform", HeaderText = "Edit", AllowDefaultButtonText = true });
             columnsGrid.DetailsViewDefinitions.Add(new GridViewDefinition
             {
                 RelationalColumn = "Transforms",
@@ -182,15 +191,22 @@ namespace SqlServerDEID.Editor
         private void TablesGrid_CellButtonClick(object sender, Syncfusion.WinForms.DataGrid.Events.CellButtonClickEventArgs e)
         {
             var table = ((DataRowBase)e.Record).RowData as DatabaseTable;
+
+            if (!table.Columns.Any(c => c.Transforms.Any()))
+            {
+                MessageBox.Show(this, "This table does not have any transforms. You cannot test it.", "Test Transforms", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             var database = _database.CloneObject<Database>();
             database.Tables.Clear();
             database.Tables.Add(table);
             database.RemoveNullTransforms();
 
+
             var tranformsTestForm = new frmTransformTest(database);
             if (tranformsTestForm.ShowDialog(this) == DialogResult.OK)
             {
-                //TODO: ???
+                //TODO: is there anything to do here???
             }
         }
 
@@ -205,11 +221,37 @@ namespace SqlServerDEID.Editor
             }
         }
 
-        private void ColumnsGrid_ToolTipOpening(object sender, Syncfusion.WinForms.DataGrid.Events.ToolTipOpeningEventArgs e)
+        private void Grid_ToolTipOpening(object sender, Syncfusion.WinForms.DataGrid.Events.ToolTipOpeningEventArgs e)
         {
-            if (_stringComparer.Equals("IsSelected", e.Column.MappingName))
+            var position = Cursor.Position;
+            var popupDelay = 5000;
+            e.ToolTipInfo.Items[0].Text = "";
+
+            switch (e.Column.MappingName.ToLower())
             {
-                e.ToolTipInfo.Items[0].Text = "This column determines whether or not the column will be in the transform document, and also be available in the RowValues object.";
+                case "isselected":
+                    _tooltip.Show("This column determines whether or not the column will appear in the transform document, and also be available in the RowValues object.", position, popupDelay);
+                    break;
+                case "prescript":
+                    _tooltip.Show("This sql script will be run before the table transform is run. \r\nA fully qualified or relative path can be used. \r\n\r\nAll relative paths will be relative to the transform configuration file.", position, popupDelay);
+                    break;
+                case "postscript":
+                    _tooltip.Show("This sql script will be run after the table transform is run. \r\nA fully qualified or relative path can be used. \r\n\r\nAll relative paths will be relative to the transform configuration file.", position, popupDelay);
+                    break;
+                case "scripttimeout":
+                    _tooltip.Show("Gets the wait time (in seconds) before terminating the attempt to execute the PreScript or PostScript and generating an error.", position, popupDelay);
+                    break;
+                case "transform":
+                    _tooltip.Show("The transform can either be a C# expression or a path to a powershell file. If pointing to a powershell file path, then make the path relative to where the transform file will be saved, or use an absolute path.", position, popupDelay);
+                    break;
+                case "whereclause":
+                    _tooltip.Show("The where clause is a standard SQL where clause without the WHERE statement. If there are multiple transforms for a single column then the WHERE clause is required for each one.", position, popupDelay);
+                    break;
+                case "transformtype":
+                    _tooltip.Show("Determines whether or not a C# expression will be used, or a powershell file.", position, popupDelay);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -270,11 +312,20 @@ namespace SqlServerDEID.Editor
 
         private void LoadFile(string fileName)
         {
-            _database = Database.LoadFile(fileName);
+            try
+            {
+                ResetData();
 
-            LoadData();
+                _database = Database.LoadFile(fileName);
 
-            DisableEnableControls(false);
+                LoadData();
+
+                DisableEnableControls(false);
+            }
+            catch (Exception ex)
+            {
+                this.MessageException(ex, "Exception trying to load file:");
+            }
         }
 
         private void DisableEnableControls(bool enabled = false)
@@ -282,14 +333,16 @@ namespace SqlServerDEID.Editor
             txtServerName.Enabled =
                 txtDatabaseName.Enabled =
                 btnConnect.Enabled = enabled;
+
+            btnEditScriptImports.Enabled = !enabled;
         }
 
         private void ResetData()
         {
-            _tablesColumn.DataSource = null;
-            tablesGrid.DataSource = null;
-            bindingSource1.DataSource = typeof(Database);
-            ddlCredentials.SelectedText = "";
+            ////tablesGrid.DataBindings.Clear();
+            //tablesGrid.DataSource = null;
+            //bindingSourceFormMain.DataSource = typeof(Database); //cant use null for this one... for w/e reason
+            ddlCredentials.SelectedIndex = 0;
         }
 
         private void LoadData()
@@ -297,16 +350,22 @@ namespace SqlServerDEID.Editor
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
-                ResetData();
+                DataTable tables;
                 using (var connection = _database.GetConnection())
                 {
                     connection.Open();
                     _database.GetMetaData(connection, true);
-                    _tablesColumn.DataSource = connection.ExecuteDataTable(Resources.GetTableNames.Replace("{{DB_NAME}}", _database.DatabaseName.CleanName()));
+                    tables = connection.ExecuteDataTable(Resources.GetTableNames.Replace("{{DB_NAME}}", _database.DatabaseName.CleanName()));
                 }
+                var tablesCombo = (GridComboBoxColumn)tablesGrid.Columns["Name"];
+                tablesCombo.DataSource = tables;
+                tablesCombo.MappingName = "Name";
+                tablesCombo.ValueMember = "TableName";
+                tablesCombo.DisplayMember = "TableName";
 
                 tablesGrid.DataSource = _database.Tables;
-                bindingSource1.DataSource = _database;
+                bindingSourceFormMain.DataSource = _database;
+
                 ValidateForm();
             }
             catch (Exception ex)
@@ -360,17 +419,18 @@ namespace SqlServerDEID.Editor
 
         private void newToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            SetNewDatabase();
+            BindNewDatabase();
         }
 
-        private void SetNewDatabase()
+        private void BindNewDatabase()
         {
             _database = new Database();
             ResetData();
             tablesGrid.DataSource = _database.Tables;
-            bindingSource1.DataSource = _database;
+            bindingSourceFormMain.DataSource = _database;
             DisableEnableControls(true);
             txtServerName.Focus();
+            ddlCredentials.SelectedIndex = 0;
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -490,7 +550,7 @@ namespace SqlServerDEID.Editor
 
         private bool ValidateForm()
         {
-            return ValidateServerName() 
+            return ValidateServerName()
                 && ValidateDatabaseName();
         }
 
@@ -508,9 +568,19 @@ namespace SqlServerDEID.Editor
             Process.Start("https://github.com/bchavez/Bogus#locales");
         }
 
-        private void txtScriptImports_DoubleClick(object sender, EventArgs e)
+        private void label8_DoubleClick(object sender, EventArgs e)
         {
             Process.Start("https://github.com/bchavez/Bogus#api-extension-methods");
+        }
+
+        private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void refreshCredentialsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BindCredentials();
         }
     }
 }

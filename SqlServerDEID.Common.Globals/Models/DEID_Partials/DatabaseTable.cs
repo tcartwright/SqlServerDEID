@@ -54,6 +54,16 @@ namespace SqlServerDEID.Common.Globals.Models
                 },
                 CommandType.Text);
 
+            // remove any columns that do not exist in the database to cleanup
+            for (int i = this.Columns.Count - 1; i >= 0; i--)
+            {
+                var col = this.Columns[i];
+                if (table.Select($"column_name = '{col.CleanName}' OR column_name = '{col.Name}'").Length == 0)
+                {
+                    this.Columns.RemoveAt(i);
+                }
+            }
+
             foreach (DataRow row in table.Rows)
             {
                 var column = this.Columns.FirstOrDefault(c => _stringComparer.Equals(c.CleanName, row["column_name"]));
@@ -83,6 +93,7 @@ namespace SqlServerDEID.Common.Globals.Models
             if (_columnNames == null)
             {
                 _columnNames = this.Columns
+                    .Where(c => !c.IsPk)
                     .Select(c => c.CleanName)
                     .ToList();
             }
@@ -112,10 +123,16 @@ namespace SqlServerDEID.Common.Globals.Models
             }
             GetColumnNames();
             var sb = new StringBuilder();
-            sb.AppendLine($"SELECT {string.Join($",{columnsSeperator}{padding}", _columnNames.Select(c => $"[{c}]"))}");
+            // append the two lists together, so the primary key columns show up at the front of the query.
+            var columns = _primaryKeyColumnNames.Concat(_columnNames).ToList();
+            sb.AppendLine($"SELECT {string.Join($",{columnsSeperator}{padding}", columns.Select(c => $"[{c}]"))}");
             sb.AppendLine($"FROM {this.Name}");
             if (!string.IsNullOrWhiteSpace(whereClause))
             {
+                if (!whereClause.Trim().ToLower().StartsWith("where"))
+                {
+                    whereClause = "WHERE " + whereClause.Trim();   
+                }
                 sb.AppendLine(whereClause);
             }
             sb.AppendLine($"ORDER BY {string.Join($",{columnsSeperator}{padding}", _primaryKeyColumnNames.Select(c => $"[{c}]"))}");
