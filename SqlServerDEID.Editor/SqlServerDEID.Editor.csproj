@@ -12,7 +12,7 @@
 		<PackageReference Include="CDS.CSharpScripting" Version="1.0.18" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.1.0" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="Syncfusion.SfDataGrid.Winforms" Version="20.1.0.57" />
+		<PackageReference Include="Syncfusion.SfDataGrid.Winforms" Version="20.1.0.60" />
 		<PackageReference Include="Syncfusion.Shared.Windows" Version="20.1.0.57" />
 		<PackageReference Include="Syncfusion.Tools.Windows" Version="20.1.0.57" />
 		<PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
