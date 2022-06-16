@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net4.8</TargetFramework>
 		<RootNamespace>SqlServerDEID.Common</RootNamespace>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<ImplicitUsings>disable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
