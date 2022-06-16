@@ -40,6 +40,7 @@ namespace SqlServerDEID.Editor
             SetupGrid();
             BindNewDatabase();
             portNumber.Value = GetDefaultSqlPort();
+            this.Text = "SQL Server DEID Editor";
         }
 
         private void BindCredentials()
