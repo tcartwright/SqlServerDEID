@@ -217,7 +217,7 @@ namespace SqlServerDEID.Editor
         {
             //var grid = e.OriginalSender as SfDataGrid;
             var column = e.Record as DatabaseTableColumn;
-            
+
             if (column.IsPk || column.IsComputed || column.IsIdentity)
             {
                 MessageBox.Show(this, "Transforms cannot be added to a Primary Key, Identity, or Computed column.", "Transforms", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -285,7 +285,7 @@ namespace SqlServerDEID.Editor
                     var tablesGrid = columnsGrid.NotifyListener.GetParentDataGrid();
 
                     var columns = columnsGrid.DataSource as IList<DatabaseTableColumn>;
-                    var selectedColumns = columns.Where(c => c.IsSelected).ToList();
+                    var selectedColumns = columns.Where(c => c.IsSelected || c.IsPk || c.Transforms.Count > 0).ToList();
 
                     dynamic rowValues = selectedColumns.GetRowValues(_database.Locale);
 
@@ -438,7 +438,7 @@ namespace SqlServerDEID.Editor
         private void BindNewDatabase()
         {
             _database = new Database();
-            _database.Port = GetDefaultSqlPort(); 
+            _database.Port = GetDefaultSqlPort();
             ResetData();
             tablesGrid.DataSource = _database.Tables;
             bindingSourceFormMain.DataSource = _database;
