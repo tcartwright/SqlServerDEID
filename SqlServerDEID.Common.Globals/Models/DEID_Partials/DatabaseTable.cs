@@ -149,7 +149,7 @@ namespace SqlServerDEID.Common.Globals.Models
             sb.AppendLine($"UPDATE {this.Name} SET");
             sb.AppendLine($"{tab}{string.Join($",\r\n{tab}", _updateColumnNames.Select(c => $"[{c}] = @{c}"))}");
             sb.AppendLine("WHERE");
-            sb.AppendLine($"{tab}{string.Join($",\r\n{tab}AND ", _primaryKeyColumnNames.Select(c => $"[{c}] = @{c}"))}");
+            sb.AppendLine($"{tab}{string.Join($"\r\n{tab}AND ", _primaryKeyColumnNames.Select(c => $"[{c}] = @{c}"))}");
 
             return sb.ToString();
         }

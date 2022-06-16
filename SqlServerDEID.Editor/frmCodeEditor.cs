@@ -36,8 +36,8 @@ namespace SqlServerDEID.Editor
                 typeof(Enumerable),
                 typeof(Bogus.Faker),
                 typeof(Bogus.DataSets.Name),
-                typeof(ExpandoObject)
-            //,typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo)
+                typeof(ExpandoObject),
+                typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo)
             };
         public string Transform { get => _transform; }
 
