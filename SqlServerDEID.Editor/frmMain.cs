@@ -11,6 +11,7 @@ using Syncfusion.WinForms.DataGrid.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing.Design;
@@ -38,6 +39,7 @@ namespace SqlServerDEID.Editor
             BindCredentials();
             SetupGrid();
             BindNewDatabase();
+            portNumber.Value = GetDefaultSqlPort();
         }
 
         private void BindCredentials()
@@ -346,7 +348,7 @@ namespace SqlServerDEID.Editor
             ddlCredentials.SelectedIndex = 0;
         }
 
-        private void LoadData()
+        private bool LoadData()
         {
             try
             {
@@ -368,11 +370,13 @@ namespace SqlServerDEID.Editor
                 bindingSourceFormMain.DataSource = _database;
 
                 ValidateForm();
+                return true;
             }
             catch (Exception ex)
             {
                 Cursor.Current = Cursors.Default;
                 MessageException(ex, "Problem loading data.");
+                return false;
             }
             finally
             {
@@ -423,9 +427,17 @@ namespace SqlServerDEID.Editor
             BindNewDatabase();
         }
 
+        private int GetDefaultSqlPort()
+        {
+            var port = 1433;
+            int.TryParse(ConfigurationManager.AppSettings["DefaultPort"], out port);
+            return port;
+        }
+
         private void BindNewDatabase()
         {
             _database = new Database();
+            _database.Port = GetDefaultSqlPort(); 
             ResetData();
             tablesGrid.DataSource = _database.Tables;
             bindingSourceFormMain.DataSource = _database;
@@ -508,7 +520,11 @@ namespace SqlServerDEID.Editor
         {
             if (ValidateForm())
             {
-                LoadData();
+                if (LoadData())
+                {
+                    DisableEnableControls(false);
+                    MessageBox.Show(this, "Connected");
+                }
             }
         }
 

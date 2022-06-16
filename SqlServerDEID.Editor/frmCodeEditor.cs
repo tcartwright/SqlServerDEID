@@ -36,8 +36,8 @@ namespace SqlServerDEID.Editor
                 typeof(Enumerable),
                 typeof(Bogus.Faker),
                 typeof(Bogus.DataSets.Name),
-                typeof(ExpandoObject),
-                typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo)
+                typeof(ExpandoObject)
+            //,typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo)
             };
         public string Transform { get => _transform; }
 
@@ -56,10 +56,15 @@ namespace SqlServerDEID.Editor
         {
             var assembly = typeof(Bogus.Faker).Assembly;
             var allTypes = assembly.GetTypes();
-            var types = allTypes.Where(t => t.IsClass && !string.IsNullOrWhiteSpace(t.Namespace) && Regex.IsMatch(t.Namespace, "Bogus.Extensions", RegexOptions.IgnoreCase)).ToList();
-            _typeList.AddRange(types);
+            var types = allTypes.Where(t => 
+                t.IsClass 
+                && !string.IsNullOrWhiteSpace(t.Namespace)
+                && !Regex.IsMatch(t.Assembly.FullName, "Microsoft.CodeAnalysis", RegexOptions.IgnoreCase)
+                && Regex.IsMatch(t.Namespace, "Bogus.Extensions", RegexOptions.IgnoreCase)
+            ).ToList();
+            types.AddRange(_typeList);
 
-            _types = _typeList.ToArray();
+            _types = types.ToArray();
             codeEditor1.CDSInitialize(_types, _types, typeof(ScriptGlobals));
             if (string.IsNullOrWhiteSpace(_transform))
             {

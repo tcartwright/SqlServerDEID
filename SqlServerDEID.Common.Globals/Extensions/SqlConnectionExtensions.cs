@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Security;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace SqlServerDEID.Common.Globals.Extensions
@@ -25,22 +26,22 @@ namespace SqlServerDEID.Common.Globals.Extensions
 
             SqlCredential credentials = null;
 
-            var connectionString = $"Persist Security Info=False;Initial Catalog={databaseName};MultipleActiveResultSets=True;Application Name=SQLServerDEID;";
-            if (port == 0)
+            var connectionString = new StringBuilder($"Persist Security Info=False;Initial Catalog={databaseName};MultipleActiveResultSets=True;Application Name=SQLServerDEID;");
+            if (port == 0 || port == 1433)
             {
-                connectionString += $"Data Source={serverName};";
+                connectionString.Append($"Data Source={serverName};");
             }
             else
             {
-                connectionString += $"Data Source={serverName},{port};";
+                connectionString.Append($"Data Source={serverName},{port};");
             }
             if (string.IsNullOrWhiteSpace(credentialsName))
             {
-                connectionString += "Integrated Security=SSPI;";
+                connectionString.Append("Integrated Security=SSPI;");
             }
             else
             {
-                var cred = CredentialManager.ReadCredential(applicationName: credentialsName);
+                var cred = CredentialManager.ReadCredential(credentialsName);
                 if (cred == null)
                 {
                     throw new CredentialNotFoundException($"Credentials could not be found by the name: {credentialsName} in the Credential Manager");
@@ -51,9 +52,10 @@ namespace SqlServerDEID.Common.Globals.Extensions
                 foreach (var c in cred.Password) { securePwd.AppendChar(c); }
                 securePwd.MakeReadOnly();
                 credentials = new SqlCredential(cred.UserName, securePwd);
+                return new SqlConnection(connectionString.ToString(), credentials);
             }
 
-            return new SqlConnection(connectionString, credentials);
+            return new SqlConnection(connectionString.ToString());
         }
 
         public static void RunScriptFile(this SqlConnection connection, string baseTransformPath, string fileName, int timeout = 30)
