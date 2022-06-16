@@ -36,6 +36,7 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshCredentialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,7 +69,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.refreshCredentialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnRefreshTables = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tablesGrid)).BeginInit();
             this.panel1.SuspendLayout();
@@ -106,35 +107,42 @@
             // newToolStripMenuItem1
             // 
             this.newToolStripMenuItem1.Name = "newToolStripMenuItem1";
-            this.newToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem1.Size = new System.Drawing.Size(175, 22);
             this.newToolStripMenuItem1.Text = "New";
             this.newToolStripMenuItem1.Click += new System.EventHandler(this.newToolStripMenuItem1_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // refreshCredentialsToolStripMenuItem
+            // 
+            this.refreshCredentialsToolStripMenuItem.Name = "refreshCredentialsToolStripMenuItem";
+            this.refreshCredentialsToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.refreshCredentialsToolStripMenuItem.Text = "Refresh Credentials";
+            this.refreshCredentialsToolStripMenuItem.Click += new System.EventHandler(this.refreshCredentialsToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem1
             // 
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(175, 22);
             this.exitToolStripMenuItem1.Text = "Exit";
             this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem1_Click);
             // 
@@ -367,6 +375,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnRefreshTables);
             this.groupBox2.Controls.Add(this.txtDatabaseName);
             this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.btnConnect);
@@ -402,7 +411,7 @@
             // 
             this.btnConnect.Location = new System.Drawing.Point(95, 75);
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(115, 20);
+            this.btnConnect.Size = new System.Drawing.Size(95, 20);
             this.btnConnect.TabIndex = 2;
             this.btnConnect.Text = "Connect";
             this.btnConnect.UseVisualStyleBackColor = true;
@@ -437,12 +446,16 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // refreshCredentialsToolStripMenuItem
+            // btnRefreshTables
             // 
-            this.refreshCredentialsToolStripMenuItem.Name = "refreshCredentialsToolStripMenuItem";
-            this.refreshCredentialsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.refreshCredentialsToolStripMenuItem.Text = "Refresh Credentials";
-            this.refreshCredentialsToolStripMenuItem.Click += new System.EventHandler(this.refreshCredentialsToolStripMenuItem_Click);
+            this.btnRefreshTables.Location = new System.Drawing.Point(200, 75);
+            this.btnRefreshTables.Name = "btnRefreshTables";
+            this.btnRefreshTables.Size = new System.Drawing.Size(95, 20);
+            this.btnRefreshTables.TabIndex = 5;
+            this.btnRefreshTables.Text = "Refresh Tables";
+            this.toolTip1.SetToolTip(this.btnRefreshTables, "Click this button to refresh the list of tables in the grid.");
+            this.btnRefreshTables.UseVisualStyleBackColor = true;
+            this.btnRefreshTables.Click += new System.EventHandler(this.btnRefreshTables_Click);
             // 
             // frmMain
             // 
@@ -513,5 +526,6 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.NumericUpDown scriptTimeout;
         private System.Windows.Forms.ToolStripMenuItem refreshCredentialsToolStripMenuItem;
+        private System.Windows.Forms.Button btnRefreshTables;
     }
 }

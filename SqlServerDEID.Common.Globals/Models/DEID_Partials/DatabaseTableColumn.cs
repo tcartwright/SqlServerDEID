@@ -11,6 +11,7 @@ namespace SqlServerDEID.Common.Globals.Models
     public partial class DatabaseTableColumn
     {
         private string _cleanName = String.Empty;
+        private bool isSelected;
 
         [XmlIgnore]
         [JsonIgnore]
@@ -28,7 +29,7 @@ namespace SqlServerDEID.Common.Globals.Models
 
         [XmlIgnore]
         [JsonIgnore]
-        public bool IsSelected { get; set; }
+        public bool IsSelected { get => isSelected || this.IsPk || this.Transforms.Count > 0; set => isSelected = value; }
 
         internal void SetMetaData(DataRow row)
         {

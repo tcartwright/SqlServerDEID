@@ -117,4 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label5.Text" xml:space="preserve">
+    <value>You can test your transforms here. NO data alterations are made to the source table when run.  When the query is run a copy of the data will be made into a global temp table using SELECT...INTO. All of the transforms will be applied to the global temp table. When this form closes the global temp table will be dropped. A custom where clause can be applied if desired to view different data sets. 
+
+</value>
+  </data>
 </root>

@@ -157,6 +157,22 @@ namespace SqlServerDEID.Editor
                             connection.Open();
                             table.Reset();
                             table.GetMetaData(connection, true);
+
+                            if (!table.Columns.Any(c => c.IsPk))
+                            {
+                                MessageBox.Show(this, "Transforms cannot be created for tables that do not have primary keys. Either add a primary key for this table or select a different table.", "No PK", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                if (tablesGrid.View.IsAddingNew && tablesGrid.IsAddNewRowIndex(tablesGrid.CurrentCell.RowIndex))
+                                {
+                                    _database.Tables.Remove(table);
+                                    tablesGrid.View.CancelNew();
+                                }
+                                else if (this.tablesGrid.View.CanCancelEdit)
+                                {
+                                    tablesGrid.View.CancelEdit();
+                                }
+                                tablesGrid.View.Refresh();
+                                return;
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -285,7 +301,7 @@ namespace SqlServerDEID.Editor
                     var tablesGrid = columnsGrid.NotifyListener.GetParentDataGrid();
 
                     var columns = columnsGrid.DataSource as IList<DatabaseTableColumn>;
-                    var selectedColumns = columns.Where(c => c.IsSelected || c.IsPk || c.Transforms.Count > 0).ToList();
+                    var selectedColumns = columns.Where(c => c.IsSelected).ToList();
 
                     dynamic rowValues = selectedColumns.GetRowValues(_database.Locale);
 
@@ -338,7 +354,8 @@ namespace SqlServerDEID.Editor
                 txtDatabaseName.Enabled =
                 btnConnect.Enabled = enabled;
 
-            btnEditScriptImports.Enabled = !enabled;
+            btnEditScriptImports.Enabled = 
+                btnRefreshTables.Enabled = !enabled;
         }
 
         private void ResetData()
@@ -524,7 +541,7 @@ namespace SqlServerDEID.Editor
                 if (LoadData())
                 {
                     DisableEnableControls(false);
-                    MessageBox.Show(this, "Connected");
+                    MessageBox.Show(this, "Connected", "Connected", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
@@ -599,6 +616,11 @@ namespace SqlServerDEID.Editor
         private void refreshCredentialsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             BindCredentials();
+        }
+
+        private void btnRefreshTables_Click(object sender, EventArgs e)
+        {
+            LoadData();
         }
     }
 }
