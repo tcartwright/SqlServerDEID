@@ -244,7 +244,7 @@ namespace SqlServerDEID.Editor
         private void Grid_ToolTipOpening(object sender, Syncfusion.WinForms.DataGrid.Events.ToolTipOpeningEventArgs e)
         {
             var position = Cursor.Position;
-            var popupDelay = 5000;
+            var popupDelay = 3000;
             e.ToolTipInfo.Items[0].Text = "";
 
             switch (e.Column.MappingName.ToLower())

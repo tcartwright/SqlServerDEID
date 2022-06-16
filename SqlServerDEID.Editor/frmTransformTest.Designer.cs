@@ -66,7 +66,7 @@
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 7;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 115F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
@@ -81,7 +81,7 @@
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(47, 171);
+            this.label2.Location = new System.Drawing.Point(47, 181);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(102, 18);
             this.label2.TabIndex = 22;
@@ -90,7 +90,7 @@
             // txtQuery
             // 
             this.txtQuery.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtQuery.Location = new System.Drawing.Point(155, 53);
+            this.txtQuery.Location = new System.Drawing.Point(155, 63);
             this.txtQuery.Multiline = true;
             this.txtQuery.Name = "txtQuery";
             this.txtQuery.ReadOnly = true;
@@ -103,7 +103,7 @@
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(101, 98);
+            this.label1.Location = new System.Drawing.Point(101, 108);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(48, 18);
             this.label1.TabIndex = 20;
@@ -112,7 +112,7 @@
             // txtWhereClause
             // 
             this.txtWhereClause.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtWhereClause.Location = new System.Drawing.Point(155, 168);
+            this.txtWhereClause.Location = new System.Drawing.Point(155, 178);
             this.txtWhereClause.Name = "txtWhereClause";
             this.txtWhereClause.Size = new System.Drawing.Size(652, 20);
             this.txtWhereClause.TabIndex = 21;
@@ -120,7 +120,7 @@
             // btnRunQuery
             // 
             this.btnRunQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
-            this.btnRunQuery.Location = new System.Drawing.Point(432, 198);
+            this.btnRunQuery.Location = new System.Drawing.Point(432, 208);
             this.btnRunQuery.Name = "btnRunQuery";
             this.btnRunQuery.Size = new System.Drawing.Size(97, 24);
             this.btnRunQuery.TabIndex = 23;
@@ -132,7 +132,7 @@
             // 
             this.gridRawData.AccessibleName = "Table";
             this.gridRawData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridRawData.Location = new System.Drawing.Point(155, 228);
+            this.gridRawData.Location = new System.Drawing.Point(155, 238);
             this.gridRawData.Name = "gridRawData";
             this.gridRawData.Size = new System.Drawing.Size(652, 194);
             this.gridRawData.TabIndex = 24;
@@ -142,7 +142,7 @@
             this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(36, 316);
+            this.label3.Location = new System.Drawing.Point(36, 326);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(113, 18);
             this.label3.TabIndex = 25;
@@ -152,7 +152,7 @@
             // 
             this.btnRunTransform.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.btnRunTransform.Enabled = false;
-            this.btnRunTransform.Location = new System.Drawing.Point(432, 428);
+            this.btnRunTransform.Location = new System.Drawing.Point(432, 438);
             this.btnRunTransform.Name = "btnRunTransform";
             this.btnRunTransform.Size = new System.Drawing.Size(97, 24);
             this.btnRunTransform.TabIndex = 26;
@@ -164,7 +164,7 @@
             // 
             this.gridTransformedData.AccessibleName = "Table";
             this.gridTransformedData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gridTransformedData.Location = new System.Drawing.Point(155, 458);
+            this.gridTransformedData.Location = new System.Drawing.Point(155, 468);
             this.gridTransformedData.Name = "gridTransformedData";
             this.gridTransformedData.Size = new System.Drawing.Size(652, 194);
             this.gridTransformedData.TabIndex = 27;
@@ -174,7 +174,7 @@
             this.label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(21, 546);
+            this.label4.Location = new System.Drawing.Point(21, 556);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(128, 18);
             this.label4.TabIndex = 28;
@@ -186,7 +186,7 @@
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label5.Location = new System.Drawing.Point(155, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(652, 50);
+            this.label5.Size = new System.Drawing.Size(652, 60);
             this.label5.TabIndex = 29;
             this.label5.Text = resources.GetString("label5.Text");
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
