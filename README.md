@@ -49,7 +49,7 @@ A transform file connects to a single database on a server. It can be saved in e
 	- Name: The name of the column.
 
 - Transform 
-	- Transform: The actual transform to be applied to the column. Can either be:
+	- Transform: The actual transform to be applied to the column. Transforms cannot be applied to primary key, identity, or computed columns. A transform can be one of two types:
 		- C# expression. An editor can be used to construct the C# expression. For Faker API support see [here](https://github.com/bchavez/Bogus#bogus-api-support).
 		- Path to a PowerShell file. **
 	- TransformType: The type of expression to run. (expression, PowerShell)
