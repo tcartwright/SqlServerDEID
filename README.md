@@ -2,7 +2,7 @@
 
 NOTE: This documentation is in the process of being fleshed out. 
 
-SqlServerDEID is an application that can DEID (De-Identify) sensitive PCI, HIPPA or GDPR data within your SQL Server database. There are two applications:
+SqlServerDEID is an application that can DEID (De-Identify) sensitive [PCI](https://www.pcisecuritystandards.org/), [HIPPA](https://www.hhs.gov/hipaa/index.html) or [GDPR](https://gdpr-info.eu/) data within your SQL Server database. There are two applications:
 
 - SqlServerDEID.exe: Command line utility that uses a transform file to actually perform the DEID process. Run the application from a command window to see the current command line help.
 - SqlServerDEID.Editor.exe: Windows application that can be used to create and test the transform files. The editor is not required to edit transform files, but it greatly eases doing so.
