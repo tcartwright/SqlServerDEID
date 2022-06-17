@@ -61,13 +61,15 @@ A transform file connects to a single database on a server. It can be saved in e
 - Faker.Name.FullName(Name.Gender.Female)
 	- Generates a full name for a female. Can pass in Male or just remove the gender parameter to generate a random name.
 - Faker.Date.Past(70, DateTime.Now.AddYears(-18)) 
-	- Generates a birthdate between 80 and 18 years of age
+	- Generates a birthdate between 70 and 18 years of age
 - Faker.Person.Ssn() 
 	- Requires the Bogus.Extensions.UnitedStates namespace to be imported. Generates a US SSN.
 - String.Concat(Male.FullName, "<", Male.Email, ">") 
 	- Generates a email address with fullname. Concatenates mulitple faker values. 
 - Faker.Address.ZipCode("#####") 
 	- Generates a five digit zip code using a format
+- Faker.Random.ListItem(new[] { "Item1", "Item2", "Item3", "Item4" })
+	- Select an item from a list of items at random
 
 ## PowerShell file example:
 	[CmdletBinding()]
