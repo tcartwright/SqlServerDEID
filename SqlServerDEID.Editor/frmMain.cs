@@ -558,7 +558,7 @@ namespace SqlServerDEID.Editor
 
                 using (var dialog = new SaveFileDialog())
                 {
-                    dialog.Filter = "Transform Files (*.xml, *.json)|*.xml; *.json|All files (*.*)|*.*";
+                    dialog.Filter = "Transform File (*.json)|*.json|Transform File (*.xml)|*.xml|All files (*.*)|*.*";
                     dialog.RestoreDirectory = true;
                     dialog.FileName = _database.TransformFilePath;
 
