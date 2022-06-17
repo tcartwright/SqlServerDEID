@@ -5,7 +5,7 @@ NOTE: This documentation is in the process of being fleshed out.
 SqlServerDEID is an application that can DEID (De-Identify) sensitive PCI, HIPPA or GDPR data within your SQL Server database. There are two applications:
 
 - SqlServerDEID.exe: Command line utility that uses a transform file to actually perform the DEID process. Run the application from a command window to see the current command line help.
-- SqlServerDEID.Editor.exe: Windows application that can be used to create and test the transform files. 
+- SqlServerDEID.Editor.exe: Windows application that can be used to create and test the transform files. The editor is not required to edit transform files, but it greatly eases doing so.
 
 The fake data is being supplied by the [Bogus library here](https://github.com/bchavez/Bogus).
 
@@ -92,7 +92,32 @@ A transform file connects to a single database on a server. It can be saved in e
 ## Objects available within both the C# and PowerShell
 - Faker: Object that can be used to call any of the Faker API methods to generate fake data to replace the real data with
 - Column: Object that represents the information about the database table column currently being transformed. Can be possibly used within a PS script to branch off name. 
-- RowValues: No intellisense is available for this object. It is a dynamic object that will hold the current row values from the row being transformed. 
+- RowValues: No intellisense is available for this object. It is a dynamic object that will hold the current row values from the row being transformed. Transforms are applied by column and then by row. If you wish to use the column value of a column **after** its been transformed, you must ensure that the column transforms occur in the proper order. 
+    - Example (this is a contrived example. The fullname column would normally be a computed column): 
+<pre>
+    &lt;Column Name="[fname1]">
+		&lt;Transforms>
+			&lt;Transform Transform="Faker.Name.FirstName().ToUpper()" TransformType="expression" WhereClause="" />
+		&lt;/Transforms>
+	&lt;/Column>
+	&lt;Column Name="[middle1]">
+		&lt;Transforms>
+			&lt;Transform Transform="Faker.Name.LastName().Substring(0, 1).ToUpper()" TransformType="expression" WhereClause="[Middle1] IS NOT NULL AND LEN([Middle1]) = 1" />
+			&lt;Transform Transform="Faker.Name.LastName().ToUpper()" TransformType="expression" WhereClause="[Middle1] IS NOT NULL AND LEN([Middle1]) &gt; 1" />
+		&lt;/Transforms>
+	&lt;/Column>
+	&lt;Column Name="[lname1]">
+		&lt;Transforms>
+			&lt;Transform Transform="Faker.Name.LastName().ToUpper()" TransformType="expression" WhereClause="" />
+		&lt;/Transforms>
+	&lt;/Column>
+	&lt;Column Name="[fullname]">
+		&lt;Transforms>
+			&lt;Transform Transform="String.Concat(RowValues.fname1, &quot; &quot;, RowValues.middle1, &quot; &quot;, RowValues.lname1)" TransformType="expression" WhereClause="[middle1] IS NOT NULL" />
+			&lt;Transform Transform="String.Concat(RowValues.fname1, &quot; &quot;, RowValues.lname1)" TransformType="expression" WhereClause="[middle1] IS NULL" />
+		&lt;/Transforms>
+	&lt;/Column>
+</pre>
 - Male: A gendered person where all of the personal data is co-related.
 - Female: A gendered person where all of the personal data is co-related.
 
