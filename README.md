@@ -1,6 +1,8 @@
 # SqlServerDEID
 
-NOTE: This documentation is in the process of being fleshed out. 
+NOTE: 
+- This documentation is in the process of being fleshed out. 
+- I also have potential ideas about making this database generic.
 
 SqlServerDEID is an application that can DEID (De-Identify) sensitive [PCI](https://www.pcisecuritystandards.org/), [HIPPA](https://www.hhs.gov/hipaa/index.html) or [GDPR](https://gdpr-info.eu/) data within your SQL Server database. There are two applications:
 
@@ -74,15 +76,15 @@ A transform file connects to a single database on a server. It can be saved in e
 ## PowerShell file example:
 	[CmdletBinding()]
 	param (
-		[Parameter(Mandatory=$true)]
+		[Parameter()]
 		$Faker, 
-		[Parameter(Mandatory=$true)]
+		[Parameter()]
 		$Column, 
-		[Parameter(Mandatory=$true)]
+		[Parameter()]
 		$RowValues, 
 		[Parameter()]
 		$Male, 
-		[Parameter(Mandatory=$true)]
+		[Parameter()]
 		$Female
 	)
 	<#
