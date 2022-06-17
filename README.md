@@ -1,3 +1,5 @@
+# SqlServerDEID
+
 NOTE: This documentation is in the process of being fleshed out. 
 
 SqlServerDEID is an application that can DEID (De-Identify) sensitive PCI, HIPPA or GDPR data within your SQL Server database. There are two applications:
@@ -5,24 +7,25 @@ SqlServerDEID is an application that can DEID (De-Identify) sensitive PCI, HIPPA
 - SqlServerDEID.exe: Command line utility that uses a transform file to actually perform the DEID process. Run the application from a command window to see the current command line help.
 - SqlServerDEID.Editor.exe: Windows application that can be used to create and test the transform files. 
 
-The faker data is being supplied by the [Bogus library here](https://github.com/bchavez/Bogus).
+The fake data is being supplied by the [Bogus library here](https://github.com/bchavez/Bogus).
 
-Transforms:
+## Transform file structure:
 A transform file connects to a single database on a server. It can be saved in either json or xml format. Pseudo format:
 
 	- Database (properties: ServerName, Port, DatabaseName, CredentialsName, Locale, PreScript, PostScript, ScriptTimeout)
-		- ScriptingImports
+		- ScriptingImports (0 to many)
 			- NameSpace 
-		- Tables 
+		- Tables (1 to many)
 			- Table (properties: Name, DisableTriggers, DisableConstraints, PreScript, PostScript, ScriptTimeout)
-				- Columns
+				- Columns (1 to many)
 					- Column (properties: Name)
-						- Transforms 
+						- Transforms (0 to many)
 							- Transform (properties: Transform, TransformType, WhereClause)
 
 
+## Transform object properties
 - Database
-	- ServerName: The server name of the SQL Server.
+    - ServerName: The server name of the SQL Server.
 	- Port: The port of the SQL Server, defaults to 1433.
 	- DatabaseName: The database name.
 	- CredentialsName: If missing or empty, then a trusted connection will be used. If supplied, it must match a generic credential name found in the windows [Credential Manager](https://support.microsoft.com/en-us/windows/accessing-credential-manager-1b5c916a-6a16-889f-8581-fc16e8165ac0).
@@ -31,7 +34,7 @@ A transform file connects to a single database on a server. It can be saved in e
 	- PostScript: A path to a SQL script that will be run after any table transforms are applied. Will not be used when testing from the transform test form. **
 	- ScriptTimeout: The timeout in seconds before either the postscript or the prescript will throw a timeout exception.
 
-- ScriptingImports (0 to many)
+- ScriptingImports 
 	- NameSpace: Addtional namespaces can be brought in for access to additional built in functions in the C# expressions. There are also custom namespaces the Bogus library supports for additonal functionality. See [here](https://github.com/bchavez/Bogus#api-extension-methods) for more information. For example, to be able to use the Faker.Person.Ssn() function you must import the namespace: Bogus.Extensions.UnitedStates.
 
 - Table 
@@ -51,21 +54,28 @@ A transform file connects to a single database on a server. It can be saved in e
 		- Path to a PowerShell file. **
 	- TransformType: The type of expression to run. (expression, PowerShell)
 	- WhereClause: A SQL where clause used to limit the rows that the transform is applied to.
-		- The SQL is a cut down syntax. See [DataColumn.Expression](https://docs.microsoft.com/en-us/dotnet/api/system.data.datacolumn.expression?view=net-6.0) for more information.
+		- The SQL for the where clause is a cut down syntax. See [DataColumn.Expression](https://docs.microsoft.com/en-us/dotnet/api/system.data.datacolumn.expression?view=net-6.0#expression-syntax) for more information.
 		- When multiple transforms are applied to the same column then where clauses are required. 
 
+## C# Expression Examples:
+- Faker.Name.FullName(Name.Gender.Female)
+	- Generates a full name for a female. Can pass in Male or just remove the gender parameter to generate a random name.
+- Faker.Date.Past(70, DateTime.Now.AddYears(-18)) 
+	- Generates a birthdate between 80 and 18 years of age
+- Faker.Person.Ssn() 
+	- Requires the Bogus.Extensions.UnitedStates namespace to be imported. Generates a US SSN.
+- String.Concat(Male.FullName, "<", Male.Email, ">") 
+	- Generates a email address with fullname. Concatenates mulitple faker values. 
+- Faker.Address.ZipCode("#####") 
+	- Generates a five digit zip code using a format
 
-** All paths to SQL files, and PowerShell files can be absolute or relative. Relative paths are relative to the file location of the transform file itself.
-
-
-An example PowerShell file:
-
+## PowerShell file example:
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory=$true)]
 		$Faker, 
 		[Parameter(Mandatory=$true)]
-		$ColumnInfo, 
+		$Column, 
 		[Parameter(Mandatory=$true)]
 		$RowValues, 
 		[Parameter()]
@@ -78,3 +88,13 @@ An example PowerShell file:
 	#>
 
 	Write-Output $Faker.Name.FullName('Female')
+
+## Objects available within both the C# and PowerShell
+- Faker: Object that can be used to call any of the Faker API methods to generate fake data to replace the real data with
+- Column: Object that represents the information about the database table column currently being transformed. Can be possibly used within a PS script to branch off name. 
+- RowValues: No intellisense is available for this object. It is a dynamic object that will hold the current row values from the row being transformed. 
+- Male: A gendered person where all of the personal data is co-related.
+- Female: A gendered person where all of the personal data is co-related.
+
+### Miscellaneous information
+** All paths to SQL files, and PowerShell files can be absolute or relative. Relative paths are relative to the file location of the transform file itself.
