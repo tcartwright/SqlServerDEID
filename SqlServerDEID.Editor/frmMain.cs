@@ -25,10 +25,14 @@ namespace SqlServerDEID.Editor
 {
     public partial class frmMain : Form
     {
+        #region privates
         private Database _database;
         private readonly StringComparer _stringComparer = StringComparer.OrdinalIgnoreCase;
         private readonly SfToolTip _tooltip = new SfToolTip() { AutoPopDelay = 5000 };
+        private string _currentFileName = null;
+        #endregion privates
 
+        #region form 
         public frmMain()
         {
             InitializeComponent();
@@ -42,7 +46,9 @@ namespace SqlServerDEID.Editor
             portNumber.Value = GetDefaultSqlPort();
             this.Text = "SQL Server DEID Editor";
         }
+        #endregion form 
 
+        #region private methods
         private void BindCredentials()
         {
             var credentials = CredentialManager.EnumerateCredentials()
@@ -57,7 +63,6 @@ namespace SqlServerDEID.Editor
             ddlCredentials.DataSource = credentials;
             ddlCredentials.SelectedIndex = 0;
         }
-
         private void SetupGrid()
         {
             var transformTypeValues = Enum.GetValues(typeof(TransformType))
@@ -139,11 +144,180 @@ namespace SqlServerDEID.Editor
                 DataGrid = transformsGrid
             });
         }
+        private void LoadFile(string fileName)
+        {
+            var currentCursor = Cursor.Current;
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
 
+                ResetData();
+
+                _database = Database.LoadFile(fileName);
+
+                LoadData();
+
+                DisableEnableControls(false);
+            }
+            catch (Exception ex)
+            {
+                this.MessageException(ex, "Exception trying to load file:", cursor: currentCursor);
+            }
+            Cursor.Current = currentCursor;
+        }
+        private void DisableEnableControls(bool enabled = false)
+        {
+            txtServerName.Enabled =
+                txtDatabaseName.Enabled =
+                btnConnect.Enabled = enabled;
+
+            btnEditScriptImports.Enabled =
+                btnRefreshTables.Enabled = !enabled;
+        }
+        private void ResetData()
+        {
+            ////tablesGrid.DataBindings.Clear();
+            //tablesGrid.DataSource = null;
+            //bindingSourceFormMain.DataSource = typeof(Database); //cant use null for this one... for w/e reason
+            ddlCredentials.SelectedIndex = 0;
+        }
+        private bool LoadData()
+        {
+            var currentCursor = Cursor.Current;
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                DataTable tables;
+                using (var connection = _database.GetConnection())
+                {
+                    connection.Open();
+                    _database.GetMetaData(connection, true);
+                    tables = connection.ExecuteDataTable(Resources.GetTableNames.Replace("{{DB_NAME}}", _database.DatabaseName.CleanName()));
+                }
+                var tablesCombo = (GridComboBoxColumn)tablesGrid.Columns["Name"];
+                tablesCombo.DataSource = tables;
+                tablesCombo.MappingName = "Name";
+                tablesCombo.ValueMember = "TableName";
+                tablesCombo.DisplayMember = "TableName";
+
+                tablesGrid.DataSource = _database.Tables;
+                bindingSourceFormMain.DataSource = _database;
+
+                ValidateForm();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageException(ex, "Problem loading data.", cursor: currentCursor);
+                return false;
+            }
+            finally
+            {
+                Cursor.Current = currentCursor;
+            }
+        }
+        private string ProperCase(string value)
+        {
+            return $"{Char.ToUpper(value[0])}{value.Substring(1)}";
+        }
+        private int GetDefaultSqlPort()
+        {
+            var port = 1433;
+            int.TryParse(ConfigurationManager.AppSettings["DefaultPort"], out port);
+            return port;
+        }
+        private void BindNewDatabase()
+        {
+            _database = new Database();
+            _database.Port = GetDefaultSqlPort();
+            ResetData();
+            tablesGrid.DataSource = _database.Tables;
+            bindingSourceFormMain.DataSource = _database;
+            DisableEnableControls(true);
+            txtServerName.Focus();
+            ddlCredentials.SelectedIndex = 0;
+        }
+        private void MessageException(Exception ex, string message, string title = "Exception", Cursor cursor = null)
+        {
+            if (cursor == null) { cursor = Cursors.Default; }
+            Cursor.Current = Cursors.Default;
+            var msg = $"{message} Exception:\r\n\r\n{ex.Message}";
+            MessageBox.Show(this, msg, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Cursor.Current = cursor;
+        }
+        private void SaveFile()
+        {
+            var currentCursor = Cursor.Current;
+            Cursor.Current = Cursors.WaitCursor;
+            var db = _database.CloneObject<Database>();
+            db.RemoveNullTransforms();
+
+            try
+            {
+                var ext = Path.GetExtension(db.TransformFilePath).ToLower();
+
+                if (_stringComparer.Equals(ext, ".xml"))
+                {
+                    File.WriteAllText(db.TransformFilePath, db.ToXml());
+                }
+                else if (_stringComparer.Equals(ext, ".json"))
+                {
+                    File.WriteAllText(db.TransformFilePath, db.ToJson());
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageException(ex, "Exception saving file.", cursor: currentCursor);
+            }
+            Cursor.Current = currentCursor;
+        }
+        private void ValidateForSave()
+        {
+            if (!_database.Tables.Any(t => t.HasTransforms()))
+            {
+                MessageBox.Show(this, "The current database does not have any transforms and cannot be saved.", "No Transforms", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private bool ValidateServerName()
+        {
+            if (string.IsNullOrWhiteSpace(txtServerName.Text))
+            {
+                errorProvider1.SetError(txtServerName, "ServerName is required");
+                return false;
+            }
+            else
+            {
+                errorProvider1.SetError(txtServerName, "");
+                return true;
+            }
+        }
+        private bool ValidateDatabaseName()
+        {
+            if (string.IsNullOrWhiteSpace(txtDatabaseName.Text))
+            {
+                errorProvider1.SetError(txtDatabaseName, "Database name is required");
+                return false;
+            }
+            else
+            {
+                errorProvider1.SetError(txtDatabaseName, "");
+                return true;
+            }
+        }
+        private bool ValidateForm()
+        {
+            return ValidateServerName()
+                && ValidateDatabaseName();
+        }
+
+        #endregion private methods
+
+        #region grid events
         private void TablesGrid_CellComboBoxSelectionChanged(object sender, CellComboBoxSelectionChangedEventArgs e)
         {
             if (_stringComparer.Equals(e.GridColumn.MappingName, "Name"))
             {
+                Cursor.Current = Cursors.WaitCursor;
                 var table = e.Record as DatabaseTable;
                 var selection = Convert.ToString(((DataRowView)e.SelectedItem).Row.ItemArray.FirstOrDefault());
 
@@ -183,10 +357,11 @@ namespace SqlServerDEID.Editor
                     {
                         MessageException(ex, "Problem loading data.");
                     }
+
+                    Cursor.Current = Cursors.Default;
                 }
             }
         }
-
         private void TablesGrid_CurrentCellBeginEdit(object sender, CurrentCellBeginEditEventArgs e)
         {
             if (_stringComparer.Equals(e.DataColumn.GridColumn.MappingName, "Name"))
@@ -199,7 +374,6 @@ namespace SqlServerDEID.Editor
                 }
             }
         }
-
         private void TablesGrid_RecordDeleting(object sender, Syncfusion.WinForms.DataGrid.Events.RecordDeletingEventArgs e)
         {
             var table = tablesGrid.CurrentItem as DatabaseTable;
@@ -210,7 +384,6 @@ namespace SqlServerDEID.Editor
                 e.Cancel = true;
             }
         }
-
         private void TablesGrid_CellButtonClick(object sender, Syncfusion.WinForms.DataGrid.Events.CellButtonClickEventArgs e)
         {
             var table = ((DataRowBase)e.Record).RowData as DatabaseTable;
@@ -232,7 +405,6 @@ namespace SqlServerDEID.Editor
                 //TODO: is there anything to do here???
             }
         }
-
         private void ColumnsGrid_DetailsViewExpanding(object sender, Syncfusion.WinForms.DataGrid.Events.DetailsViewExpandingEventArgs e)
         {
             //var grid = e.OriginalSender as SfDataGrid;
@@ -244,7 +416,6 @@ namespace SqlServerDEID.Editor
                 e.Cancel = true;
             }
         }
-
         private void Grid_ToolTipOpening(object sender, Syncfusion.WinForms.DataGrid.Events.ToolTipOpeningEventArgs e)
         {
             var position = Cursor.Position;
@@ -278,7 +449,6 @@ namespace SqlServerDEID.Editor
                     break;
             }
         }
-
         private void TransformsGrid_CellComboBoxSelectionChanged(object sender, CellComboBoxSelectionChangedEventArgs e)
         {
             var transform = e.Record as DatabaseTableColumnTransform;
@@ -288,7 +458,6 @@ namespace SqlServerDEID.Editor
             }
             transform.Transform = null;
         }
-
         private void TransformsChildGrid_CellButtonClick(object sender, Syncfusion.WinForms.DataGrid.Events.CellButtonClickEventArgs e)
         {
             var row = e.Record as DataRowBase;
@@ -333,84 +502,9 @@ namespace SqlServerDEID.Editor
                 MessageBox.Show(this, "Only transforms of type expression can be edited.", "Edit Transform", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+        #endregion grid events
 
-        private void LoadFile(string fileName)
-        {
-            try
-            {
-                ResetData();
-
-                _database = Database.LoadFile(fileName);
-
-                LoadData();
-
-                DisableEnableControls(false);
-            }
-            catch (Exception ex)
-            {
-                this.MessageException(ex, "Exception trying to load file:");
-            }
-        }
-
-        private void DisableEnableControls(bool enabled = false)
-        {
-            txtServerName.Enabled =
-                txtDatabaseName.Enabled =
-                btnConnect.Enabled = enabled;
-
-            btnEditScriptImports.Enabled = 
-                btnRefreshTables.Enabled = !enabled;
-        }
-
-        private void ResetData()
-        {
-            ////tablesGrid.DataBindings.Clear();
-            //tablesGrid.DataSource = null;
-            //bindingSourceFormMain.DataSource = typeof(Database); //cant use null for this one... for w/e reason
-            ddlCredentials.SelectedIndex = 0;
-        }
-
-        private bool LoadData()
-        {
-            try
-            {
-                Cursor.Current = Cursors.WaitCursor;
-                DataTable tables;
-                using (var connection = _database.GetConnection())
-                {
-                    connection.Open();
-                    _database.GetMetaData(connection, true);
-                    tables = connection.ExecuteDataTable(Resources.GetTableNames.Replace("{{DB_NAME}}", _database.DatabaseName.CleanName()));
-                }
-                var tablesCombo = (GridComboBoxColumn)tablesGrid.Columns["Name"];
-                tablesCombo.DataSource = tables;
-                tablesCombo.MappingName = "Name";
-                tablesCombo.ValueMember = "TableName";
-                tablesCombo.DisplayMember = "TableName";
-
-                tablesGrid.DataSource = _database.Tables;
-                bindingSourceFormMain.DataSource = _database;
-
-                ValidateForm();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Cursor.Current = Cursors.Default;
-                MessageException(ex, "Problem loading data.");
-                return false;
-            }
-            finally
-            {
-                Cursor.Current = Cursors.Default;
-            }
-        }
-
-        private string ProperCase(string value)
-        {
-            return $"{Char.ToUpper(value[0])}{value.Substring(1)}";
-        }
-
+        #region menu events
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -429,7 +523,6 @@ namespace SqlServerDEID.Editor
             }
             catch (Exception ex)
             {
-                Cursor.Current = Cursors.Default;
                 MessageException(ex, "Exception loading file.");
             }
             finally
@@ -437,37 +530,10 @@ namespace SqlServerDEID.Editor
                 Cursor.Current = Cursors.Default;
             }
         }
-
-        private void MessageException(Exception ex, string message, string title = "Exception")
-        {
-            var msg = $"{message} Exception:\r\n\r\n{ex.Message}";
-            MessageBox.Show(this, msg, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
         private void newToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             BindNewDatabase();
         }
-
-        private int GetDefaultSqlPort()
-        {
-            var port = 1433;
-            int.TryParse(ConfigurationManager.AppSettings["DefaultPort"], out port);
-            return port;
-        }
-
-        private void BindNewDatabase()
-        {
-            _database = new Database();
-            _database.Port = GetDefaultSqlPort();
-            ResetData();
-            tablesGrid.DataSource = _database.Tables;
-            bindingSourceFormMain.DataSource = _database;
-            DisableEnableControls(true);
-            txtServerName.Focus();
-            ddlCredentials.SelectedIndex = 0;
-        }
-
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (_database != null)
@@ -484,7 +550,6 @@ namespace SqlServerDEID.Editor
                 }
             }
         }
-
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (_database != null)
@@ -505,39 +570,17 @@ namespace SqlServerDEID.Editor
                 }
             }
         }
-
-        private void SaveFile()
+        private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            var db = _database.CloneObject<Database>();
-            db.RemoveNullTransforms();
-
-            try
-            {
-                var ext = Path.GetExtension(db.TransformFilePath).ToLower();
-
-                if (_stringComparer.Equals(ext, ".xml"))
-                {
-                    File.WriteAllText(db.TransformFilePath, db.ToXml());
-                }
-                else if (_stringComparer.Equals(ext, ".json"))
-                {
-                    File.WriteAllText(db.TransformFilePath, db.ToJson());
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageException(ex, "Exception saving file.");
-            }
+            this.Close();
         }
-
-        private void ValidateForSave()
+        private void refreshCredentialsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!_database.Tables.Any(t => t.HasTransforms()))
-            {
-                MessageBox.Show(this, "The current database does not have any transforms and cannot be saved.", "No Transforms", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            BindCredentials();
         }
+        #endregion menu events
 
+        #region button events
         private void btnConnect_Click(object sender, EventArgs e)
         {
             if (ValidateForm())
@@ -549,7 +592,21 @@ namespace SqlServerDEID.Editor
                 }
             }
         }
+        private void btnEditScriptImports_Click(object sender, EventArgs e)
+        {
+            // https://localcoder.org/is-there-any-way-to-use-a-collectioneditor-outside-of-the-property-grid
+            PropertyDescriptor pd = TypeDescriptor.GetProperties(_database)["ScriptingImports"];
+            UITypeEditor editor = (UITypeEditor)pd.GetEditor(typeof(UITypeEditor));
+            RuntimeServiceProvider serviceProvider = new RuntimeServiceProvider();
+            editor.EditValue(serviceProvider, serviceProvider, _database.ScriptingImports);
+        }
+        private void btnRefreshTables_Click(object sender, EventArgs e)
+        {
+            LoadData();
+        }
+        #endregion button events
 
+        #region misc control events
         private void txtServerName_Validating(object sender, CancelEventArgs e)
         {
             ValidateServerName();
@@ -558,48 +615,6 @@ namespace SqlServerDEID.Editor
         private void txtDatabaseName_Validating(object sender, CancelEventArgs e)
         {
             ValidateDatabaseName();
-        }
-
-        private bool ValidateServerName()
-        {
-            if (string.IsNullOrWhiteSpace(txtServerName.Text))
-            {
-                errorProvider1.SetError(txtServerName, "ServerName is required");
-                return false;
-            }
-            else
-            {
-                errorProvider1.SetError(txtServerName, "");
-                return true;
-            }
-        }
-        private bool ValidateDatabaseName()
-        {
-            if (string.IsNullOrWhiteSpace(txtDatabaseName.Text))
-            {
-                errorProvider1.SetError(txtDatabaseName, "Database name is required");
-                return false;
-            }
-            else
-            {
-                errorProvider1.SetError(txtDatabaseName, "");
-                return true;
-            }
-        }
-
-        private bool ValidateForm()
-        {
-            return ValidateServerName()
-                && ValidateDatabaseName();
-        }
-
-        private void btnEditScriptImports_Click(object sender, EventArgs e)
-        {
-            // https://localcoder.org/is-there-any-way-to-use-a-collectioneditor-outside-of-the-property-grid
-            PropertyDescriptor pd = TypeDescriptor.GetProperties(_database)["ScriptingImports"];
-            UITypeEditor editor = (UITypeEditor)pd.GetEditor(typeof(UITypeEditor));
-            RuntimeServiceProvider serviceProvider = new RuntimeServiceProvider();
-            editor.EditValue(serviceProvider, serviceProvider, _database.ScriptingImports);
         }
 
         private void txtLocale_DoubleClick(object sender, EventArgs e)
@@ -611,20 +626,7 @@ namespace SqlServerDEID.Editor
         {
             Process.Start("https://github.com/bchavez/Bogus#api-extension-methods");
         }
+        #endregion misc control events
 
-        private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void refreshCredentialsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            BindCredentials();
-        }
-
-        private void btnRefreshTables_Click(object sender, EventArgs e)
-        {
-            LoadData();
-        }
     }
 }
