@@ -400,8 +400,10 @@ namespace SqlServerDEID.Common
 
                 ps.AddCommand(path)
                     .AddParameter("Faker", scriptGlobals.Faker)
-                    .AddParameter("ColumnInfo", scriptGlobals.Column)
-                    .AddParameter("RowValues", scriptGlobals.RowValues);
+                    .AddParameter("Column", scriptGlobals.Column)
+                    .AddParameter("RowValues", scriptGlobals.RowValues)
+                    .AddParameter("Male", scriptGlobals.Male)
+                    .AddParameter("Female", scriptGlobals.Female);
 
                 var streams = ps.Streams;
                 if (OutputPowershell)
