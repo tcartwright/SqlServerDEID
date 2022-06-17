@@ -90,9 +90,9 @@ A transform file connects to a single database on a server. It can be saved in e
 	Write-Output $Faker.Name.FullName('Female')
 
 ## Objects available within both the C# and PowerShell
-- Faker: Object that can be used to call any of the Faker API methods to generate fake data to replace the real data with
+- Faker: Object that can be used to call any of the [Faker API methods](https://github.com/bchavez/Bogus#bogus-api-support) to generate fake data to replace the real data with.
 - Column: Object that represents the information about the database table column currently being transformed. Can be possibly used within a PS script to branch off name. 
-- RowValues: No intellisense is available for this object. It is a dynamic object that will hold the current row values from the row being transformed. Transforms are applied by column and then by row. If you wish to use the column value of a column **after** its been transformed, you must ensure that the column transforms occur in the proper order. It is not possible to re-arrange the column transform order in the editor. Changing the order would have to be done manually. In the below example, the fullname must occur **after** the other name columns used so as to retrieve the new fake values. If placed prior to the other name columns then it would get the original sensitive data.
+- RowValues: No intellisense is available for this object. It is a dynamic object that will hold the current row values from the row being transformed. Transforms are applied by column and then by row. If you wish to use the column value of a column **after** its been transformed, you must ensure that the column transforms occur in the proper order. It is not possible to re-arrange the column transform order in the editor. Changing the order has to be done manually. In the below example, the fullname must occur **after** the other name columns used so as to retrieve the new fake values. If placed prior to the other name columns then it would get the original sensitive data.
     - Example (this is a contrived example. The fullname column would normally be a computed column): 
 <pre>
     &lt;Column Name="[fname1]">
