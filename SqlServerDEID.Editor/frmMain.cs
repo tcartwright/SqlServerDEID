@@ -173,6 +173,10 @@ namespace SqlServerDEID.Editor
                                 tablesGrid.View.Refresh();
                                 return;
                             }
+                            if (tablesGrid.View.IsAddingNew && tablesGrid.IsAddNewRowIndex(tablesGrid.CurrentCell.RowIndex))
+                            {
+                                tablesGrid.View.CommitNew();
+                            }
                         }
                     }
                     catch (Exception ex)

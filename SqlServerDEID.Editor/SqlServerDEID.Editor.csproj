@@ -23,6 +23,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\SqlServerDEID.Common.Globals\SqlServerDEID.Common.Globals.csproj" />
 		<ProjectReference Include="..\SqlServerDEID.Common\SqlServerDEID.Common.csproj" />
+		<ProjectReference Include="..\SqlServerDEID\SqlServerDEID.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Reference Include="PresentationFramework" />
