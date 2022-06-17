@@ -11,6 +11,8 @@ Transforms:
 A transform file connects to a single database on a server. It can be saved in either json or xml format. Pseudo format:
 
 	- Database (properties: ServerName, Port, DatabaseName, CredentialsName, Locale, PreScript, PostScript, ScriptTimeout)
+		- ScriptingImports
+			- NameSpace 
 		- Tables 
 			- Table (properties: Name, DisableTriggers, DisableConstraints, PreScript, PostScript, ScriptTimeout)
 				- Columns
@@ -29,6 +31,9 @@ A transform file connects to a single database on a server. It can be saved in e
 	- PostScript: A path to a SQL script that will be run after any table transforms are applied. Will not be used when testing from the transform test form. **
 	- ScriptTimeout: The timeout in seconds before either the postscript or the prescript will throw a timeout exception.
 
+- ScriptingImports (0 to many)
+	- NameSpace: Addtional namespaces can be brought in for access to additional built in functions in the C# expressions. There are also custom namespaces the Bogus library supports for additonal functionality. See [here](https://github.com/bchavez/Bogus#api-extension-methods) for more information. For example, to be able to use the Faker.Person.Ssn() function you must import the namespace: Bogus.Extensions.UnitedStates.
+
 - Table 
 	- Name: The name of the database table. Must include schema.
 	- DisableTriggers: If true will disable all triggers before the table transform, and re-enable them after.
@@ -42,7 +47,7 @@ A transform file connects to a single database on a server. It can be saved in e
 
 - Transform 
 	- Transform: The actual transform to be applied to the column. Can either be:
-		- C# expression. An editor can be used to construct the C# expression.
+		- C# expression. An editor can be used to construct the C# expression. For Faker API support see [here](https://github.com/bchavez/Bogus#bogus-api-support).
 		- Path to a PowerShell file. **
 	- TransformType: The type of expression to run. (expression, PowerShell)
 	- WhereClause: A SQL where clause used to limit the rows that the transform is applied to.
