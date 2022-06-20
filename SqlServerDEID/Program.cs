@@ -33,50 +33,48 @@ namespace SqlServerDEID
             _handler += new EventHandler(Handler);
             SetConsoleCtrlHandler(_handler, true);
 
-            DeidCmdLineOptions deidCmdLineOptions = null;
-            CredentialCmdLineOptions credentialCmdLineOptions = null;
-
+            int result = 0;
             var parserResult = Parser.Default
                 .ParseArguments<DeidCmdLineOptions, CredentialCmdLineOptions>(args)
-                .WithParsed<DeidCmdLineOptions>(options => deidCmdLineOptions = options)
-                .WithParsed<CredentialCmdLineOptions>(options => credentialCmdLineOptions = options);
+                .WithParsed<DeidCmdLineOptions>(options => result = RunDEID(options))
+                .WithParsed<CredentialCmdLineOptions>(options => result = RunCredentialsOp(options))
+                .WithNotParsed(errors => result = -1);
 
-            var notParsed = parserResult as NotParsed<object>;
-            if (notParsed != null && notParsed.Errors.Any())
+            return result;
+        }
+
+        private static int RunCredentialsOp(CredentialCmdLineOptions credentialCmdLineOptions)
+        {
+            try
             {
-                return -1;
+                if (credentialCmdLineOptions.SaveCredential)
+                {
+                    DEID.WriteCredential(credentialCmdLineOptions.ApplicationName, credentialCmdLineOptions.UserName, credentialCmdLineOptions.Password);
+                    Console.WriteLine($"Credential '{credentialCmdLineOptions.ApplicationName}' written to the credential manager.");
+                }
+                else if (credentialCmdLineOptions.RemoveCredential)
+                {
+                    DEID.RemoveCredential(credentialCmdLineOptions.ApplicationName);
+                    Console.WriteLine($"Credential '{credentialCmdLineOptions.ApplicationName}' removed from the credential manager.");
+                }
+                return 0;
             }
-
-            if (credentialCmdLineOptions != null)
+            catch (Exception ex)
             {
-                try
-                {
-                    if (credentialCmdLineOptions.SaveCredential)
-                    {
-                        DEID.WriteCredential(credentialCmdLineOptions.ApplicationName, credentialCmdLineOptions.UserName, credentialCmdLineOptions.Password);
-                        Console.WriteLine($"Credential '{credentialCmdLineOptions.ApplicationName}' written to the credential manager.");
-                    }
-                    else if (credentialCmdLineOptions.RemoveCredential)
-                    {
-                        DEID.RemoveCredential(credentialCmdLineOptions.ApplicationName);
-                        Console.WriteLine($"Credential '{credentialCmdLineOptions.ApplicationName}' removed from the credential manager.");
-                    }
-                    return 0;
-                }
-                catch (Exception ex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(ex.Message);
-                    Console.ResetColor();
-                    return -5;
-                }
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.Message);
+                Console.ResetColor();
+                return -5;
             }
+        }
 
+        private static int RunDEID(DeidCmdLineOptions options)
+        {
             try
             {
                 var stopwatch = Stopwatch.StartNew();
-                _deid = new DEID(deidCmdLineOptions.TablesThreadCount, deidCmdLineOptions.UdateBatchSize, deidCmdLineOptions.ProcessRowCount, deidCmdLineOptions.OutputPowershell);
-                _deid.RunTransform(deidCmdLineOptions.File);
+                _deid = new DEID(options.TablesThreadCount, options.UdateBatchSize, options.ProcessRowCount, options.OutputPowershell);
+                _deid.RunTransform(options.File);
                 stopwatch.Stop();
                 Console.WriteLine("Done in {0}", stopwatch.Elapsed.ToStringFormat());
                 return 0;
