@@ -33,23 +33,50 @@ namespace SqlServerDEID
             _handler += new EventHandler(Handler);
             SetConsoleCtrlHandler(_handler, true);
 
-            CmdLineOptions cmdLineOptions = null;
+            DeidCmdLineOptions deidCmdLineOptions = null;
+            CredentialCmdLineOptions credentialCmdLineOptions = null;
 
             var parserResult = Parser.Default
-                .ParseArguments<CmdLineOptions>(args)
-                .WithParsed(options => cmdLineOptions = options);
+                .ParseArguments<DeidCmdLineOptions, CredentialCmdLineOptions>(args)
+                .WithParsed<DeidCmdLineOptions>(options => deidCmdLineOptions = options)
+                .WithParsed<CredentialCmdLineOptions>(options => credentialCmdLineOptions = options);
 
-            var notParsed = parserResult as NotParsed<CmdLineOptions>;
+            var notParsed = parserResult as NotParsed<object>;
             if (notParsed != null && notParsed.Errors.Any())
             {
                 return -1;
             }
 
+            if (credentialCmdLineOptions != null)
+            {
+                try
+                {
+                    if (credentialCmdLineOptions.SaveCredential)
+                    {
+                        DEID.WriteCredential(credentialCmdLineOptions.ApplicationName, credentialCmdLineOptions.UserName, credentialCmdLineOptions.Password);
+                        Console.WriteLine($"Credential '{credentialCmdLineOptions.ApplicationName}' written to the credential manager.");
+                    }
+                    else if (credentialCmdLineOptions.RemoveCredential)
+                    {
+                        DEID.RemoveCredential(credentialCmdLineOptions.ApplicationName);
+                        Console.WriteLine($"Credential '{credentialCmdLineOptions.ApplicationName}' removed from the credential manager.");
+                    }
+                    return 0;
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(ex.Message);
+                    Console.ResetColor();
+                    return -5;
+                }
+            }
+
             try
             {
                 var stopwatch = Stopwatch.StartNew();
-                _deid = new DEID(cmdLineOptions.TablesThreadCount, cmdLineOptions.UdateBatchSize, cmdLineOptions.ProcessRowCount, cmdLineOptions.OutputPowershell);
-                _deid.RunTransform(cmdLineOptions.File);
+                _deid = new DEID(deidCmdLineOptions.TablesThreadCount, deidCmdLineOptions.UdateBatchSize, deidCmdLineOptions.ProcessRowCount, deidCmdLineOptions.OutputPowershell);
+                _deid.RunTransform(deidCmdLineOptions.File);
                 stopwatch.Stop();
                 Console.WriteLine("Done in {0}", stopwatch.Elapsed.ToStringFormat());
                 return 0;

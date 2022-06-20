@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
+﻿using Meziantou.Framework.Win32;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.PowerShell;
 using SqlServerDEID.Common.Globals.Extensions;
@@ -33,6 +34,16 @@ namespace SqlServerDEID.Common
         public int UpdateBatchSize { get; }
         public int ProcessRowCount { get; }
         public bool OutputPowershell { get; }
+
+        public static void WriteCredential(string applicationName, string userName, string password)
+        {
+            CredentialManager.WriteCredential(applicationName, userName, password, CredentialPersistence.LocalMachine);
+        }
+
+        public static void RemoveCredential(string applicationName)
+        {
+            CredentialManager.DeleteCredential(applicationName);
+        }
 
         public DEID(int tablesThreadCount, int updateBatchSize, int processRowCount, bool outputPowershell, Action<string, MessageImportance> stdout = null, Action<string> stderror = null)
         {
