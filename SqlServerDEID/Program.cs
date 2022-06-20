@@ -28,22 +28,31 @@ namespace SqlServerDEID
         }
         #endregion
 
+        enum RETURN_VALUE: int
+        {
+            OK = 0,  
+            CMD_LINE_NOT_PARSED = -1,
+            CREDENTIAL_FAILURE = -2,
+            OPERATION_CANCELLED = -3,
+            DEID_EXCEPTION = -4
+        }
+
         static int Main(string[] args)
         {
             _handler += new EventHandler(Handler);
             SetConsoleCtrlHandler(_handler, true);
 
-            int result = 0;
+            var result = RETURN_VALUE.OK;
             var parserResult = Parser.Default
                 .ParseArguments<DeidCmdLineOptions, CredentialCmdLineOptions>(args)
                 .WithParsed<DeidCmdLineOptions>(options => result = RunDEID(options))
                 .WithParsed<CredentialCmdLineOptions>(options => result = RunCredentialsOp(options))
-                .WithNotParsed(errors => result = -1);
+                .WithNotParsed(errors => result = RETURN_VALUE.CMD_LINE_NOT_PARSED);
 
-            return result;
+            return Convert.ToInt32(result);
         }
 
-        private static int RunCredentialsOp(CredentialCmdLineOptions credentialCmdLineOptions)
+        private static RETURN_VALUE RunCredentialsOp(CredentialCmdLineOptions credentialCmdLineOptions)
         {
             try
             {
@@ -57,18 +66,18 @@ namespace SqlServerDEID
                     DEID.RemoveCredential(credentialCmdLineOptions.ApplicationName);
                     Console.WriteLine($"Credential '{credentialCmdLineOptions.ApplicationName}' removed from the credential manager.");
                 }
-                return 0;
+                return RETURN_VALUE.OK;
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.Message);
                 Console.ResetColor();
-                return -5;
+                return RETURN_VALUE.CREDENTIAL_FAILURE;
             }
         }
 
-        private static int RunDEID(DeidCmdLineOptions options)
+        private static RETURN_VALUE RunDEID(DeidCmdLineOptions options)
         {
             try
             {
@@ -77,14 +86,14 @@ namespace SqlServerDEID
                 _deid.RunTransform(options.File);
                 stopwatch.Stop();
                 Console.WriteLine("Done in {0}", stopwatch.Elapsed.ToStringFormat());
-                return 0;
+                return RETURN_VALUE.OK;
             }
             catch (OperationCanceledException ocex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ocex.Message);
                 Console.ResetColor();
-                return -2;
+                return RETURN_VALUE.OPERATION_CANCELLED;
             }
             catch (Exception ex)
             {
@@ -96,7 +105,7 @@ namespace SqlServerDEID
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(message);
                 Console.ResetColor();
-                return -3;
+                return RETURN_VALUE.DEID_EXCEPTION;
             }
         }
 
