@@ -37,6 +37,7 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshCredentialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshTablesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,7 +70,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnRefreshTables = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tablesGrid)).BeginInit();
             this.panel1.SuspendLayout();
@@ -99,6 +99,7 @@
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.refreshCredentialsToolStripMenuItem,
+            this.refreshTablesToolStripMenuItem,
             this.exitToolStripMenuItem1});
             this.fileToolStripMenuItem1.Name = "fileToolStripMenuItem1";
             this.fileToolStripMenuItem1.Size = new System.Drawing.Size(37, 20);
@@ -107,42 +108,57 @@
             // newToolStripMenuItem1
             // 
             this.newToolStripMenuItem1.Name = "newToolStripMenuItem1";
-            this.newToolStripMenuItem1.Size = new System.Drawing.Size(175, 22);
-            this.newToolStripMenuItem1.Text = "New";
+            this.newToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem1.Text = "&New";
             this.newToolStripMenuItem1.Click += new System.EventHandler(this.newToolStripMenuItem1_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.S)));
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // refreshCredentialsToolStripMenuItem
             // 
             this.refreshCredentialsToolStripMenuItem.Name = "refreshCredentialsToolStripMenuItem";
-            this.refreshCredentialsToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.refreshCredentialsToolStripMenuItem.Text = "Refresh Credentials";
+            this.refreshCredentialsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.refreshCredentialsToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.refreshCredentialsToolStripMenuItem.Text = "Refresh &Credentials";
             this.refreshCredentialsToolStripMenuItem.Click += new System.EventHandler(this.refreshCredentialsToolStripMenuItem_Click);
+            // 
+            // refreshTablesToolStripMenuItem
+            // 
+            this.refreshTablesToolStripMenuItem.Name = "refreshTablesToolStripMenuItem";
+            this.refreshTablesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
+            this.refreshTablesToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.refreshTablesToolStripMenuItem.Text = "Refresh &Tables";
+            this.refreshTablesToolStripMenuItem.Click += new System.EventHandler(this.refreshTablesToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem1
             // 
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(175, 22);
+            this.exitToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem1.Text = "Exit";
             this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem1_Click);
             // 
@@ -155,12 +171,14 @@
             // openFileToolStripMenuItem
             // 
             this.openFileToolStripMenuItem.Name = "openFileToolStripMenuItem";
+            this.openFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.openFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openFileToolStripMenuItem.Text = "Open File";
             // 
             // saveFileToolStripMenuItem
             // 
             this.saveFileToolStripMenuItem.Name = "saveFileToolStripMenuItem";
+            this.saveFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveFileToolStripMenuItem.Text = "Save File";
             // 
@@ -375,7 +393,6 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.btnRefreshTables);
             this.groupBox2.Controls.Add(this.txtDatabaseName);
             this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.btnConnect);
@@ -446,17 +463,6 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // btnRefreshTables
-            // 
-            this.btnRefreshTables.Location = new System.Drawing.Point(200, 75);
-            this.btnRefreshTables.Name = "btnRefreshTables";
-            this.btnRefreshTables.Size = new System.Drawing.Size(95, 20);
-            this.btnRefreshTables.TabIndex = 5;
-            this.btnRefreshTables.Text = "Refresh Tables";
-            this.toolTip1.SetToolTip(this.btnRefreshTables, "Click this button to refresh the list of tables in the grid.");
-            this.btnRefreshTables.UseVisualStyleBackColor = true;
-            this.btnRefreshTables.Click += new System.EventHandler(this.btnRefreshTables_Click);
-            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -526,6 +532,6 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.NumericUpDown scriptTimeout;
         private System.Windows.Forms.ToolStripMenuItem refreshCredentialsToolStripMenuItem;
-        private System.Windows.Forms.Button btnRefreshTables;
+        private System.Windows.Forms.ToolStripMenuItem refreshTablesToolStripMenuItem;
     }
 }

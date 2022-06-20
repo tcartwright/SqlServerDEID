@@ -24,7 +24,7 @@ namespace SqlServerDEID.Editor
         public frmTransformTest(Database database) : this()
         {
             _database = database;
-            txtQuery.Text = _database.Tables.First().GetSelectStatement(padding: "", columnsSeperator: "");
+            txtQuery.Text = _database.Tables.First().GetSelectStatement(padding: " ", columnsSeperator: "");
             // we have to use a global table here, as we are spanning connections :|
             _tableName = $"##TransformTest_{Guid.NewGuid():N}";
             this.Text = $"Transform Test ({database.Tables.First().Name} - {_tableName})";
@@ -54,7 +54,6 @@ namespace SqlServerDEID.Editor
                     new SqlParameter("@rows", SqlDbType.Int) { Value = topRows }
                 });
                 gridRawData.DataSource = tbl;
-
                 btnRunTransform.Enabled = true;
             }
             catch (Exception ex)
@@ -82,6 +81,12 @@ namespace SqlServerDEID.Editor
 
                 var tbl = _connection.ExecuteDataTable($"SELECT * FROM [{_tableName}] AS [tt]");
                 gridTransformedData.DataSource = tbl;
+
+                // synch up the columns width
+                for (int i = 0; i <= gridRawData.Columns.Count - 1; i++)
+                {
+                    gridTransformedData.Columns[i].Width = gridRawData.Columns[i].ActualWidth;
+                }
             }
             catch (Exception ex)
             {

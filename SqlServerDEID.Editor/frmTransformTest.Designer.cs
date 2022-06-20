@@ -48,6 +48,9 @@
             // 
             // tableLayoutPanel1
             // 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 125F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -56,13 +59,12 @@
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.txtWhereClause, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.btnRunQuery, 1, 3);
-            this.tableLayoutPanel1.Controls.Add(this.gridRawData, 1, 4);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.btnRunTransform, 1, 5);
             this.tableLayoutPanel1.Controls.Add(this.gridTransformedData, 1, 6);
             this.tableLayoutPanel1.Controls.Add(this.label4, 0, 6);
             this.tableLayoutPanel1.Controls.Add(this.label5, 1, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Controls.Add(this.gridRawData, 1, 4);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 7;
@@ -70,10 +72,10 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 115F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(810, 618);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(810, 647);
             this.tableLayoutPanel1.TabIndex = 19;
             // 
             // label2
@@ -131,10 +133,12 @@
             // gridRawData
             // 
             this.gridRawData.AccessibleName = "Table";
+            this.gridRawData.AllowResizingColumns = true;
+            this.gridRawData.AutoSizeColumnsMode = Syncfusion.WinForms.DataGrid.Enums.AutoSizeColumnsMode.AllCells;
             this.gridRawData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridRawData.Location = new System.Drawing.Point(128, 238);
             this.gridRawData.Name = "gridRawData";
-            this.gridRawData.Size = new System.Drawing.Size(679, 194);
+            this.gridRawData.Size = new System.Drawing.Size(679, 175);
             this.gridRawData.TabIndex = 24;
             // 
             // label3
@@ -163,10 +167,11 @@
             // gridTransformedData
             // 
             this.gridTransformedData.AccessibleName = "Table";
+            this.gridTransformedData.AllowResizingColumns = true;
             this.gridTransformedData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridTransformedData.Location = new System.Drawing.Point(128, 468);
             this.gridTransformedData.Name = "gridTransformedData";
-            this.gridTransformedData.Size = new System.Drawing.Size(679, 150);
+            this.gridTransformedData.Size = new System.Drawing.Size(679, 175);
             this.gridTransformedData.TabIndex = 27;
             // 
             // label4
@@ -195,7 +200,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(810, 618);
+            this.ClientSize = new System.Drawing.Size(810, 651);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MaximizeBox = false;

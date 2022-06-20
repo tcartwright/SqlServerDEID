@@ -11,6 +11,7 @@ using Syncfusion.WinForms.DataGrid.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
@@ -171,8 +172,8 @@ namespace SqlServerDEID.Editor
                 txtDatabaseName.Enabled =
                 btnConnect.Enabled = enabled;
 
-            btnEditScriptImports.Enabled =
-                btnRefreshTables.Enabled = !enabled;
+            btnEditScriptImports.Enabled = 
+                refreshTablesToolStripMenuItem.Enabled = !enabled;
         }
         private void ResetData()
         {
@@ -271,12 +272,15 @@ namespace SqlServerDEID.Editor
             }
             Cursor.Current = currentCursor;
         }
-        private void ValidateForSave()
+        private bool ValidateForSave()
         {
-            if (!_database.Tables.Any(t => t.HasTransforms()))
+            var results = _database.Validate();
+            if (results.Any())
             {
-                MessageBox.Show(this, "The current database does not have any transforms and cannot be saved.", "No Transforms", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, $"Errors occurred during save: \r\n\r\n\t{string.Join("\r\n\r\n\t", results.Select(r => r.ErrorMessage))}", "Errors", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
+            return true;
         }
         private bool ValidateServerName()
         {
@@ -536,10 +540,8 @@ namespace SqlServerDEID.Editor
         }
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_database != null)
+            if (_database != null && ValidateForSave())
             {
-                ValidateForSave();
-
                 if (!string.IsNullOrWhiteSpace(_database.TransformFilePath))
                 {
                     SaveFile();
@@ -552,10 +554,8 @@ namespace SqlServerDEID.Editor
         }
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_database != null)
+            if (_database != null && ValidateForSave())
             {
-                ValidateForSave();
-
                 using (var dialog = new SaveFileDialog())
                 {
                     dialog.Filter = "Transform File (*.json)|*.json|Transform File (*.xml)|*.xml|All files (*.*)|*.*";
@@ -578,6 +578,10 @@ namespace SqlServerDEID.Editor
         {
             BindCredentials();
         }
+        private void refreshTablesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadData();
+        }
         #endregion menu events
 
         #region button events
@@ -599,10 +603,6 @@ namespace SqlServerDEID.Editor
             UITypeEditor editor = (UITypeEditor)pd.GetEditor(typeof(UITypeEditor));
             RuntimeServiceProvider serviceProvider = new RuntimeServiceProvider();
             editor.EditValue(serviceProvider, serviceProvider, _database.ScriptingImports);
-        }
-        private void btnRefreshTables_Click(object sender, EventArgs e)
-        {
-            LoadData();
         }
         #endregion button events
 

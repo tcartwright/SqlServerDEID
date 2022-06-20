@@ -13,7 +13,7 @@ namespace SqlServerDEID.Common.Globals.Models
 {
     public partial class DatabaseTable
     {
-        private const string tab = " ";
+        private const string _tab = "\t";
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private IList<string> _columnNames;
         private IList<string> _updateColumnNames;
@@ -117,10 +117,7 @@ namespace SqlServerDEID.Common.Globals.Models
 
         public string GetSelectStatement(string whereClause = null, string padding = null, string columnsSeperator = "\r\n")
         {
-            if (string.IsNullOrWhiteSpace(padding))
-            {
-                padding = tab;
-            }
+            if (padding == null) { padding = _tab; }
             GetColumnNames();
             var sb = new StringBuilder();
             // append the two lists together, so the primary key columns show up at the front of the query.
@@ -147,9 +144,9 @@ namespace SqlServerDEID.Common.Globals.Models
             GetColumnNames();
             var sb = new StringBuilder();
             sb.AppendLine($"UPDATE {this.Name} SET");
-            sb.AppendLine($"{tab}{string.Join($",\r\n{tab}", _updateColumnNames.Select(c => $"[{c}] = @{c}"))}");
+            sb.AppendLine($"{_tab}{string.Join($",\r\n{_tab}", _updateColumnNames.Select(c => $"[{c}] = @{c}"))}");
             sb.AppendLine("WHERE");
-            sb.AppendLine($"{tab}{string.Join($"\r\n{tab}AND ", _primaryKeyColumnNames.Select(c => $"[{c}] = @{c}"))}");
+            sb.AppendLine($"{_tab}{string.Join($"\r\n{_tab}AND ", _primaryKeyColumnNames.Select(c => $"[{c}] = @{c}"))}");
 
             return sb.ToString();
         }

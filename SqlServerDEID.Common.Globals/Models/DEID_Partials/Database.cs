@@ -74,7 +74,14 @@ namespace SqlServerDEID.Common.Globals.Models
             }
             return database;
         }
+        public IList<ValidationResult> Validate()
+        {
+            var context = new ValidationContext(this, null, null);
+            var validationResults = new List<ValidationResult>();
 
+            Validator.TryValidateObject(this, context, validationResults, true);
+            return validationResults;
+        }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -86,7 +93,10 @@ namespace SqlServerDEID.Common.Globals.Models
                     yield return new ValidationResult($"- The database has a credentials specified, but a generic credential could not be found in the Credential Manager with the name {CredentialsName}. ");
                 }
             }
-
+            if (!this.Tables.Any(t => t.HasTransforms()))
+            {
+                yield return new ValidationResult($"- The database has no transforms applied.");
+            }
             foreach (var table in this.Tables)
             {
                 var columns = table.Columns.Where(c => c.Transforms != null && c.Transforms.Count() > 1 && c.Transforms.Any(x => string.IsNullOrWhiteSpace(x.WhereClause)));

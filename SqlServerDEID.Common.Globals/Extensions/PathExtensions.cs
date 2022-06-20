@@ -15,7 +15,11 @@ namespace SqlServerDEID.Common.Globals.Extensions
             }
             else
             {
-                basePath = Path.GetDirectoryName(basePath);
+                var fileAttributes = File.GetAttributes(basePath);
+                if (!fileAttributes.HasFlag(FileAttributes.Directory))
+                {
+                    basePath = Path.GetDirectoryName(basePath);
+                }
             }
 
             if (!Path.IsPathRooted(path))
