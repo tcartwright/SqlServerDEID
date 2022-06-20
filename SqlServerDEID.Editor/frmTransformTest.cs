@@ -2,6 +2,7 @@
 using SqlServerDEID.Common.Globals.Extensions;
 using SqlServerDEID.Common.Globals.Models;
 using SqlServerDEID.Editor.Properties;
+using Syncfusion.WinForms.DataGrid;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -30,8 +31,36 @@ namespace SqlServerDEID.Editor
             this.Text = $"Transform Test ({database.Tables.First().Name} - {_tableName})";
             _connection = database.GetConnection();
             _connection.Open();
+            gridRawData.TableControl.Scroll += gridRawData_Scroll;
+            gridTransformedData.TableControl.Scroll += gridTransformedData_Scroll;
         }
 
+        private void gridTransformedData_Scroll(object sender, ScrollEventArgs e)
+        {
+            ScrollGrid(e, gridRawData, gridTransformedData);
+        }
+
+        private void gridRawData_Scroll(object sender, ScrollEventArgs e)
+        {
+            ScrollGrid(e, gridTransformedData, gridRawData);
+        }
+
+        private void ScrollGrid(ScrollEventArgs scrollArgs, SfDataGrid leftGrid, SfDataGrid rightGrid)
+        {
+            if (scrollArgs.OldValue == -1) { return; }
+            if (scrollArgs.ScrollOrientation == ScrollOrientation.HorizontalScroll)
+            {
+                leftGrid.TableControl.HorizontalScroll.Value = scrollArgs.NewValue;
+                leftGrid.TableControl.VerticalScroll.Value = rightGrid.TableControl.VerticalScroll.Value;
+            }
+            else
+            {
+                leftGrid.TableControl.HorizontalScroll.Value = rightGrid.TableControl.HorizontalScroll.Value;
+                leftGrid.TableControl.VerticalScroll.Value = scrollArgs.NewValue;
+            }
+            leftGrid.TableControl.Refresh();
+            rightGrid.TableControl.Refresh();
+        }
         private void frmTransformTest_Load(object sender, EventArgs e)
         {
 
@@ -87,6 +116,13 @@ namespace SqlServerDEID.Editor
                 {
                     gridTransformedData.Columns[i].Width = gridRawData.Columns[i].ActualWidth;
                 }
+                // now reset the scroll bars
+                gridTransformedData.TableControl.HorizontalScroll.Value = 0;
+                gridTransformedData.TableControl.VerticalScroll.Value = 0;
+                gridTransformedData.TableControl.Refresh();
+                gridRawData.TableControl.HorizontalScroll.Value = 0;
+                gridRawData.TableControl.VerticalScroll.Value = 0;
+                gridRawData.TableControl.Refresh();
             }
             catch (Exception ex)
             {
