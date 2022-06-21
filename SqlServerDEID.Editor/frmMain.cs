@@ -1,4 +1,4 @@
-﻿using Meziantou.Framework.Win32;
+﻿using SqlServerDEID.Common.Globals;
 using SqlServerDEID.Common.Globals.Extensions;
 using SqlServerDEID.Common.Globals.Models;
 using SqlServerDEID.Editor.Controls;
@@ -30,7 +30,6 @@ namespace SqlServerDEID.Editor
         private Database _database;
         private readonly StringComparer _stringComparer = StringComparer.OrdinalIgnoreCase;
         private readonly SfToolTip _tooltip = new SfToolTip() { AutoPopDelay = 5000 };
-        private string _currentFileName = null;
         #endregion privates
 
         #region form 
@@ -52,10 +51,8 @@ namespace SqlServerDEID.Editor
         #region private methods
         private void BindCredentials()
         {
-            var credentials = CredentialManager.EnumerateCredentials()
-                .OrderBy(cr => cr.ApplicationName)
-                .Where(cr => cr.CredentialType == CredentialType.Generic && !Regex.IsMatch(cr.ApplicationName, "git.*|microsoft.*|onedrive.*|xbox.*", RegexOptions.IgnoreCase))
-                .Select(cr => new KeyValuePair<string, string>(cr.ApplicationName, cr.ApplicationName.ToLower()))
+            var credentials = Credentials.ListCredentials() 
+                .Select(cr => new KeyValuePair<string, string>(cr, cr.ToLower()))
                 .ToList();
             ddlCredentials.DisplayMember = "Key";
             ddlCredentials.ValueMember = "Value";

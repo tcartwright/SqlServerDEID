@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using SqlServerDEID.Common;
+using SqlServerDEID.Common.Globals;
 using SqlServerDEID.Common.Globals.Extensions;
 using System;
 using System.Diagnostics;
@@ -58,21 +59,19 @@ namespace SqlServerDEID
             {
                 if (credentialCmdLineOptions.SaveCredential)
                 {
-                    DEID.WriteCredential(credentialCmdLineOptions.ApplicationName, credentialCmdLineOptions.UserName, credentialCmdLineOptions.Password);
+                    Credentials.WriteCredential(credentialCmdLineOptions.ApplicationName, credentialCmdLineOptions.UserName, credentialCmdLineOptions.Password);
                     Console.WriteLine($"Credential '{credentialCmdLineOptions.ApplicationName}' written to the credential manager.");
                 }
                 else if (credentialCmdLineOptions.RemoveCredential)
                 {
-                    DEID.RemoveCredential(credentialCmdLineOptions.ApplicationName);
+                    Credentials.RemoveCredential(credentialCmdLineOptions.ApplicationName);
                     Console.WriteLine($"Credential '{credentialCmdLineOptions.ApplicationName}' removed from the credential manager.");
                 }
                 return RETURN_VALUE.OK;
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.Message);
-                Console.ResetColor();
+                WriteError(ex.Message);
                 return RETURN_VALUE.CREDENTIAL_FAILURE;
             }
         }
@@ -90,9 +89,7 @@ namespace SqlServerDEID
             }
             catch (OperationCanceledException ocex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ocex.Message);
-                Console.ResetColor();
+                WriteError(ocex.Message);
                 return RETURN_VALUE.OPERATION_CANCELLED;
             }
             catch (Exception ex)
@@ -102,11 +99,16 @@ namespace SqlServerDEID
                 {
                     message = ocex.Message;
                 }
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(message);
-                Console.ResetColor();
+                WriteError(message);
                 return RETURN_VALUE.DEID_EXCEPTION;
             }
+        }
+
+        private static void WriteError(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ResetColor();
         }
 
         private static bool Handler(CtrlType sig)

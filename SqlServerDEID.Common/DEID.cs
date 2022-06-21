@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,16 +35,6 @@ namespace SqlServerDEID.Common
         public int UpdateBatchSize { get; }
         public int ProcessRowCount { get; }
         public bool OutputPowershell { get; }
-
-        public static void WriteCredential(string applicationName, string userName, string password)
-        {
-            CredentialManager.WriteCredential(applicationName, userName, password, CredentialPersistence.LocalMachine);
-        }
-
-        public static void RemoveCredential(string applicationName)
-        {
-            CredentialManager.DeleteCredential(applicationName);
-        }
 
         public DEID(int tablesThreadCount, int updateBatchSize, int processRowCount, bool outputPowershell, Action<string, MessageImportance> stdout = null, Action<string> stderror = null)
         {
