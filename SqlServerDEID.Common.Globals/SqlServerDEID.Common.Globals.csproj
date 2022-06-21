@@ -6,8 +6,8 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
-		<AssemblyVersion>2022.0.1.0621</AssemblyVersion>
-		<FileVersion>2022.0.1.0621</FileVersion>
+		<AssemblyVersion>2022.0.3.0621</AssemblyVersion>
+		<FileVersion>2022.0.3.0621</FileVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Bogus" Version="34.0.2" />

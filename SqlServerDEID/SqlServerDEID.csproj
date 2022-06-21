@@ -6,8 +6,8 @@
 		<StartupObject>SqlServerDEID.Program</StartupObject>
 		<LangVersion>latest</LangVersion>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<AssemblyVersion>2022.0.1.0621</AssemblyVersion>
-		<FileVersion>2022.0.1.0621</FileVersion>
+		<AssemblyVersion>2022.0.3.0621</AssemblyVersion>
+		<FileVersion>2022.0.3.0621</FileVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
