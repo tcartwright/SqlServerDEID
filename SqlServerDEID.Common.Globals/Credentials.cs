@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace SqlServerDEID.Common.Globals
 {
-    public class Credentials
+    public static class Credentials
     {
         public static void WriteCredential(string applicationName, string userName, string password)
         {
@@ -20,8 +20,8 @@ namespace SqlServerDEID.Common.Globals
         public static IList<string> ListCredentials()
         {
             var credentials = CredentialManager.EnumerateCredentials()
-                .OrderBy(cr => cr.ApplicationName)
                 .Where(cr => cr.CredentialType == CredentialType.Generic && !Regex.IsMatch(cr.ApplicationName, @"git.*|microsoft.*|onedrive.*|xbox.*", RegexOptions.IgnoreCase))
+                .OrderBy(cr => cr.ApplicationName)
                 .Select(cr => cr.ApplicationName)
                 .ToList();
             return credentials;

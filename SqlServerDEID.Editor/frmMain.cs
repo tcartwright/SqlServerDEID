@@ -11,7 +11,6 @@ using Syncfusion.WinForms.DataGrid.Events;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
@@ -19,7 +18,6 @@ using System.Drawing.Design;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace SqlServerDEID.Editor
@@ -44,7 +42,7 @@ namespace SqlServerDEID.Editor
             SetupGrid();
             BindNewDatabase();
             portNumber.Value = GetDefaultSqlPort();
-            this.Text = "SQL Server DEID Editor";
+            this.Text = $"SQL Server DEID Editor v{this.GetType().Assembly.GetName().Version}";
         }
         #endregion form 
 
@@ -226,8 +224,10 @@ namespace SqlServerDEID.Editor
         }
         private void BindNewDatabase()
         {
-            _database = new Database();
-            _database.Port = GetDefaultSqlPort();
+            _database = new Database
+            {
+                Port = GetDefaultSqlPort()
+            };
             ResetData();
             tablesGrid.DataSource = _database.Tables;
             bindingSourceFormMain.DataSource = _database;
@@ -579,6 +579,24 @@ namespace SqlServerDEID.Editor
         {
             LoadData();
         }
+        private void credentialManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://docs.microsoft.com/en-us/windows/win32/secauthn/credentials-management");
+        }
+
+        private void scriptImportsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/bchavez/Bogus#api-extension-methods");
+        }
+
+        private void localeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/bchavez/Bogus#locales");
+        }
+        private void aPIToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/bchavez/Bogus#bogus-api-support");
+        }
         #endregion menu events
 
         #region button events
@@ -614,16 +632,6 @@ namespace SqlServerDEID.Editor
             ValidateDatabaseName();
         }
 
-        private void txtLocale_DoubleClick(object sender, EventArgs e)
-        {
-            Process.Start("https://github.com/bchavez/Bogus#locales");
-        }
-
-        private void label8_DoubleClick(object sender, EventArgs e)
-        {
-            Process.Start("https://github.com/bchavez/Bogus#api-extension-methods");
-        }
         #endregion misc control events
-
     }
 }

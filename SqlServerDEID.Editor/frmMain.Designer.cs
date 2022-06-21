@@ -39,6 +39,12 @@
             this.refreshCredentialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshTablesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.credentialManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fakerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.localeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aPIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.scriptImportsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -84,7 +90,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem1});
+            this.fileToolStripMenuItem1,
+            this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1051, 24);
@@ -109,7 +116,7 @@
             // 
             this.newToolStripMenuItem1.Name = "newToolStripMenuItem1";
             this.newToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem1.Size = new System.Drawing.Size(217, 22);
             this.newToolStripMenuItem1.Text = "&New";
             this.newToolStripMenuItem1.Click += new System.EventHandler(this.newToolStripMenuItem1_Click);
             // 
@@ -158,9 +165,56 @@
             // 
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
             this.exitToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(217, 22);
             this.exitToolStripMenuItem1.Text = "Exit";
             this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem1_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.credentialManagerToolStripMenuItem,
+            this.fakerToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // credentialManagerToolStripMenuItem
+            // 
+            this.credentialManagerToolStripMenuItem.Name = "credentialManagerToolStripMenuItem";
+            this.credentialManagerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.credentialManagerToolStripMenuItem.Text = "Credential Manager";
+            this.credentialManagerToolStripMenuItem.Click += new System.EventHandler(this.credentialManagerToolStripMenuItem_Click);
+            // 
+            // fakerToolStripMenuItem
+            // 
+            this.fakerToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.localeToolStripMenuItem,
+            this.aPIToolStripMenuItem,
+            this.scriptImportsToolStripMenuItem});
+            this.fakerToolStripMenuItem.Name = "fakerToolStripMenuItem";
+            this.fakerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fakerToolStripMenuItem.Text = "Faker";
+            // 
+            // localeToolStripMenuItem
+            // 
+            this.localeToolStripMenuItem.Name = "localeToolStripMenuItem";
+            this.localeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.localeToolStripMenuItem.Text = "Locale";
+            this.localeToolStripMenuItem.Click += new System.EventHandler(this.localeToolStripMenuItem_Click);
+            // 
+            // aPIToolStripMenuItem
+            // 
+            this.aPIToolStripMenuItem.Name = "aPIToolStripMenuItem";
+            this.aPIToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aPIToolStripMenuItem.Text = "API";
+            this.aPIToolStripMenuItem.Click += new System.EventHandler(this.aPIToolStripMenuItem_Click);
+            // 
+            // scriptImportsToolStripMenuItem
+            // 
+            this.scriptImportsToolStripMenuItem.Name = "scriptImportsToolStripMenuItem";
+            this.scriptImportsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.scriptImportsToolStripMenuItem.Text = "Script Imports";
+            this.scriptImportsToolStripMenuItem.Click += new System.EventHandler(this.scriptImportsToolStripMenuItem_Click);
             // 
             // fileToolStripMenuItem
             // 
@@ -285,7 +339,6 @@
             this.label8.TabIndex = 20;
             this.label8.Text = "Script Imports";
             this.toolTip1.SetToolTip(this.label8, resources.GetString("label8.ToolTip"));
-            this.label8.DoubleClick += new System.EventHandler(this.label8_DoubleClick);
             // 
             // txtPostScript
             // 
@@ -378,9 +431,7 @@
             this.txtLocale.Name = "txtLocale";
             this.txtLocale.Size = new System.Drawing.Size(242, 20);
             this.txtLocale.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.txtLocale, "More information about locales and available locales can be found here: https://g" +
-        "ithub.com/bchavez/Bogus#locales. \r\n\r\nDouble click to open the url.");
-            this.txtLocale.DoubleClick += new System.EventHandler(this.txtLocale_DoubleClick);
+            this.toolTip1.SetToolTip(this.txtLocale, "The locale to use when generating faker data.");
             // 
             // label3
             // 
@@ -533,5 +584,11 @@
         private System.Windows.Forms.NumericUpDown scriptTimeout;
         private System.Windows.Forms.ToolStripMenuItem refreshCredentialsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshTablesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem credentialManagerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fakerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem localeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aPIToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem scriptImportsToolStripMenuItem;
     }
 }
