@@ -117,6 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddionalNameSpaces" xml:space="preserve">
+    <value>Additional namespaces can be imported to provide access to additional classes or 
+functions in the C# expressions or the PowerShell scripts.
+
+These namespaces will be brought in by default:
+
+- Bogus
+- Bogus.DataSets
+- System
+- System.Text
+- System.Text.RegularExpressions</value>
+  </data>
+  <data name="Credentials" xml:space="preserve">
+    <value>A generic credential must be created in the Credential Manager to be available in this dropdown.
+
+Use \"Trusted Connection\" to connect as the currently logged on user.</value>
+  </data>
+  <data name="disableconstraints.column" xml:space="preserve">
+    <value>If enabled all constraints that are enabled will be disabled before running any DEID transforms against the table. All previouly disabled constraints will be re-enabled afterwards.</value>
+  </data>
+  <data name="disabletriggers.column" xml:space="preserve">
+    <value>If enabled all triggers will be disabled before running any DEID transforms against the table. All triggers will be re-enabled afterwards.</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ExampleScript" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ExampleScript.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
@@ -127,7 +150,44 @@
   <data name="GetTransformData" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GetTransformData.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="isselected.column" xml:space="preserve">
+    <value>This column determines whether or not the column will appear in the transform document, and also be available in the RowValues object.</value>
+  </data>
+  <data name="Locale" xml:space="preserve">
+    <value>The locale to use when generating faker data.</value>
+  </data>
+  <data name="name.column" xml:space="preserve">
+    <value>The database name of the object.</value>
+  </data>
+  <data name="PortNumber" xml:space="preserve">
+    <value>The port to connect to SQL Server on. 0 and 1433 are synonymous.</value>
+  </data>
+  <data name="PostScript" xml:space="preserve">
+    <value>This sql script will be run after all table transforms are run. A fully qualified or relative path can be used. 
+
+All relative paths will be relative to the transform configuration file.</value>
+  </data>
+  <data name="PreScript" xml:space="preserve">
+    <value>This sql script will be run before all table transforms are run. A fully qualified or relative path can be used. 
+
+All relative paths will be relative to the transform configuration file.</value>
+  </data>
+  <data name="Scriptimeout" xml:space="preserve">
+    <value>Gets the wait time (in seconds) before terminating the attempt to execute the PreScript or PostScript and generating an error.</value>
+  </data>
   <data name="ScriptTemplate" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ScriptTemplate.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="testtransform.column" xml:space="preserve">
+    <value>Allows for testing of the transforms without making any actual table changes. All changes are tested against a global temp table.</value>
+  </data>
+  <data name="transform.column" xml:space="preserve">
+    <value>The transform can either be a C# expression or a path to a powershell file. If pointing to a powershell file path, then make the path relative to where the transform file will be saved, or use an absolute path.</value>
+  </data>
+  <data name="transformtype.column" xml:space="preserve">
+    <value>Determines whether or not a C# expression will be used, or a powershell file.</value>
+  </data>
+  <data name="whereclause.column" xml:space="preserve">
+    <value>The where clause is data expression SQL where clause without the WHERE statement. If there are multiple transforms for a single column then the WHERE clause is required for each one.</value>
   </data>
 </root>

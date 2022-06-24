@@ -52,9 +52,10 @@ Global
 		UpdateAssemblyVersion = True
 		UpdateAssemblyFileVersion = True
 		UpdateAssemblyInfoVersion = True
-		AssemblyVersionSettings = YearStamp.IncrementOnDemand.IncrementOnDemand.MMddStamp
-		AssemblyFileVersionSettings = YearStamp.IncrementOnDemand.IncrementOnDemand.MMddStamp
-		AssemblyInfoVersionSettings = YearStamp.IncrementOnDemand.IncrementOnDemand.MMddStamp
+		ShouldCreateLogs = True
+		AssemblyVersionSettings = IncrementOnDemand.IncrementOnDemand.YearStamp.MMddStamp
+		AssemblyFileVersionSettings = IncrementOnDemand.IncrementOnDemand.YearStamp.MMddStamp
+		AssemblyInfoVersionSettings = IncrementOnDemand.IncrementOnDemand.YearStamp.MMddStamp
 		UpdatePackageVersion = False
 		AssemblyInfoVersionType = SettingsVersion
 		InheritWinAppVersionFrom = None

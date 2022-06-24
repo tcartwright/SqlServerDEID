@@ -76,6 +76,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.whereClauseSyntaxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tablesGrid)).BeginInit();
             this.panel1.SuspendLayout();
@@ -173,6 +174,7 @@
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.credentialManagerToolStripMenuItem,
+            this.whereClauseSyntaxToolStripMenuItem,
             this.fakerToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -181,7 +183,7 @@
             // credentialManagerToolStripMenuItem
             // 
             this.credentialManagerToolStripMenuItem.Name = "credentialManagerToolStripMenuItem";
-            this.credentialManagerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.credentialManagerToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.credentialManagerToolStripMenuItem.Text = "Credential Manager";
             this.credentialManagerToolStripMenuItem.Click += new System.EventHandler(this.credentialManagerToolStripMenuItem_Click);
             // 
@@ -192,27 +194,27 @@
             this.aPIToolStripMenuItem,
             this.scriptImportsToolStripMenuItem});
             this.fakerToolStripMenuItem.Name = "fakerToolStripMenuItem";
-            this.fakerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fakerToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.fakerToolStripMenuItem.Text = "Faker";
             // 
             // localeToolStripMenuItem
             // 
             this.localeToolStripMenuItem.Name = "localeToolStripMenuItem";
-            this.localeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.localeToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.localeToolStripMenuItem.Text = "Locale";
             this.localeToolStripMenuItem.Click += new System.EventHandler(this.localeToolStripMenuItem_Click);
             // 
             // aPIToolStripMenuItem
             // 
             this.aPIToolStripMenuItem.Name = "aPIToolStripMenuItem";
-            this.aPIToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aPIToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.aPIToolStripMenuItem.Text = "API";
             this.aPIToolStripMenuItem.Click += new System.EventHandler(this.aPIToolStripMenuItem_Click);
             // 
             // scriptImportsToolStripMenuItem
             // 
             this.scriptImportsToolStripMenuItem.Name = "scriptImportsToolStripMenuItem";
-            this.scriptImportsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.scriptImportsToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.scriptImportsToolStripMenuItem.Text = "Script Imports";
             this.scriptImportsToolStripMenuItem.Click += new System.EventHandler(this.scriptImportsToolStripMenuItem_Click);
             // 
@@ -312,8 +314,6 @@
             this.scriptTimeout.Name = "scriptTimeout";
             this.scriptTimeout.Size = new System.Drawing.Size(242, 20);
             this.scriptTimeout.TabIndex = 23;
-            this.toolTip1.SetToolTip(this.scriptTimeout, "Gets the wait time (in seconds) before terminating the attempt to execute the Pre" +
-        "Script or PostScript and generating an error.");
             // 
             // bindingSourceFormMain
             // 
@@ -338,7 +338,6 @@
             this.label8.Size = new System.Drawing.Size(71, 13);
             this.label8.TabIndex = 20;
             this.label8.Text = "Script Imports";
-            this.toolTip1.SetToolTip(this.label8, resources.GetString("label8.ToolTip"));
             // 
             // txtPostScript
             // 
@@ -347,9 +346,6 @@
             this.txtPostScript.Name = "txtPostScript";
             this.txtPostScript.Size = new System.Drawing.Size(242, 20);
             this.txtPostScript.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.txtPostScript, "This sql script will be run after all table transforms are run. \r\nA fully qualifi" +
-        "ed or relative path can be used. \r\n\r\nAll relative paths will be relative to the " +
-        "transform configuration file.");
             // 
             // label6
             // 
@@ -367,9 +363,6 @@
             this.txtPreScript.Name = "txtPreScript";
             this.txtPreScript.Size = new System.Drawing.Size(242, 20);
             this.txtPreScript.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.txtPreScript, "This sql script will be run before all table transforms are run. \r\nA fully qualif" +
-        "ied or relative path can be used. \r\n\r\nAll relative paths will be relative to the" +
-        " transform configuration file. ");
             // 
             // label2
             // 
@@ -406,9 +399,7 @@
             this.ddlCredentials.Name = "ddlCredentials";
             this.ddlCredentials.Size = new System.Drawing.Size(242, 21);
             this.ddlCredentials.TabIndex = 0;
-            this.toolTip1.SetToolTip(this.ddlCredentials, "A generic credential must be created in the Credential Manager to be available in" +
-        " this dropdown.\r\n Use \"Trusted Connection\" to connect as the currently logged on" +
-        " user.");
+
             // 
             // portNumber
             // 
@@ -422,7 +413,6 @@
             this.portNumber.Name = "portNumber";
             this.portNumber.Size = new System.Drawing.Size(242, 20);
             this.portNumber.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.portNumber, "The port to connect to SQL Server on. 0 and 1433 are synonymous.");
             // 
             // txtLocale
             // 
@@ -431,7 +421,7 @@
             this.txtLocale.Name = "txtLocale";
             this.txtLocale.Size = new System.Drawing.Size(242, 20);
             this.txtLocale.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.txtLocale, "The locale to use when generating faker data.");
+            
             // 
             // label3
             // 
@@ -514,6 +504,13 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
+            // whereClauseSyntaxToolStripMenuItem
+            // 
+            this.whereClauseSyntaxToolStripMenuItem.Name = "whereClauseSyntaxToolStripMenuItem";
+            this.whereClauseSyntaxToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.whereClauseSyntaxToolStripMenuItem.Text = "Where Clause Syntax";
+            this.whereClauseSyntaxToolStripMenuItem.Click += new System.EventHandler(this.whereClauseSyntaxToolStripMenuItem_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -590,5 +587,6 @@
         private System.Windows.Forms.ToolStripMenuItem localeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aPIToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem scriptImportsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem whereClauseSyntaxToolStripMenuItem;
     }
 }

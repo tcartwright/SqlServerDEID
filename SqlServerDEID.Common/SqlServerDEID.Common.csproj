@@ -6,8 +6,8 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
-		<AssemblyVersion>2022.0.3.0621</AssemblyVersion>
-		<FileVersion>2022.0.3.0621</FileVersion>
+		<AssemblyVersion>2022.3.2022.0624</AssemblyVersion>
+		<FileVersion>2022.3.2022.0624</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

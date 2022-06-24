@@ -18,6 +18,7 @@ using System.Drawing.Design;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace SqlServerDEID.Editor
@@ -41,15 +42,29 @@ namespace SqlServerDEID.Editor
             BindCredentials();
             SetupGrid();
             BindNewDatabase();
+            SetupToolTips();
             portNumber.Value = GetDefaultSqlPort();
             this.Text = $"SQL Server DEID Editor v{this.GetType().Assembly.GetName().Version}";
         }
         #endregion form 
 
         #region private methods
+        private void SetupToolTips()
+        {
+            //sftooltip does not currently work with numeric up downs
+            toolTip1.SetToolTip(portNumber, Resources.PortNumber);
+            toolTip1.SetToolTip(scriptTimeout, Resources.Scriptimeout);
+
+            _tooltip.SetToolTip(label8, Resources.AddionalNameSpaces);
+            _tooltip.SetToolTip(btnEditScriptImports, Resources.AddionalNameSpaces);
+            _tooltip.SetToolTip(txtPostScript, Resources.PostScript);
+            _tooltip.SetToolTip(txtPreScript, Resources.PreScript);
+            _tooltip.SetToolTip(ddlCredentials, Resources.Credentials);
+            _tooltip.SetToolTip(txtLocale, Resources.Locale);
+        }
         private void BindCredentials()
         {
-            var credentials = Credentials.ListCredentials() 
+            var credentials = Credentials.ListCredentials()
                 .Select(cr => new KeyValuePair<string, string>(cr, cr.ToLower()))
                 .ToList();
             ddlCredentials.DisplayMember = "Key";
@@ -80,14 +95,15 @@ namespace SqlServerDEID.Editor
             tablesGrid.CellComboBoxSelectionChanged += TablesGrid_CellComboBoxSelectionChanged;
             tablesGrid.ToolTipOpening += Grid_ToolTipOpening;
 
-            tablesGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300, ShowToolTip = true }); // new GridTextColumn() { MappingName = "Name", HeaderText = "Table Name", AllowEditing = false });
+
+            tablesGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300, ShowToolTip = true, ShowHeaderToolTip = true }); // new GridTextColumn() { MappingName = "Name", HeaderText = "Table Name", AllowEditing = false });
             tablesGrid.Columns.Add(new GridNumericColumn() { MappingName = "Columns.Count", HeaderText = "Columns Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
-            tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableTriggers", HeaderText = "Disable Triggers" });
-            tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableConstraints", HeaderText = "Disable Constraints" });
+            tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableTriggers", HeaderText = "Disable Triggers", ShowHeaderToolTip = true });
+            tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableConstraints", HeaderText = "Disable Constraints", ShowHeaderToolTip = true });
             tablesGrid.Columns.Add(new GridTextColumn() { MappingName = "PreScript", HeaderText = "Pre Script", ShowHeaderToolTip = true });
             tablesGrid.Columns.Add(new GridTextColumn() { MappingName = "PostScript", HeaderText = "Post Script", ShowHeaderToolTip = true });
             tablesGrid.Columns.Add(new GridNumericColumn() { MappingName = "ScriptTimeout", HeaderText = "Script Timeout", NumberFormatInfo = integerFormatInfo, ShowHeaderToolTip = true });
-            tablesGrid.Columns.Add(new GridButtonColumn() { HeaderText = "Test Transform", DefaultButtonText = "Test Transform", AllowDefaultButtonText = true, MappingName = "Name" });
+            tablesGrid.Columns.Add(new GridButtonColumn() { HeaderText = "Test Transform", DefaultButtonText = "Test Transform", AllowDefaultButtonText = true, MappingName = "TestTransform", ShowHeaderToolTip = true });
 
             //columns
             var columnsGrid = new SfDataGrid
@@ -101,7 +117,7 @@ namespace SqlServerDEID.Editor
             columnsGrid.ToolTipOpening += Grid_ToolTipOpening;
             columnsGrid.DetailsViewExpanding += ColumnsGrid_DetailsViewExpanding;
 
-            columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "Name", HeaderText = "Column Name", AllowEditing = false, Width = 150 });
+            columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "Name", HeaderText = "Column Name", AllowEditing = false, Width = 150, ShowHeaderToolTip = true });
             columnsGrid.Columns.Add(new GridNumericColumn() { MappingName = "Transforms.Count", HeaderText = "Transforms Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
             columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "DataType", HeaderText = "Data Type", AllowEditing = false });
             columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsSelected", HeaderText = "Is Selected", ShowHeaderToolTip = true });
@@ -167,7 +183,7 @@ namespace SqlServerDEID.Editor
                 txtDatabaseName.Enabled =
                 btnConnect.Enabled = enabled;
 
-            btnEditScriptImports.Enabled = 
+            btnEditScriptImports.Enabled =
                 refreshTablesToolStripMenuItem.Enabled = !enabled;
         }
         private void ResetData()
@@ -419,36 +435,29 @@ namespace SqlServerDEID.Editor
         }
         private void Grid_ToolTipOpening(object sender, Syncfusion.WinForms.DataGrid.Events.ToolTipOpeningEventArgs e)
         {
-            var position = Cursor.Position;
-            var popupDelay = 3000;
             e.ToolTipInfo.Items[0].Text = "";
+            var tt = Resources.ResourceManager.GetString($"{e.Column.MappingName.ToLower()}.column");
+            var grid = (SfDataGrid)sender;
 
             switch (e.Column.MappingName.ToLower())
             {
-                case "isselected":
-                    _tooltip.Show("This column determines whether or not the column will appear in the transform document, and also be available in the RowValues object.", position, popupDelay);
-                    break;
                 case "prescript":
-                    _tooltip.Show("This sql script will be run before the table transform is run. \r\nA fully qualified or relative path can be used. \r\n\r\nAll relative paths will be relative to the transform configuration file.", position, popupDelay);
+                    tt = Resources.PreScript;
                     break;
                 case "postscript":
-                    _tooltip.Show("This sql script will be run after the table transform is run. \r\nA fully qualified or relative path can be used. \r\n\r\nAll relative paths will be relative to the transform configuration file.", position, popupDelay);
+                    tt = Resources.PostScript;
                     break;
                 case "scripttimeout":
-                    _tooltip.Show("Gets the wait time (in seconds) before terminating the attempt to execute the PreScript or PostScript and generating an error.", position, popupDelay);
-                    break;
-                case "transform":
-                    _tooltip.Show("The transform can either be a C# expression or a path to a powershell file. If pointing to a powershell file path, then make the path relative to where the transform file will be saved, or use an absolute path.", position, popupDelay);
-                    break;
-                case "whereclause":
-                    _tooltip.Show("The where clause is a standard SQL where clause without the WHERE statement. If there are multiple transforms for a single column then the WHERE clause is required for each one.", position, popupDelay);
-                    break;
-                case "transformtype":
-                    _tooltip.Show("Determines whether or not a C# expression will be used, or a powershell file.", position, popupDelay);
+                    tt = Resources.Scriptimeout;
                     break;
                 default:
+                    tt = Resources.ResourceManager.GetString($"{e.Column.MappingName.ToLower()}.column");
                     break;
             }
+            _tooltip.Show(tt);
+            //toolTip1.Show(tt, grid.TableControl);
+            //e.ToolTipInfo.Items[0].Text = tt;
+            //e.ToolTipInfo.ToolTipLocation = Syncfusion.WinForms.Controls.Enums.ToolTipLocation.BottomCenter;
         }
         private void TransformsGrid_CellComboBoxSelectionChanged(object sender, CellComboBoxSelectionChangedEventArgs e)
         {
@@ -596,6 +605,10 @@ namespace SqlServerDEID.Editor
         private void aPIToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Process.Start("https://github.com/bchavez/Bogus#bogus-api-support");
+        }
+        private void whereClauseSyntaxToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://docs.microsoft.com/en-us/dotnet/api/system.data.datacolumn.expression?view=net-6.0#expression-syntax");
         }
         #endregion menu events
 
