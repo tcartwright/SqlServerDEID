@@ -81,7 +81,7 @@ namespace SqlServerDEID.Editor.Properties {
         /// <summary>
         ///   Looks up a localized string similar to A generic credential must be created in the Credential Manager to be available in this dropdown.
         ///
-        ///Use \&quot;Trusted Connection\&quot; to connect as the currently logged on user..
+        ///Use &quot;Trusted Connection&quot; to connect as the currently logged on user..
         /// </summary>
         internal static string Credentials {
             get {
@@ -174,7 +174,7 @@ namespace SqlServerDEID.Editor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The database name of the object..
+        ///   Looks up a localized string similar to The name of the database object..
         /// </summary>
         internal static string name_column {
             get {

@@ -132,7 +132,7 @@ These namespaces will be brought in by default:
   <data name="Credentials" xml:space="preserve">
     <value>A generic credential must be created in the Credential Manager to be available in this dropdown.
 
-Use \"Trusted Connection\" to connect as the currently logged on user.</value>
+Use "Trusted Connection" to connect as the currently logged on user.</value>
   </data>
   <data name="disableconstraints.column" xml:space="preserve">
     <value>If enabled all constraints that are enabled will be disabled before running any DEID transforms against the table. All previouly disabled constraints will be re-enabled afterwards.</value>
@@ -157,7 +157,7 @@ Use \"Trusted Connection\" to connect as the currently logged on user.</value>
     <value>The locale to use when generating faker data.</value>
   </data>
   <data name="name.column" xml:space="preserve">
-    <value>The database name of the object.</value>
+    <value>The name of the database object.</value>
   </data>
   <data name="PortNumber" xml:space="preserve">
     <value>The port to connect to SQL Server on. 0 and 1433 are synonymous.</value>

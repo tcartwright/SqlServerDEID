@@ -62,6 +62,31 @@ namespace SqlServerDEID.Common.Globals.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to SELECT
+        ///    [a].[table_view],
+        ///    [a].[object_type],
+        ///    [a].[constraint_type],
+        ///    [a].[constraint_name],
+        ///    [a].[details]
+        ///FROM (
+        ///    SELECT
+        ///        SCHEMA_NAME([t].[schema_id]) + &apos;.&apos; + [t].[name] AS [table_view],
+        ///        CASE
+        ///            WHEN [t].[type] = &apos;U&apos; THEN &apos;Table&apos;
+        ///            WHEN [t].[type] = &apos;V&apos; THEN &apos;View&apos;
+        ///        END AS [object_type],
+        ///        CASE
+        ///            WHEN [c].[type] = &apos;PK&apos; THEN &apos;Primary key&apos;
+        ///            WHEN [c].[type] = &apos;UQ&apos; THEN &apos;Unique constraint&apos;
+        ///            WHEN [ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string GetConstraints {
+            get {
+                return ResourceManager.GetString("GetConstraints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SELECT
         ///    CONCAT(QUOTENAME(SCHEMA_NAME([t].[schema_id])), &apos;.&apos;, QUOTENAME([t].[name])) AS [table_name],
         ///    [c].[name] AS [column_name],
         ///    [c].[type_name],

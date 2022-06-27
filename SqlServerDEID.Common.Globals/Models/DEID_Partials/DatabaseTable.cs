@@ -20,6 +20,9 @@ namespace SqlServerDEID.Common.Globals.Models
         private IList<string> _primaryKeyColumnNames;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private string _cleanName = String.Empty;
+        private string _enableScripts;
+        private string _disableScripts;
+        private string _constraintNames;
         private readonly StringComparer _stringComparer = StringComparer.InvariantCultureIgnoreCase;
 
         [XmlIgnore]
@@ -175,6 +178,67 @@ namespace SqlServerDEID.Common.Globals.Models
         public bool HasTransforms()
         {
             return this.Columns.Any(c => c.Transforms.Any(t => !string.IsNullOrWhiteSpace(t.Transform)));
+        }
+
+        public IEnumerable<DatabaseTableColumn> GetColumnsWithTransforms()
+        {
+            return this.Columns.Where(c => c.Transforms != null && c.Transforms.Any() && !(c.IsPk || c.IsComputed || c.IsIdentity));
+        }
+
+        public void DisableTableConstraints(SqlConnection connection, Action<string> messageHandler, Action<Exception> exceptionHandler)
+        {
+            if (!this.DisableConstraints) { return; }
+
+            var tblConstraints = connection.ExecuteDataTable(Resources.GetConstraints,
+                new[] { new SqlParameter("@table_name", SqlDbType.NVarChar, 256) { Value = this.Name } },
+                CommandType.Text
+            ).AsEnumerable();
+
+            if (!tblConstraints.Any()) { return; }
+
+            _enableScripts = string.Join("\r\n", tblConstraints.Select(r => r["enable_script"].ToString()));
+            _disableScripts = string.Join("\r\n", tblConstraints.Select(r => r["disable_script"].ToString()));
+            _constraintNames = string.Join(", ", tblConstraints.Select(r => r["constraint_name"].ToString()));
+
+            if (!string.IsNullOrWhiteSpace(_disableScripts))
+            {
+                messageHandler($"DISABLING ALL CONSTRAINTS FOR TABLE {this.Name}: {_constraintNames}");
+                connection.RunScript(_disableScripts, exceptionHandler);
+            }
+            else
+            {
+                messageHandler($"TABLE {this.Name} HAS NO ENABLED CONSTRAINTS");
+            }
+        }
+
+        public void EnableTableConstraints(SqlConnection connection, Action<string> messageHandler, Action<Exception> exceptionHandler)
+        {
+            if (!this.DisableConstraints) { return; }
+
+            if (!string.IsNullOrWhiteSpace(_enableScripts))
+            {
+                messageHandler($"ENABLING ALL CONSTRAINTS FOR TABLE {this.Name}: {_constraintNames}");
+                connection.RunScript(_enableScripts, exceptionHandler, 600);
+            }
+            else
+            {
+                messageHandler($"TABLE {this.Name} HAS NO ENABLED CONSTRAINTS");
+            }
+        }
+
+        public void DisableTableTriggers(SqlConnection connection, Action<string> messageHandler, Action<Exception> exceptionHandler)
+        {
+            if (!this.DisableTriggers) { return; }
+
+            messageHandler($"DISABLING ALL TRIGGERS FOR TABLE {this.Name}");
+            connection.RunScript($"ALTER TABLE {this.Name} DISABLE TRIGGER ALL", exceptionHandler);
+        }
+        public void EnableTableTriggers(SqlConnection connection, Action<string> messageHandler, Action<Exception> exceptionHandler)
+        {
+            if (!this.DisableTriggers) { return; }
+
+            messageHandler($"ENABLING ALL TRIGGERS FOR TABLE {this.Name}");
+            connection.RunScript($"ALTER TABLE {this.Name} ENABLE TRIGGER ALL", exceptionHandler);
         }
     }
 

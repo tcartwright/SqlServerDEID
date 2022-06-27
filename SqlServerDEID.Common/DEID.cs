@@ -186,16 +186,12 @@ namespace SqlServerDEID.Common
                             var sw = Stopwatch.StartNew();
                             WriteLine("[{0}]Starting [{1}].{2}", Thread.CurrentThread.ManagedThreadId, database.ServerName.CleanName().ToUpper(), databaseTable.Name.ToUpper());
 
-                            if (databaseTable.DisableConstraints)
-                            {
-                                WriteLine("DISABLING ALL CONSTRAINTS FOR TABLE {0}", databaseTable.Name);
-                                connection.RunScript($"ALTER TABLE {databaseTable.Name} NOCHECK CONSTRAINT ALL", (Exception ex) => WriteError($"EXCEPTION DISABLING CONSTRAINTS: {ex.Message}"));
-                            }
-                            if (databaseTable.DisableTriggers)
-                            {
-                                WriteLine("DISABLING ALL TRIGGERS FOR TABLE {0}", databaseTable.Name);
-                                connection.RunScript($"ALTER TABLE {databaseTable.Name} DISABLE TRIGGER ALL", (Exception ex) => WriteError($"EXCEPTION DISABLING TRIGGERS: {ex.Message}"));
-                            }
+                            databaseTable.DisableTableConstraints(connection, 
+                                (string msg) => Console.WriteLine(msg), 
+                                (Exception ex) => WriteError($"EXCEPTION DISABLING TABLE {databaseTable.Name} CONSTRAINTS: {ex.Message}"));
+                            databaseTable.DisableTableTriggers(connection,
+                                (string msg) => Console.WriteLine(msg),
+                                (Exception ex) => WriteError($"EXCEPTION DISABLING TABLE {databaseTable.Name} TRIGGERS: {ex.Message}"));
 
                             connection.RunScriptFile(database.TransformFilePath, database.PreScript, database.ScriptTimeout);
                             UpdateTable(connection, databaseTable, imports, cancellationToken, database.Locale);
@@ -213,16 +209,12 @@ namespace SqlServerDEID.Common
                         {
                             if (connection.State != ConnectionState.Closed)
                             {
-                                if (databaseTable.DisableConstraints)
-                                {
-                                    WriteLine("ENABLING ALL CONSTRAINTS FOR TABLE {0}", databaseTable.Name);
-                                    connection.RunScript($"ALTER TABLE {databaseTable.Name} WITH CHECK CHECK CONSTRAINT ALL", (Exception ex) => WriteError($"EXCEPTION ENABLING CONSTRAINTS: {ex.Message}"), 600);
-                                }
-                                if (databaseTable.DisableTriggers)
-                                {
-                                    WriteLine("ENABLING ALL TRIGGERS FOR TABLE {0}", databaseTable.Name);
-                                    connection.RunScript($"ALTER TABLE {databaseTable.Name} ENABLE TRIGGER ALL", (Exception ex) => WriteError($"EXCEPTION ENABLING TRIGGERS: {ex.Message}"));
-                                }
+                                databaseTable.EnableTableConstraints(connection,
+                                    (string msg) => Console.WriteLine(msg),
+                                    (Exception ex) => WriteError($"EXCEPTION ENABLING TABLE {databaseTable.Name} CONSTRAINTS: {ex.Message}"));
+                                databaseTable.EnableTableTriggers(connection,
+                                    (string msg) => Console.WriteLine(msg),
+                                    (Exception ex) => WriteError($"EXCEPTION ENABLING TABLE {databaseTable.Name} TRIGGERS: {ex.Message}"));
                             }
                         }
                     }
@@ -303,7 +295,7 @@ namespace SqlServerDEID.Common
 
                             //RowValue expressions must be processed AFTER the other expressions as they use the results of the initial bogus values.
                             //we will leave it to the user to order them correctly
-                            foreach (var column in databaseTable.Columns.Where(c => c.Transforms != null && !(c.IsPk || c.IsComputed || c.IsIdentity)))
+                            foreach (var column in databaseTable.GetColumnsWithTransforms())
                             {
                                 if (cancellationToken.IsCancellationRequested) { return; }
 
