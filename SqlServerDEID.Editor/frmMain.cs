@@ -51,10 +51,13 @@ namespace SqlServerDEID.Editor
         #region private methods
         private void SetupToolTips()
         {
-            //sftooltip does not currently work with numeric up downs
-            toolTip1.SetToolTip(portNumber, Resources.PortNumber);
-            toolTip1.SetToolTip(scriptTimeout, Resources.Scriptimeout);
-
+            //sftooltip does not currently work with numeric up downs unless you set all sub controls as well
+            _tooltip.SetToolTip(portNumber, Resources.PortNumber);
+            _tooltip.SetToolTip(portNumber.Controls[0], Resources.PortNumber);
+            _tooltip.SetToolTip(portNumber.Controls[1], Resources.PortNumber);
+            _tooltip.SetToolTip(scriptTimeout, Resources.Scriptimeout);
+            _tooltip.SetToolTip(scriptTimeout.Controls[0], Resources.Scriptimeout);
+            _tooltip.SetToolTip(scriptTimeout.Controls[1], Resources.Scriptimeout);
             _tooltip.SetToolTip(label8, Resources.AddionalNameSpaces);
             _tooltip.SetToolTip(btnEditScriptImports, Resources.AddionalNameSpaces);
             _tooltip.SetToolTip(txtPostScript, Resources.PostScript);
@@ -435,8 +438,7 @@ namespace SqlServerDEID.Editor
         }
         private void Grid_ToolTipOpening(object sender, Syncfusion.WinForms.DataGrid.Events.ToolTipOpeningEventArgs e)
         {
-            e.ToolTipInfo.Items[0].Text = "";
-            var tt = Resources.ResourceManager.GetString($"{e.Column.MappingName.ToLower()}.column");
+            var tt = string.Empty;
             var grid = (SfDataGrid)sender;
 
             switch (e.Column.MappingName.ToLower())
@@ -454,10 +456,10 @@ namespace SqlServerDEID.Editor
                     tt = Resources.ResourceManager.GetString($"{e.Column.MappingName.ToLower()}.column");
                     break;
             }
-            _tooltip.Show(tt);
+            //_tooltip.Show(tt);
             //toolTip1.Show(tt, grid.TableControl);
-            //e.ToolTipInfo.Items[0].Text = tt;
-            //e.ToolTipInfo.ToolTipLocation = Syncfusion.WinForms.Controls.Enums.ToolTipLocation.BottomCenter;
+            e.ToolTipInfo.Items[0].Text = tt;
+            e.ToolTipInfo.ToolTipLocation = Syncfusion.WinForms.Controls.Enums.ToolTipLocation.BottomRight;
         }
         private void TransformsGrid_CellComboBoxSelectionChanged(object sender, CellComboBoxSelectionChangedEventArgs e)
         {
