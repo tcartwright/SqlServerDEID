@@ -95,7 +95,6 @@ namespace SqlServerDEID.Common.Globals.Models
             return parameter;
         }
 
-
         [XmlIgnore]
         [JsonIgnore]
         public string DataType
@@ -123,6 +122,7 @@ namespace SqlServerDEID.Common.Globals.Models
                 return "";
             }
         }
+
         public override string ToString()
         {
             return $"{this.Name} {this.SqlDbType}";

@@ -10,6 +10,7 @@ using Syncfusion.WinForms.DataGrid.Enums;
 using Syncfusion.WinForms.DataGrid.Events;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
@@ -27,6 +28,8 @@ namespace SqlServerDEID.Editor
     {
         #region privates
         private Database _database;
+        private SfDataGrid _columnsGrid;
+        private SfDataGrid _transformsGrid;
         private readonly StringComparer _stringComparer = StringComparer.OrdinalIgnoreCase;
         private readonly SfToolTip _tooltip = new SfToolTip() { AutoPopDelay = 5000 };
         #endregion privates
@@ -86,7 +89,6 @@ namespace SqlServerDEID.Editor
 
             var integerFormatInfo = new NumberFormatInfo() { NumberDecimalDigits = 0, NumberGroupSizes = new int[] { } };
 
-            //tablesGrid.ResetTableControl();
             tablesGrid.EditMode = EditMode.SingleClick;
             tablesGrid.AutoSizeColumnsMode = AutoSizeColumnsMode.Fill;
             tablesGrid.AutoGenerateColumns = false;
@@ -97,7 +99,10 @@ namespace SqlServerDEID.Editor
             tablesGrid.CurrentCellBeginEdit += TablesGrid_CurrentCellBeginEdit;
             tablesGrid.CellComboBoxSelectionChanged += TablesGrid_CellComboBoxSelectionChanged;
             tablesGrid.ToolTipOpening += Grid_ToolTipOpening;
-
+            tablesGrid.RecordContextMenu = new ContextMenuStrip();
+            tablesGrid.RecordContextMenu.Items.Add("Delete Row", null, tablesGrid_DeleteRowClicked);
+            tablesGrid.RecordContextMenu.Items.Add("Move Row Up", null, tablesGrid_MoveRowUpClicked);
+            tablesGrid.RecordContextMenu.Items.Add("Move Row Down", null, tablesGrid_MoveRowDownClicked);
 
             tablesGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300, ShowToolTip = true, ShowHeaderToolTip = true }); // new GridTextColumn() { MappingName = "Name", HeaderText = "Table Name", AllowEditing = false });
             tablesGrid.Columns.Add(new GridNumericColumn() { MappingName = "Columns.Count", HeaderText = "Columns Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
@@ -109,7 +114,7 @@ namespace SqlServerDEID.Editor
             tablesGrid.Columns.Add(new GridButtonColumn() { HeaderText = "Test Transform", DefaultButtonText = "Test Transform", AllowDefaultButtonText = true, MappingName = "TestTransform", ShowHeaderToolTip = true });
 
             //columns
-            var columnsGrid = new SfDataGrid
+            _columnsGrid = new SfDataGrid
             {
                 AutoGenerateColumns = false,
                 AutoSizeColumnsMode = AutoSizeColumnsMode.Fill,
@@ -117,26 +122,29 @@ namespace SqlServerDEID.Editor
                 AllowDeleting = false,
                 AllowSorting = false
             };
-            columnsGrid.ToolTipOpening += Grid_ToolTipOpening;
-            columnsGrid.DetailsViewExpanding += ColumnsGrid_DetailsViewExpanding;
+            _columnsGrid.ToolTipOpening += Grid_ToolTipOpening;
+            _columnsGrid.DetailsViewExpanding += ColumnsGrid_DetailsViewExpanding;
+            _columnsGrid.RecordContextMenu = new ContextMenuStrip();
+            //_columnsGrid.RecordContextMenu.Items.Add("Delete Row", null, columnsGrid_DeleteRowClicked);
+            _columnsGrid.RecordContextMenu.Items.Add("Move Row Up", null, columnsGrid_MoveRowUpClicked);
+            _columnsGrid.RecordContextMenu.Items.Add("Move Row Down", null, columnsGrid_MoveRowDownClicked);
 
-            columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "Name", HeaderText = "Column Name", AllowEditing = false, Width = 150, ShowHeaderToolTip = true });
-            columnsGrid.Columns.Add(new GridNumericColumn() { MappingName = "Transforms.Count", HeaderText = "Transforms Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
-            columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "DataType", HeaderText = "Data Type", AllowEditing = false });
-            columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsSelected", HeaderText = "Is Selected", ShowHeaderToolTip = true });
-            columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsPk", HeaderText = "Is Pk", AllowEditing = false });
-            columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsIdentity", HeaderText = "Is Identity", AllowEditing = false });
-            columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsComputed", HeaderText = "Is Computed", AllowEditing = false });
-            // this column will not update. for w/e reason
+            _columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "Name", HeaderText = "Column Name", AllowEditing = false, Width = 150, ShowHeaderToolTip = true });
+            _columnsGrid.Columns.Add(new GridNumericColumn() { MappingName = "Transforms.Count", HeaderText = "Transforms Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
+            _columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "DataType", HeaderText = "Data Type", AllowEditing = false });
+            _columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsSelected", HeaderText = "Is Selected", ShowHeaderToolTip = true });
+            _columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsPk", HeaderText = "Is Pk", AllowEditing = false });
+            _columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsIdentity", HeaderText = "Is Identity", AllowEditing = false });
+            _columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsComputed", HeaderText = "Is Computed", AllowEditing = false });
 
             tablesGrid.DetailsViewDefinitions.Add(new GridViewDefinition
             {
                 RelationalColumn = "Columns",
-                DataGrid = columnsGrid
+                DataGrid = _columnsGrid
             });
 
             // tranforms
-            var transformsGrid = new SfDataGrid
+            _transformsGrid = new SfDataGrid
             {
                 AutoGenerateColumns = false,
                 AutoSizeColumnsMode = AutoSizeColumnsMode.Fill,
@@ -145,20 +153,25 @@ namespace SqlServerDEID.Editor
                 AddNewRowPosition = RowPosition.Bottom,
                 AllowDeleting = true
             };
-            transformsGrid.CellButtonClick += TransformsChildGrid_CellButtonClick;
-            transformsGrid.CellComboBoxSelectionChanged += TransformsGrid_CellComboBoxSelectionChanged;
-            transformsGrid.ToolTipOpening += Grid_ToolTipOpening;
+            _transformsGrid.CellButtonClick += TransformsChildGrid_CellButtonClick;
+            _transformsGrid.CellComboBoxSelectionChanged += TransformsGrid_CellComboBoxSelectionChanged;
+            _transformsGrid.ToolTipOpening += Grid_ToolTipOpening;
+            _transformsGrid.RecordContextMenu = new ContextMenuStrip();
+            _transformsGrid.RecordContextMenu.Items.Add("Delete Row", null, transformsGrid_DeleteRowClicked);
+            _transformsGrid.RecordContextMenu.Items.Add("Move Row Up", null, transformsGrid_MoveRowUpClicked);
+            _transformsGrid.RecordContextMenu.Items.Add("Move Row Down", null, transformsGrid_MoveRowDownClicked);
 
-            transformsGrid.Columns.Add(new GridTextColumn() { MappingName = "Transform", HeaderText = "Transform", Width = 300, ShowHeaderToolTip = true });
-            transformsGrid.Columns.Add(new GridTextColumn() { MappingName = "WhereClause", HeaderText = "Where Clause", Width = 300, ShowHeaderToolTip = true });
-            transformsGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "TransformType", HeaderText = "TransformType", DisplayMember = "Key", ValueMember = "Value", DataSource = transformTypeValues, ShowHeaderToolTip = true });
-            transformsGrid.Columns.Add(new GridButtonColumn() { MappingName = "Transform", DefaultButtonText = "Edit Transform", HeaderText = "Edit", AllowDefaultButtonText = true });
-            columnsGrid.DetailsViewDefinitions.Add(new GridViewDefinition
+            _transformsGrid.Columns.Add(new GridTextColumn() { MappingName = "Transform", HeaderText = "Transform", Width = 300, ShowHeaderToolTip = true });
+            _transformsGrid.Columns.Add(new GridTextColumn() { MappingName = "WhereClause", HeaderText = "Where Clause", Width = 300, ShowHeaderToolTip = true });
+            _transformsGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "TransformType", HeaderText = "TransformType", DisplayMember = "Key", ValueMember = "Value", DataSource = transformTypeValues, ShowHeaderToolTip = true });
+            _transformsGrid.Columns.Add(new GridButtonColumn() { MappingName = "Transform", DefaultButtonText = "Edit Transform", HeaderText = "Edit", AllowDefaultButtonText = true });
+            _columnsGrid.DetailsViewDefinitions.Add(new GridViewDefinition
             {
                 RelationalColumn = "Transforms",
-                DataGrid = transformsGrid
+                DataGrid = _transformsGrid
             });
         }
+
         private void LoadFile(string fileName)
         {
             var currentCursor = Cursor.Current;
@@ -367,6 +380,7 @@ namespace SqlServerDEID.Editor
                                 tablesGrid.View.Refresh();
                                 return;
                             }
+
                             if (tablesGrid.View.IsAddingNew && tablesGrid.IsAddNewRowIndex(tablesGrid.CurrentCell.RowIndex))
                             {
                                 tablesGrid.View.CommitNew();
@@ -514,6 +528,121 @@ namespace SqlServerDEID.Editor
                 MessageBox.Show(this, "Only transforms of type expression can be edited.", "Edit Transform", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+
+        private void transformsGrid_MoveRowUpClicked(object sender, EventArgs e)
+        {
+            var grid = ((tablesGrid.SelectedDetailsViewGrid as SfDataGrid).SelectedDetailsViewGrid as SfDataGrid);
+            var datasource = grid.DataSource as ObservableCollection<DatabaseTableColumnTransform>;
+            var item = ((DatabaseTableColumnTransform)grid.CurrentItem);
+            var index = datasource.IndexOf(item);
+            if (index > 0)
+            {
+                datasource.Remove(item);
+                datasource.Insert(index - 1, item);
+            }
+        }
+
+        private void transformsGrid_MoveRowDownClicked(object sender, EventArgs e)
+        {
+            var grid = ((tablesGrid.SelectedDetailsViewGrid as SfDataGrid).SelectedDetailsViewGrid as SfDataGrid);
+            var datasource = grid.DataSource as ObservableCollection<DatabaseTableColumnTransform>;
+            var item = ((DatabaseTableColumnTransform)grid.CurrentItem);
+            var index = datasource.IndexOf(item);
+            if (index < datasource.Count - 1)
+            {
+                datasource.Remove(item);
+                datasource.Insert(index + 1, item);
+            }
+        }
+
+        private void transformsGrid_DeleteRowClicked(object sender, EventArgs e)
+        {
+            var grid = ((tablesGrid.SelectedDetailsViewGrid as SfDataGrid).SelectedDetailsViewGrid as SfDataGrid);
+            var datasource = grid.DataSource as ObservableCollection<DatabaseTableColumnTransform>;
+            var item = ((DatabaseTableColumnTransform)grid.CurrentItem);
+            datasource.Remove(item);
+        }
+
+        private void columnsGrid_MoveRowUpClicked(object sender, EventArgs e)
+        {
+            var grid = (tablesGrid.SelectedDetailsViewGrid as SfDataGrid);
+            var datasource = grid.DataSource as ObservableCollection<DatabaseTableColumn>;
+            var item = ((DatabaseTableColumn)grid.CurrentItem);
+            if (!item.IsSelected) { return; }
+            var index = datasource.IndexOf(item);
+            if (index > 0)
+            {
+                datasource.Remove(item);
+                datasource.Insert(index - 1, item);
+            }
+        }
+
+        private void columnsGrid_MoveRowDownClicked(object sender, EventArgs e)
+        {
+            var grid = (tablesGrid.SelectedDetailsViewGrid as SfDataGrid);
+            var datasource = grid.DataSource as ObservableCollection<DatabaseTableColumn>;
+            var item = ((DatabaseTableColumn)grid.CurrentItem);
+            if (!item.IsSelected) { return; }
+            var index = datasource.IndexOf(item);
+            if (index < datasource.Count(i => i.IsSelected) - 1)
+            {
+                datasource.Remove(item);
+                datasource.Insert(index + 1, item);
+            }
+        }
+
+        //private void columnsGrid_DeleteRowClicked(object sender, EventArgs e)
+        //{
+        //    var grid = (tablesGrid.SelectedDetailsViewGrid as SfDataGrid);
+        //    var datasource = grid.DataSource as ObservableCollection<DatabaseTableColumn>;
+        //    var item = ((DatabaseTableColumn)grid.CurrentItem);
+        //    datasource.Remove(item);
+        //}
+
+        private void tablesGrid_MoveRowUpClicked(object sender, EventArgs e)
+        {
+            var grid = tablesGrid;
+            var datasource = grid.DataSource as ObservableCollection<DatabaseTable>;
+            var item = ((DatabaseTable)grid.CurrentItem);
+            var index = datasource.IndexOf(item);
+            if (index > 0)
+            {
+                datasource.Remove(item);
+                datasource.Insert(index - 1, item);
+            }
+        }
+
+        private void tablesGrid_MoveRowDownClicked(object sender, EventArgs e)
+        {
+            var grid = tablesGrid;
+            var datasource = grid.DataSource as ObservableCollection<DatabaseTable>;
+            var item = ((DatabaseTable)grid.CurrentItem);
+            var index = datasource.IndexOf(item);
+            if (index < datasource.Count - 1)
+            {
+                datasource.Remove(item);
+                datasource.Insert(index + 1, item);
+            }
+        }
+
+        private void tablesGrid_DeleteRowClicked(object sender, EventArgs e)
+        {
+            var grid = tablesGrid;
+            var datasource = grid.DataSource as ObservableCollection<DatabaseTable>;
+            var index = grid.SelectedIndex;
+            var item = ((DatabaseTable)grid.CurrentItem);
+            if (!item.HasTransforms() || 
+                MessageBox.Show(this, "This will remove this datatable, and all transforms within it. Are you sure you wish to remove it?", "Remove table", 
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                datasource.Remove(item);
+                grid.CurrentItem = null;
+                grid.View.Refresh();
+                grid.Refresh();
+            }
+        }
+
+
         #endregion grid events
 
         #region menu events

@@ -68,7 +68,7 @@ namespace SqlServerDEID.Editor
             codeEditor1.CDSInitialize(_types, _types, typeof(ScriptGlobals));
             if (string.IsNullOrWhiteSpace(_transform))
             {
-                codeEditor1.CDSScript = Resources.ExampleScript;
+                codeEditor1.CDSScript = Resources.ScriptTemplate.Replace("<<TRANSFORM>>", "Faker...");
             }
             else
             {

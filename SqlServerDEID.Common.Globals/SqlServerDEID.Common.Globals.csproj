@@ -6,19 +6,19 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
-		<AssemblyVersion>0.3.1.2206</AssemblyVersion>
-		<FileVersion>0.3.1.2206</FileVersion>
+		<AssemblyVersion>0.3.1.2207</AssemblyVersion>
+		<FileVersion>0.3.1.2207</FileVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Bogus" Version="34.0.2" />
 		<PackageReference Include="Meziantou.Framework.Win32.CredentialManager" Version="1.4.2" />
 		<!--<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.1.0" />-->
 		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.1" />
 		<PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-		<PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.8.4" />
 		<PackageReference Include="System.IO.Packaging" Version="6.0.0" />
-		<PackageReference Include="System.Text.Json" Version="6.0.3" />
+		<PackageReference Include="System.Text.Json" Version="6.0.6" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Update="Properties\Resources.Designer.cs">

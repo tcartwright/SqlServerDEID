@@ -241,5 +241,4 @@ namespace SqlServerDEID.Common.Globals.Models
             connection.RunScript($"ALTER TABLE {this.Name} ENABLE TRIGGER ALL", exceptionHandler);
         }
     }
-
 }

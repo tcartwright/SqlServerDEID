@@ -15,7 +15,7 @@ namespace SqlServerDEID.Editor
         static void Main()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjM1ODU5QDMyMzAyZTMxMmUzMGV6V3JCdjQ2SUVHMVlTckwrU3dvdG5oRFU1T1E1YmxPNW9mWkZnM2xGeWs9");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NzQ4NTY4QDMyMzAyZTMzMmUzME9WN21wOStJbGh2S2VEZ05qMlJnTVh5VFBBbFVGWEh2V2dDellkMmtMMjg9");
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
