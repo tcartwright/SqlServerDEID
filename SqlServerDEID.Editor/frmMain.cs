@@ -70,7 +70,7 @@ namespace SqlServerDEID.Editor
             toolTipItem1.Style.BackColor = Color.LightSkyBlue;
             toolTipItem1.Style.ForeColor = Color.Black;
             toolTipItem1.Style.TextAlignment = ContentAlignment.MiddleCenter;
-            //toolTipItem1.Style.Font = new Font("Arial", 10.5f, FontStyle.Bold);
+            toolTipItem1.Style.Font = new Font(frmMain.DefaultFont.FontFamily.Name, frmMain.DefaultFont.Size, FontStyle.Bold);
             return toolTipItem1;
         }
 
@@ -506,12 +506,15 @@ namespace SqlServerDEID.Editor
                 e.ToolTipInfo.Items.Clear();
                 var datatable = tablesGrid.CurrentItem as DatabaseTable;
                 var col = e.Record as DatabaseTableColumn;
-                tt = $"{datatable.CleanName}.{col.CleanName} {col.DataType}";
+                tt = $"{datatable.CleanName} {col.CleanName} {col.DataType}";
             }
 
-            e.ToolTipInfo.Items.Add(GetToolTipItem(tt));
-            e.ToolTipInfo.BorderColor = Color.Black;
-            e.ToolTipInfo.ToolTipLocation = Syncfusion.WinForms.Controls.Enums.ToolTipLocation.BottomRight;
+            if (!string.IsNullOrWhiteSpace(tt))
+            {
+                e.ToolTipInfo.Items.Add(GetToolTipItem(tt));
+                e.ToolTipInfo.BorderColor = Color.Black;
+                e.ToolTipInfo.ToolTipLocation = Syncfusion.WinForms.Controls.Enums.ToolTipLocation.BottomRight;
+            }
         }
         private void TransformsGrid_CellComboBoxSelectionChanged(object sender, CellComboBoxSelectionChangedEventArgs e)
         {

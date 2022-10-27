@@ -6,8 +6,8 @@
 		<StartupObject>SqlServerDEID.Program</StartupObject>
 		<LangVersion>latest</LangVersion>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<AssemblyVersion>2022.10.27.8</AssemblyVersion>
-		<FileVersion>2022.10.27.8</FileVersion>
+		<AssemblyVersion>2022.10.27.9</AssemblyVersion>
+		<FileVersion>2022.10.27.9</FileVersion>
         <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
     </PropertyGroup>
 
