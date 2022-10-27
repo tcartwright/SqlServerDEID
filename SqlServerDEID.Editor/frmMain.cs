@@ -501,20 +501,14 @@ namespace SqlServerDEID.Editor
                         break;
                 }
             }
-            else
+            else if (e.Record != null)
             {
                 e.ToolTipInfo.Items.Clear();
-                var columnsGrid = tablesGrid.SelectedDetailsViewGrid as SfDataGrid;
-                if (columnsGrid != null)
-                {
-                    var datatable = tablesGrid.CurrentItem as DatabaseTable;
-                    var col = columnsGrid.CurrentItem as DatabaseTableColumn;
-                    tt = $"{datatable.CleanName}.{col.CleanName} {col.DataType}";
-                }
+                var datatable = tablesGrid.CurrentItem as DatabaseTable;
+                var col = e.Record as DatabaseTableColumn;
+                tt = $"{datatable.CleanName}.{col.CleanName} {col.DataType}";
             }
-            //_tooltip.Show(tt);
-            //toolTip1.Show(tt, grid.TableControl);
-            
+
             e.ToolTipInfo.Items.Add(GetToolTipItem(tt));
             e.ToolTipInfo.BorderColor = Color.Black;
             e.ToolTipInfo.ToolTipLocation = Syncfusion.WinForms.Controls.Enums.ToolTipLocation.BottomRight;
