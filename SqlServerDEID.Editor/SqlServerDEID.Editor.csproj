@@ -8,10 +8,10 @@
 		<StartupObject>SqlServerDEID.Editor.Program</StartupObject>
 		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
 		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
-		<RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
         <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
 	</PropertyGroup>
-	<ItemGroup>
+
+    <ItemGroup>
 		<PackageReference Include="Bogus" Version="34.0.2" />
 		<PackageReference Include="CDS.CSharpScripting" Version="1.0.18" />
 		<!--<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.1.0" />-->

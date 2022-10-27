@@ -4,6 +4,7 @@ using SqlServerDEID.Common.Globals.Models;
 using SqlServerDEID.Editor.Controls;
 using SqlServerDEID.Editor.Properties;
 using Syncfusion.Windows.Forms;
+using Syncfusion.WinForms.Controls;
 using Syncfusion.WinForms.Core.Utils;
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
@@ -15,12 +16,14 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Design;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using static Syncfusion.Windows.Forms.Tools.ToolTipInfo;
 
 namespace SqlServerDEID.Editor
 {
@@ -52,21 +55,40 @@ namespace SqlServerDEID.Editor
         #endregion form 
 
         #region private methods
+
+        private ToolTipInfo GetToolTipInfo(string text)
+        {
+            var toolTipInfo1 = new Syncfusion.WinForms.Controls.ToolTipInfo();
+            toolTipInfo1.Items.Add(GetToolTipItem(text));
+            return toolTipInfo1;
+        }
+
+        private Syncfusion.WinForms.Controls.ToolTipItem GetToolTipItem(string text)
+        {
+            var toolTipItem1 = new Syncfusion.WinForms.Controls.ToolTipItem();
+            toolTipItem1.Text = text;
+            toolTipItem1.Style.BackColor = Color.LightSkyBlue;
+            toolTipItem1.Style.ForeColor = Color.Black;
+            toolTipItem1.Style.TextAlignment = ContentAlignment.MiddleCenter;
+            //toolTipItem1.Style.Font = new Font("Arial", 10.5f, FontStyle.Bold);
+            return toolTipItem1;
+        }
+
         private void SetupToolTips()
         {
             //sftooltip does not currently work with numeric up downs unless you set all sub controls as well
-            _tooltip.SetToolTip(portNumber, Resources.PortNumber);
-            _tooltip.SetToolTip(portNumber.Controls[0], Resources.PortNumber);
-            _tooltip.SetToolTip(portNumber.Controls[1], Resources.PortNumber);
-            _tooltip.SetToolTip(scriptTimeout, Resources.Scriptimeout);
-            _tooltip.SetToolTip(scriptTimeout.Controls[0], Resources.Scriptimeout);
-            _tooltip.SetToolTip(scriptTimeout.Controls[1], Resources.Scriptimeout);
-            _tooltip.SetToolTip(label8, Resources.AddionalNameSpaces);
-            _tooltip.SetToolTip(btnEditScriptImports, Resources.AddionalNameSpaces);
-            _tooltip.SetToolTip(txtPostScript, Resources.PostScript);
-            _tooltip.SetToolTip(txtPreScript, Resources.PreScript);
-            _tooltip.SetToolTip(ddlCredentials, Resources.Credentials);
-            _tooltip.SetToolTip(txtLocale, Resources.Locale);
+            _tooltip.SetToolTipInfo(portNumber, GetToolTipInfo(Resources.PortNumber));
+            _tooltip.SetToolTipInfo(portNumber.Controls[0], GetToolTipInfo(Resources.PortNumber));
+            _tooltip.SetToolTipInfo(portNumber.Controls[1], GetToolTipInfo(Resources.PortNumber));
+            _tooltip.SetToolTipInfo(scriptTimeout, GetToolTipInfo(Resources.Scriptimeout));
+            _tooltip.SetToolTipInfo(scriptTimeout.Controls[0], GetToolTipInfo(Resources.Scriptimeout));
+            _tooltip.SetToolTipInfo(scriptTimeout.Controls[1], GetToolTipInfo(Resources.Scriptimeout));
+            _tooltip.SetToolTipInfo(label8, GetToolTipInfo(Resources.AddionalNameSpaces));
+            _tooltip.SetToolTipInfo(btnEditScriptImports, GetToolTipInfo(Resources.AddionalNameSpaces));
+            _tooltip.SetToolTipInfo(txtPostScript, GetToolTipInfo(Resources.PostScript));
+            _tooltip.SetToolTipInfo(txtPreScript, GetToolTipInfo(Resources.PreScript));
+            _tooltip.SetToolTipInfo(ddlCredentials, GetToolTipInfo(Resources.Credentials));
+            _tooltip.SetToolTipInfo(txtLocale, GetToolTipInfo(Resources.Locale));
         }
         private void BindCredentials()
         {
@@ -129,7 +151,7 @@ namespace SqlServerDEID.Editor
             _columnsGrid.RecordContextMenu.Items.Add("Move Row Up", null, columnsGrid_MoveRowUpClicked);
             _columnsGrid.RecordContextMenu.Items.Add("Move Row Down", null, columnsGrid_MoveRowDownClicked);
 
-            _columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "Name", HeaderText = "Column Name", AllowEditing = false, Width = 150, ShowHeaderToolTip = true });
+            _columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "Name", HeaderText = "Column Name", AllowEditing = false, Width = 150, ShowHeaderToolTip = true, ShowToolTip = true });
             _columnsGrid.Columns.Add(new GridNumericColumn() { MappingName = "Transforms.Count", HeaderText = "Transforms Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
             _columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "DataType", HeaderText = "Data Type", AllowEditing = false });
             _columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsSelected", HeaderText = "Is Selected", ShowHeaderToolTip = true });
@@ -461,24 +483,40 @@ namespace SqlServerDEID.Editor
             var tt = string.Empty;
             var grid = (SfDataGrid)sender;
 
-            switch (e.Column.MappingName.ToLower())
+            if (!_stringComparer.Equals(e.Column.HeaderText, "Column Name"))
             {
-                case "prescript":
-                    tt = Resources.PreScript;
-                    break;
-                case "postscript":
-                    tt = Resources.PostScript;
-                    break;
-                case "scripttimeout":
-                    tt = Resources.Scriptimeout;
-                    break;
-                default:
-                    tt = Resources.ResourceManager.GetString($"{e.Column.MappingName.ToLower()}.column");
-                    break;
+                switch (e.Column.MappingName.ToLower())
+                {
+                    case "prescript":
+                        tt = Resources.PreScript;
+                        break;
+                    case "postscript":
+                        tt = Resources.PostScript;
+                        break;
+                    case "scripttimeout":
+                        tt = Resources.Scriptimeout;
+                        break;
+                    default:
+                        tt = Resources.ResourceManager.GetString($"{e.Column.MappingName.ToLower()}.column");
+                        break;
+                }
+            }
+            else
+            {
+                e.ToolTipInfo.Items.Clear();
+                var columnsGrid = tablesGrid.SelectedDetailsViewGrid as SfDataGrid;
+                if (columnsGrid != null)
+                {
+                    var datatable = tablesGrid.CurrentItem as DatabaseTable;
+                    var col = columnsGrid.CurrentItem as DatabaseTableColumn;
+                    tt = $"{datatable.CleanName}.{col.CleanName} {col.DataType}";
+                }
             }
             //_tooltip.Show(tt);
             //toolTip1.Show(tt, grid.TableControl);
-            e.ToolTipInfo.Items[0].Text = tt;
+            
+            e.ToolTipInfo.Items.Add(GetToolTipItem(tt));
+            e.ToolTipInfo.BorderColor = Color.Black;
             e.ToolTipInfo.ToolTipLocation = Syncfusion.WinForms.Controls.Enums.ToolTipLocation.BottomRight;
         }
         private void TransformsGrid_CellComboBoxSelectionChanged(object sender, CellComboBoxSelectionChangedEventArgs e)
@@ -501,9 +539,10 @@ namespace SqlServerDEID.Editor
                 {
                     Cursor.Current = Cursors.WaitCursor;
 
-                    var grid = ReflectionHelper.GetProperty(row.GetType(), "DataGrid").GetValue(row, null) as SfDataGrid;
+                    var grid = ((tablesGrid.SelectedDetailsViewGrid as SfDataGrid).SelectedDetailsViewGrid as SfDataGrid);
+
                     var columnsGrid = grid.NotifyListener.GetParentDataGrid();
-                    var tablesGrid = columnsGrid.NotifyListener.GetParentDataGrid();
+                    var tblsGrid = columnsGrid.NotifyListener.GetParentDataGrid();
 
                     var columns = columnsGrid.DataSource as IList<DatabaseTableColumn>;
                     var selectedColumns = columns.Where(c => c.IsSelected).ToList();
@@ -514,7 +553,7 @@ namespace SqlServerDEID.Editor
                     {
                         RowValues = rowValues,
                         DatabaseName = _database.DatabaseName,
-                        TableName = (tablesGrid.CurrentItem as DatabaseTable)?.Name,
+                        TableName = (tblsGrid.CurrentItem as DatabaseTable)?.Name,
                         Column = (columnsGrid.CurrentItem as DatabaseTableColumn)?.ToColumnInfo(),
                     };
 
