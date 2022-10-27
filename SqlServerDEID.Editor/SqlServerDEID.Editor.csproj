@@ -56,7 +56,4 @@
 	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
 	  </None>
 	</ItemGroup>
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="set binPath=$(ProjectDir)$(OutputPath)&#xD;&#xA;del /f /q &quot;%25binPath%25Syncfusion.*.dll&quot;" />
-	</Target>
 </Project>
