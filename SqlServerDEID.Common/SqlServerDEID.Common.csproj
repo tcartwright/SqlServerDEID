@@ -8,7 +8,8 @@
 		<Nullable>enable</Nullable>
 		<AssemblyVersion>2022.3.1.2207</AssemblyVersion>
 		<FileVersion>2022.3.1.2207</FileVersion>
-	</PropertyGroup>
+        <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+    </PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Bogus" Version="34.0.2" />

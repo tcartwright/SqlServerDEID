@@ -9,6 +9,7 @@
 		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
 		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
 		<RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+        <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Bogus" Version="34.0.2" />
