@@ -6,8 +6,8 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
-		<AssemblyVersion>2022.10.27.1</AssemblyVersion>
-		<FileVersion>2022.10.27.1</FileVersion>
+		<AssemblyVersion>2022.10.27.3</AssemblyVersion>
+		<FileVersion>2022.10.27.3</FileVersion>
         <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
     </PropertyGroup>
 	<ItemGroup>

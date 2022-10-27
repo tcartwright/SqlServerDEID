@@ -111,7 +111,7 @@ namespace SqlServerDEID.Editor
                 var tbl = _connection.ExecuteDataTable($"SELECT * FROM [{_tableName}] AS [tt]");
                 gridTransformedData.DataSource = tbl;
 
-                // synch up the columns width
+                // sync up the columns width
                 for (int i = 0; i <= gridRawData.Columns.Count - 1; i++)
                 {
                     gridTransformedData.Columns[i].Width = gridRawData.Columns[i].ActualWidth;
@@ -156,10 +156,8 @@ namespace SqlServerDEID.Editor
 
         private void MessageException(Exception ex, string message, string title = "Exception")
         {
-            var msg = $"{message} Exception:\r\n\r\n{ex.Message}";
+            var msg = $"{message} Exception:\r\n\r\n{ex.GetBaseException().Message}";
             MessageBox.Show(this, msg, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
-
-
     }
 }

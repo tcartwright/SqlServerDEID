@@ -420,7 +420,7 @@ namespace SqlServerDEID.Editor
         }
         private void TablesGrid_CellButtonClick(object sender, Syncfusion.WinForms.DataGrid.Events.CellButtonClickEventArgs e)
         {
-            var table = ((DataRowBase)e.Record).RowData as DatabaseTable;
+            var table = (((DataRowBase)e.Record).RowData as DatabaseTable).CloneObject<DatabaseTable>();
 
             if (!table.HasTransforms())
             {
@@ -428,6 +428,12 @@ namespace SqlServerDEID.Editor
                 return;
             }
             var database = _database.CloneObject<Database>();
+            // remove the scripts if set, as we do not want them to run when testing the transform
+            table.PreScript = null;
+            table.PostScript = null;
+            database.PreScript = null;
+            database.PostScript = null;
+
             database.Tables.Clear();
             database.Tables.Add(table);
             database.RemoveNullTransforms();
@@ -532,6 +538,7 @@ namespace SqlServerDEID.Editor
         private void transformsGrid_MoveRowUpClicked(object sender, EventArgs e)
         {
             var grid = ((tablesGrid.SelectedDetailsViewGrid as SfDataGrid).SelectedDetailsViewGrid as SfDataGrid);
+            if (grid.CurrentItem == null) { return; }
             var datasource = grid.DataSource as ObservableCollection<DatabaseTableColumnTransform>;
             var item = ((DatabaseTableColumnTransform)grid.CurrentItem);
             var index = datasource.IndexOf(item);
@@ -545,6 +552,7 @@ namespace SqlServerDEID.Editor
         private void transformsGrid_MoveRowDownClicked(object sender, EventArgs e)
         {
             var grid = ((tablesGrid.SelectedDetailsViewGrid as SfDataGrid).SelectedDetailsViewGrid as SfDataGrid);
+            if (grid.CurrentItem == null) { return; }
             var datasource = grid.DataSource as ObservableCollection<DatabaseTableColumnTransform>;
             var item = ((DatabaseTableColumnTransform)grid.CurrentItem);
             var index = datasource.IndexOf(item);
@@ -558,6 +566,7 @@ namespace SqlServerDEID.Editor
         private void transformsGrid_DeleteRowClicked(object sender, EventArgs e)
         {
             var grid = ((tablesGrid.SelectedDetailsViewGrid as SfDataGrid).SelectedDetailsViewGrid as SfDataGrid);
+            if (grid.CurrentItem == null) { return; }
             var datasource = grid.DataSource as ObservableCollection<DatabaseTableColumnTransform>;
             var item = ((DatabaseTableColumnTransform)grid.CurrentItem);
             datasource.Remove(item);
@@ -566,6 +575,7 @@ namespace SqlServerDEID.Editor
         private void columnsGrid_MoveRowUpClicked(object sender, EventArgs e)
         {
             var grid = (tablesGrid.SelectedDetailsViewGrid as SfDataGrid);
+            if (grid.CurrentItem == null) { return; }
             var datasource = grid.DataSource as ObservableCollection<DatabaseTableColumn>;
             var item = ((DatabaseTableColumn)grid.CurrentItem);
             if (!item.IsSelected) { return; }
@@ -580,6 +590,7 @@ namespace SqlServerDEID.Editor
         private void columnsGrid_MoveRowDownClicked(object sender, EventArgs e)
         {
             var grid = (tablesGrid.SelectedDetailsViewGrid as SfDataGrid);
+            if (grid.CurrentItem == null) { return; }
             var datasource = grid.DataSource as ObservableCollection<DatabaseTableColumn>;
             var item = ((DatabaseTableColumn)grid.CurrentItem);
             if (!item.IsSelected) { return; }
@@ -602,6 +613,7 @@ namespace SqlServerDEID.Editor
         private void tablesGrid_MoveRowUpClicked(object sender, EventArgs e)
         {
             var grid = tablesGrid;
+            if (grid.CurrentItem == null) { return; }
             var datasource = grid.DataSource as ObservableCollection<DatabaseTable>;
             var item = ((DatabaseTable)grid.CurrentItem);
             var index = datasource.IndexOf(item);
@@ -615,6 +627,7 @@ namespace SqlServerDEID.Editor
         private void tablesGrid_MoveRowDownClicked(object sender, EventArgs e)
         {
             var grid = tablesGrid;
+            if (grid.CurrentItem == null) { return; }
             var datasource = grid.DataSource as ObservableCollection<DatabaseTable>;
             var item = ((DatabaseTable)grid.CurrentItem);
             var index = datasource.IndexOf(item);
@@ -628,11 +641,12 @@ namespace SqlServerDEID.Editor
         private void tablesGrid_DeleteRowClicked(object sender, EventArgs e)
         {
             var grid = tablesGrid;
+            if (grid.CurrentItem == null) { return; }
             var datasource = grid.DataSource as ObservableCollection<DatabaseTable>;
             var index = grid.SelectedIndex;
             var item = ((DatabaseTable)grid.CurrentItem);
-            if (!item.HasTransforms() || 
-                MessageBox.Show(this, "This will remove this datatable, and all transforms within it. Are you sure you wish to remove it?", "Remove table", 
+            if (!item.HasTransforms() ||
+                MessageBox.Show(this, "This will remove this datatable, and all transforms within it. Are you sure you wish to remove it?", "Remove table",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 datasource.Remove(item);

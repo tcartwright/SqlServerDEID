@@ -56,9 +56,9 @@ Global
 		UpdateAssemblyInfoVersion = True
 		ShouldCreateLogs = True
 		AdvancedSettingsExpanded = True
-		AssemblyVersionSettings = YearStamp.MonthStamp.DayStamp.IncrementWithResetOnIncrease
-		AssemblyFileVersionSettings = YearStamp.MonthStamp.DayStamp.IncrementWithResetOnIncrease
-		AssemblyInfoVersionSettings = YearStamp.MonthStamp.DayStamp.IncrementWithResetOnIncrease
+		AssemblyVersionSettings = YearStamp.MonthStamp.DayStamp.Increment
+		AssemblyFileVersionSettings = YearStamp.MonthStamp.DayStamp.Increment
+		AssemblyInfoVersionSettings = YearStamp.MonthStamp.DayStamp.Increment
 		UpdatePackageVersion = False
 		AssemblyInfoVersionType = SettingsVersion
 		InheritWinAppVersionFrom = None
