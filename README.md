@@ -1,6 +1,7 @@
 # SqlServerDEID
 
-NOTE: 
+NOTES: 
+- Because I am using the community license from Syncfustion I am not allowed to distribute the dlls. Because of this, you will need to download and compile the application manually until I can come up with an alternative solution.
 - This documentation is in the process of being fleshed out. 
 - I also have potential ideas about making this database generic.
 
