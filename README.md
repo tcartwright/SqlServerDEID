@@ -1,8 +1,9 @@
 # SqlServerDEID
 
 NOTES: 
-- Because I am using the community license from Syncfustion I am not allowed to distribute the dlls. Because of this, you will need to download and compile the application manually until I can come up with an alternative solution.
 - This documentation is in the process of being fleshed out. 
+- Because I am using the community license from Syncfusion I am not allowed to distribute the Syncfusion dlls. Because of this, you will need to download and compile the application manually until I can come up with an alternative solution. To try to help make this easier I have provided a "make" script. Just run the MakeRelease.bat to build the project, and it will create a release zip for you.
+	- Visual studio is not required, but you will need to install the [.NET SDK](https://learn.microsoft.com/en-us/dotnet/core/sdk) at minimum to run the make MakeRelease.bat script.
 - I also have potential ideas about making this database generic.
 
 SqlServerDEID is an application that can DEID (De-Identify) sensitive [PCI](https://www.pcisecuritystandards.org/), [HIPPA](https://www.hhs.gov/hipaa/index.html) or [GDPR](https://gdpr-info.eu/) data within your SQL Server database. There are two applications:
@@ -38,7 +39,7 @@ A transform file connects to a single database on a server. It can be saved in e
 	- ScriptTimeout: The timeout in seconds before either the postscript or the prescript will throw a timeout exception.
 
 - ScriptingImports 
-	- NameSpace: Addtional namespaces can be brought in for access to additional built in functions in the C# expressions. There are also custom namespaces the Bogus library supports for additonal functionality. See [here](https://github.com/bchavez/Bogus#api-extension-methods) for more information. For example, to be able to use the Faker.Person.Ssn() function you must import the namespace: Bogus.Extensions.UnitedStates.
+	- NameSpace: Additional namespaces can be brought in for access to additional built in functions in the C# expressions. There are also custom namespaces the Bogus library supports for additional functionality. See [here](https://github.com/bchavez/Bogus#api-extension-methods) for more information. For example, to be able to use the Faker.Person.Ssn() function you must import the namespace: Bogus.Extensions.UnitedStates.
 
 - Table 
 	- Name: The name of the database table. Must include schema.
@@ -68,7 +69,7 @@ A transform file connects to a single database on a server. It can be saved in e
 - Faker.Person.Ssn() 
 	- Requires the Bogus.Extensions.UnitedStates namespace to be imported. Generates a US SSN.
 - String.Concat(Male.FullName, "<", Male.Email, ">") 
-	- Generates a email address with fullname. Concatenates mulitple faker values. 
+	- Generates a email address with fullname. Concatenates multiple faker values. 
 - Faker.Address.ZipCode("#####") 
 	- Generates a five digit zip code using a format
 - Faker.Random.ListItem(new[] { "Item1", "Item2", "Item3", "Item4" })
