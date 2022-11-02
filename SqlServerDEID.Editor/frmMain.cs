@@ -130,7 +130,7 @@ namespace SqlServerDEID.Editor
             tablesGrid.RecordContextMenu.Items.Add("Move Row Up", null, tablesGrid_MoveRowUpClicked);
             tablesGrid.RecordContextMenu.Items.Add("Move Row Down", null, tablesGrid_MoveRowDownClicked);
 
-            tablesGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300, ShowToolTip = true, ShowHeaderToolTip = true }); 
+            tablesGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300, ShowToolTip = true, ShowHeaderToolTip = true });
             tablesGrid.Columns.Add(new GridNumericColumn() { MappingName = "Columns.Count", HeaderText = "Columns Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false, ShowHeaderToolTip = true });
             tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableTriggers", HeaderText = "Disable Triggers", ShowHeaderToolTip = true });
             tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableConstraints", HeaderText = "Disable Constraints", ShowHeaderToolTip = true });
@@ -390,10 +390,21 @@ namespace SqlServerDEID.Editor
                             connection.Open();
                             table.Reset();
                             table.GetMetaData(connection, true);
+                            var cancel = false;
 
                             if (!table.Columns.Any(c => c.IsPk))
                             {
                                 MessageBox.Show(this, "Transforms cannot be created for tables that do not have primary keys. Either add a primary key for this table or select a different table.", "No PK", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                cancel = true;
+                            }
+                            else if (tablesGrid.View.Records.Any(r => _stringComparer.Equals(((DatabaseTable)r.Data).CleanName, table.CleanName)))
+                            {
+                                MessageBox.Show(this, "This table has already been added previously. You cannot add a table twice to the same transform.", "Duplicate Table", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                cancel = true;
+                            }
+
+                            if (cancel)
+                            {
                                 if (tablesGrid.View.IsAddingNew && tablesGrid.IsAddNewRowIndex(tablesGrid.CurrentCell.RowIndex))
                                 {
                                     _database.Tables.Remove(table);
@@ -404,10 +415,8 @@ namespace SqlServerDEID.Editor
                                     tablesGrid.View.CancelEdit();
                                 }
                                 tablesGrid.View.Refresh();
-                                return;
                             }
-
-                            if (tablesGrid.View.IsAddingNew && tablesGrid.IsAddNewRowIndex(tablesGrid.CurrentCell.RowIndex))
+                            else if (tablesGrid.View.IsAddingNew && tablesGrid.IsAddNewRowIndex(tablesGrid.CurrentCell.RowIndex))
                             {
                                 tablesGrid.View.CommitNew();
                             }
@@ -417,8 +426,10 @@ namespace SqlServerDEID.Editor
                     {
                         MessageException(ex, "Problem loading data.");
                     }
-
-                    Cursor.Current = Cursors.Default;
+                    finally
+                    {
+                        Cursor.Current = Cursors.Default;
+                    }
                 }
             }
         }
