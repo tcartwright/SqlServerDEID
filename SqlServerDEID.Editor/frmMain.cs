@@ -130,8 +130,8 @@ namespace SqlServerDEID.Editor
             tablesGrid.RecordContextMenu.Items.Add("Move Row Up", null, tablesGrid_MoveRowUpClicked);
             tablesGrid.RecordContextMenu.Items.Add("Move Row Down", null, tablesGrid_MoveRowDownClicked);
 
-            tablesGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300, ShowToolTip = true, ShowHeaderToolTip = true }); // new GridTextColumn() { MappingName = "Name", HeaderText = "Table Name", AllowEditing = false });
-            tablesGrid.Columns.Add(new GridNumericColumn() { MappingName = "Columns.Count", HeaderText = "Columns Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
+            tablesGrid.Columns.Add(new GridComboBoxColumn() { MappingName = "Name", HeaderText = "Table Name", ValueMember = "TableName", DisplayMember = "TableName", Width = 300, ShowToolTip = true, ShowHeaderToolTip = true }); 
+            tablesGrid.Columns.Add(new GridNumericColumn() { MappingName = "Columns.Count", HeaderText = "Columns Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false, ShowHeaderToolTip = true });
             tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableTriggers", HeaderText = "Disable Triggers", ShowHeaderToolTip = true });
             tablesGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "DisableConstraints", HeaderText = "Disable Constraints", ShowHeaderToolTip = true });
             tablesGrid.Columns.Add(new GridTextColumn() { MappingName = "PreScript", HeaderText = "Pre Script", ShowHeaderToolTip = true });
@@ -156,12 +156,12 @@ namespace SqlServerDEID.Editor
             _columnsGrid.RecordContextMenu.Items.Add("Move Row Down", null, columnsGrid_MoveRowDownClicked);
 
             _columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "Name", HeaderText = "Column Name", AllowEditing = false, Width = 150, ShowHeaderToolTip = true, ShowToolTip = true });
-            _columnsGrid.Columns.Add(new GridNumericColumn() { MappingName = "Transforms.Count", HeaderText = "Transforms Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false });
-            _columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "DataType", HeaderText = "Data Type", AllowEditing = false });
+            _columnsGrid.Columns.Add(new GridNumericColumn() { MappingName = "Transforms.Count", HeaderText = "Transforms Count", NumberFormatInfo = integerFormatInfo, AllowEditing = false, ShowHeaderToolTip = true });
+            _columnsGrid.Columns.Add(new GridTextColumn() { MappingName = "DataType", HeaderText = "Data Type", AllowEditing = false, ShowHeaderToolTip = true });
             _columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsSelected", HeaderText = "Is Selected", ShowHeaderToolTip = true });
-            _columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsPk", HeaderText = "Is Pk", AllowEditing = false });
-            _columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsIdentity", HeaderText = "Is Identity", AllowEditing = false });
-            _columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsComputed", HeaderText = "Is Computed", AllowEditing = false });
+            _columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsPk", HeaderText = "Is Pk", AllowEditing = false, ShowHeaderToolTip = true });
+            _columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsIdentity", HeaderText = "Is Identity", AllowEditing = false, ShowHeaderToolTip = true });
+            _columnsGrid.Columns.Add(new GridCheckBoxColumn() { MappingName = "IsComputed", HeaderText = "Is Computed", AllowEditing = false, ShowHeaderToolTip = true });
 
             tablesGrid.DetailsViewDefinitions.Add(new GridViewDefinition
             {
@@ -487,7 +487,6 @@ namespace SqlServerDEID.Editor
             try
             {
                 var tt = string.Empty;
-                var grid = (SfDataGrid)sender;
                 var childGrid = e.OriginalSender as DetailsViewDataGrid;
 
                 if (!_stringComparer.Equals(e.Column.HeaderText, "Column Name") || _stringComparer.Equals(e.DisplayText, "Column Name"))

@@ -79,6 +79,15 @@ namespace SqlServerDEID.Editor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The number of columns in this table..
+        /// </summary>
+        internal static string columns_count_column {
+            get {
+                return ResourceManager.GetString("columns.count.column", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A generic credential must be created in the Credential Manager to be available in this dropdown.
         ///
         ///Use &quot;Trusted Connection&quot; to connect as the currently logged on user..
@@ -86,6 +95,15 @@ namespace SqlServerDEID.Editor.Properties {
         internal static string Credentials {
             get {
                 return ResourceManager.GetString("Credentials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The sql server datatype of the table column..
+        /// </summary>
+        internal static string datatype_column {
+            get {
+                return ResourceManager.GetString("datatype.column", resourceCulture);
             }
         }
         
@@ -156,7 +174,38 @@ namespace SqlServerDEID.Editor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This column determines whether or not the column will appear in the transform document, and also be available in the RowValues object..
+        ///   Looks up a localized string similar to True if the table column is a computed column. Transforms cannot be applied if true..
+        /// </summary>
+        internal static string iscomputed_column {
+            get {
+                return ResourceManager.GetString("iscomputed.column", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to True if this table column is an identity column. Transforms cannot be applied if true..
+        /// </summary>
+        internal static string isidentity_column {
+            get {
+                return ResourceManager.GetString("isidentity.column", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to True if this table column is part of the tables primary key. Transforms cannot be applied if true..
+        /// </summary>
+        internal static string ispk_column {
+            get {
+                return ResourceManager.GetString("ispk.column", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This column determines whether or not the column will appear in the transform document, and also be available in the RowValues object. 
+        ///
+        ///Columns with transforms will automatically be selected, and cannot be unselected.
+        ///
+        ///A column can be selected without transforms, which will add it to the overall transform query and make the value also available in the RowValues object..
         /// </summary>
         internal static string isselected_column {
             get {
@@ -248,6 +297,15 @@ namespace SqlServerDEID.Editor.Properties {
         internal static string transform_column {
             get {
                 return ResourceManager.GetString("transform.column", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of Faker transforms applied to this table column..
+        /// </summary>
+        internal static string transforms_count_column {
+            get {
+                return ResourceManager.GetString("transforms.count.column", resourceCulture);
             }
         }
         

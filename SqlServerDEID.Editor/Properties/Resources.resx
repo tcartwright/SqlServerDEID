@@ -129,10 +129,16 @@ These namespaces will be brought in by default:
 - System.Text
 - System.Text.RegularExpressions</value>
   </data>
+  <data name="columns.count.column" xml:space="preserve">
+    <value>The number of columns in this table.</value>
+  </data>
   <data name="Credentials" xml:space="preserve">
     <value>A generic credential must be created in the Credential Manager to be available in this dropdown.
 
 Use "Trusted Connection" to connect as the currently logged on user.</value>
+  </data>
+  <data name="datatype.column" xml:space="preserve">
+    <value>The sql server datatype of the table column.</value>
   </data>
   <data name="disableconstraints.column" xml:space="preserve">
     <value>If enabled all constraints that are enabled will be disabled before running any DEID transforms against the table. All previouly disabled constraints will be re-enabled afterwards.</value>
@@ -150,8 +156,21 @@ Use "Trusted Connection" to connect as the currently logged on user.</value>
   <data name="GetTransformData" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GetTransformData.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="iscomputed.column" xml:space="preserve">
+    <value>True if the table column is a computed column. Transforms cannot be applied if true.</value>
+  </data>
+  <data name="isidentity.column" xml:space="preserve">
+    <value>True if this table column is an identity column. Transforms cannot be applied if true.</value>
+  </data>
+  <data name="ispk.column" xml:space="preserve">
+    <value>True if this table column is part of the tables primary key. Transforms cannot be applied if true.</value>
+  </data>
   <data name="isselected.column" xml:space="preserve">
-    <value>This column determines whether or not the column will appear in the transform document, and also be available in the RowValues object.</value>
+    <value>This column determines whether or not the column will appear in the transform document, and also be available in the RowValues object. 
+
+Columns with transforms will automatically be selected, and cannot be unselected.
+
+A column can be selected without transforms, which will add it to the overall transform query and make the value also available in the RowValues object.</value>
   </data>
   <data name="Locale" xml:space="preserve">
     <value>The locale to use when generating faker data.</value>
@@ -183,6 +202,9 @@ All relative paths will be relative to the transform configuration file.</value>
   </data>
   <data name="transform.column" xml:space="preserve">
     <value>The transform can either be a C# expression or a path to a powershell file. If pointing to a powershell file path, then make the path relative to where the transform file will be saved, or use an absolute path.</value>
+  </data>
+  <data name="transforms.count.column" xml:space="preserve">
+    <value>The number of Faker transforms applied to this table column.</value>
   </data>
   <data name="transformtype.column" xml:space="preserve">
     <value>Determines whether or not a C# expression will be used, or a powershell file.</value>
