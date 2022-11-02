@@ -9,6 +9,7 @@ using Syncfusion.WinForms.Core.Utils;
 using Syncfusion.WinForms.DataGrid;
 using Syncfusion.WinForms.DataGrid.Enums;
 using Syncfusion.WinForms.DataGrid.Events;
+using Syncfusion.WinForms.DataGrid.Interactivity;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,6 +31,7 @@ namespace SqlServerDEID.Editor
     public partial class frmMain : Form
     {
         #region privates
+        private int _toolTipException = 0;
         private Database _database;
         private SfDataGrid _columnsGrid;
         private SfDataGrid _transformsGrid;
@@ -65,8 +67,10 @@ namespace SqlServerDEID.Editor
 
         private Syncfusion.WinForms.Controls.ToolTipItem GetToolTipItem(string text)
         {
-            var toolTipItem1 = new Syncfusion.WinForms.Controls.ToolTipItem();
-            toolTipItem1.Text = text;
+            var toolTipItem1 = new Syncfusion.WinForms.Controls.ToolTipItem
+            {
+                Text = text
+            };
             toolTipItem1.Style.BackColor = Color.LightSkyBlue;
             toolTipItem1.Style.ForeColor = Color.Black;
             toolTipItem1.Style.TextAlignment = ContentAlignment.MiddleCenter;
@@ -480,40 +484,57 @@ namespace SqlServerDEID.Editor
         }
         private void Grid_ToolTipOpening(object sender, Syncfusion.WinForms.DataGrid.Events.ToolTipOpeningEventArgs e)
         {
-            var tt = string.Empty;
-            var grid = (SfDataGrid)sender;
-
-            if (!_stringComparer.Equals(e.Column.HeaderText, "Column Name"))
+            try
             {
-                switch (e.Column.MappingName.ToLower())
+                var tt = string.Empty;
+                var grid = (SfDataGrid)sender;
+                var childGrid = e.OriginalSender as DetailsViewDataGrid;
+
+                if (!_stringComparer.Equals(e.Column.HeaderText, "Column Name") || _stringComparer.Equals(e.DisplayText, "Column Name"))
                 {
-                    case "prescript":
-                        tt = Resources.PreScript;
-                        break;
-                    case "postscript":
-                        tt = Resources.PostScript;
-                        break;
-                    case "scripttimeout":
-                        tt = Resources.Scriptimeout;
-                        break;
-                    default:
-                        tt = Resources.ResourceManager.GetString($"{e.Column.MappingName.ToLower()}.column");
-                        break;
+                    switch (e.Column.MappingName.ToLower())
+                    {
+                        case "prescript":
+                            tt = Resources.PreScript;
+                            break;
+                        case "postscript":
+                            tt = Resources.PostScript;
+                            break;
+                        case "scripttimeout":
+                            tt = Resources.Scriptimeout;
+                            break;
+                        default:
+                            tt = Resources.ResourceManager.GetString($"{e.Column.MappingName.ToLower()}.column");
+                            break;
+                    }
+                }
+                else if (e.Record != null && childGrid != null)
+                {
+                    var parentGrid = childGrid.GetTopLevelParentDataGrid();
+                    var childRowIndex = parentGrid.GetDetailsViewDataGridRowIndex(childGrid);
+                    var parentRecordIndex = parentGrid.TableControl.ResolveToRecordIndex(childRowIndex - 1);
+                    var datatable = parentGrid.View?.Records[parentRecordIndex].Data as DatabaseTable;
+
+                    e.ToolTipInfo.Items.Clear();
+
+                    var col = e.Record as DatabaseTableColumn;
+                    tt = $"{datatable.CleanName} {col.CleanName} {col.DataType}";
+                }
+
+                if (!string.IsNullOrWhiteSpace(tt))
+                {
+                    e.ToolTipInfo.Items.Add(GetToolTipItem(tt));
+                    e.ToolTipInfo.BorderColor = Color.Black;
+                    e.ToolTipInfo.ToolTipLocation = Syncfusion.WinForms.Controls.Enums.ToolTipLocation.BottomRight;
                 }
             }
-            else if (e.Record != null)
+            catch (Exception ex)
             {
-                e.ToolTipInfo.Items.Clear();
-                var datatable = tablesGrid.CurrentItem as DatabaseTable;
-                var col = e.Record as DatabaseTableColumn;
-                tt = $"{datatable.CleanName} {col.CleanName} {col.DataType}";
-            }
-
-            if (!string.IsNullOrWhiteSpace(tt))
-            {
-                e.ToolTipInfo.Items.Add(GetToolTipItem(tt));
-                e.ToolTipInfo.BorderColor = Color.Black;
-                e.ToolTipInfo.ToolTipLocation = Syncfusion.WinForms.Controls.Enums.ToolTipLocation.BottomRight;
+                if (_toolTipException < 2)
+                {
+                    this.MessageException(ex, "Exception displaying tool-tip (Only the first few exceptions will be shown):");
+                    _toolTipException++;
+                }
             }
         }
         private void TransformsGrid_CellComboBoxSelectionChanged(object sender, CellComboBoxSelectionChangedEventArgs e)
