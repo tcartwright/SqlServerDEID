@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net4.8</TargetFramework>
 		<OutputType>WinExe</OutputType>
@@ -21,7 +21,7 @@
         <PackageReference Include="Syncfusion.Tools.Windows" Version="20.3.0.50" />
         <!--<PackageReference Include="Syncfusion.Shared.Windows" Version="19.3.0.48" />-->
         <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-		<PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.6" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\SqlServerDEID.Common.Globals\SqlServerDEID.Common.Globals.csproj" />
